@@ -9,4 +9,4 @@ The android package id is currently "de.arcus.playmusicexporter2". I did this to
 
 ## Copyright
 
-Copyright (c) 2014 David Schulte. See LICENSE.txt for details.
+Copyright (c) 2015 David Schulte. See LICENSE.txt for details.
