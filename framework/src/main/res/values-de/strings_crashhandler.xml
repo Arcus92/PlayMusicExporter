@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2015.
+  -->
+
+<resources>
+    <string name="crashhandler_app_has_stopped_working">%1$s funktioniert nicht mehr!</string>
+
+    <string name="crashhandler_log">Bericht</string>
+
+    <string name="crashhandler_choose_email_title">Absturzbericht senden</string>
+
+    <string name="crashhandler_action_restart">App neustarten</string>
+    <string name="crashhandler_action_email_log">Bereicht per E-Mail senden</string>
+    <string name="crashhandler_action_support_homepage">Support-Homepage öffnen</string>
+    <string name="crashhandler_action_close_dialog">Schließen</string>
+</resources>
