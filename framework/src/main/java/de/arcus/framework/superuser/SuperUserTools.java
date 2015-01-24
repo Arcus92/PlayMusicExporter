@@ -27,18 +27,34 @@ package de.arcus.framework.superuser;
  */
 public class SuperUserTools {
     /**
+     * Private constructor
+     */
+    private SuperUserTools() {}
+
+    /**
      * Copy a file with root permissions
      * @param src Source file
      * @param dest Destination file
      * @return Returns whether the command was successful
      */
-    public static boolean copyFile(String src, String dest) {
+    public static boolean fileCopy(String src, String dest) {
         SuperUserCommand superUserCommand = new SuperUserCommand(new String[] {
                 "rm -f '" + dest + "'", // Remove destination file
                 "cat '" + src + "' >> '" + dest + "'", // Using cat to copy file instead of cp, because you can use it without busybox
-                "chmod 0777 '" + dest + "'" // Change the access mode to all users (chown sdcard_r will fail on some devices)
+                "chmod 0777 '" + dest + "'", // Change the access mode to all users (chown sdcard_r will fail on some devices)
+                "echo 'done'" // Fix to prevent the 'no output' bug in SuperUserCommand
         });
-        // Execute the command
+        // Executes the command
+        superUserCommand.execute();
+
+        // Superuser permissions and command are successful
+        return superUserCommand.commandWasSuccessful();
+    }
+
+    public static boolean fileExists(String filename) {
+        SuperUserCommand superUserCommand = new SuperUserCommand("ls '" + filename + "'");
+
+        // Executes the command
         superUserCommand.execute();
 
         // Superuser permissions and command are successful

@@ -20,6 +20,10 @@
  * THE SOFTWARE.
  */
 
+package de.arcus.playmusiclib.exceptions;
 
-
-include ':app', ':framework', ':playmusiclib'
+/**
+ * Exception will thrown if the database could not be copied or opened
+ */
+public class CouldNotOpenDatabase extends Exception {
+}

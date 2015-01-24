@@ -26,10 +26,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+
+import java.util.List;
 
 import de.arcus.framework.logger.Logger;
 import de.arcus.framework.crashhandler.CrashHandler;
 import de.arcus.framework.superuser.SuperUser;
+import de.arcus.playmusiclib.PlayMusicManager;
+import de.arcus.playmusiclib.datasources.AlbumDataSource;
+import de.arcus.playmusiclib.datasources.MusicTrackDataSource;
+import de.arcus.playmusiclib.exceptions.CouldNotOpenDatabase;
+import de.arcus.playmusiclib.exceptions.NoSuperUserException;
+import de.arcus.playmusiclib.exceptions.PlayMusicNotFound;
+import de.arcus.playmusiclib.items.Album;
+import de.arcus.playmusiclib.items.MusicTrack;
 
 /**
  * An activity representing a list of Tracks. This activity
@@ -87,7 +98,44 @@ public class TrackListActivity extends ActionBarActivity
         }
 
 
-        SuperUser.askForPermissions();
+        PlayMusicManager playMusicManager = new PlayMusicManager(this);
+
+        try {
+            // Simple play ground
+            playMusicManager.startUp();
+            playMusicManager.setOfflineOnly(true);
+
+            AlbumDataSource albumDataSource = new AlbumDataSource(playMusicManager);
+            albumDataSource.setSerchKey("A bird story");
+
+            // Load all albums
+            List<Album> albums = albumDataSource.getAll();
+
+            if (albums.size() > 0) {
+                // Gets the first album
+                Album album = albums.get(0);
+
+                // Load tracks from album
+                List<MusicTrack> tracks = album.getMusicTrackList();
+
+                if (tracks.size() > 0) {
+                    // Gets the first track
+                    MusicTrack track = tracks.get(0);
+
+                    String fileMusic = track.getSourceFile();
+                    String artwork = track.getArtworkPath();
+
+                    Log.d("Debug", "Breakpoint");
+                }
+            }
+
+        } catch (PlayMusicNotFound playMusicNotFound) {
+            playMusicNotFound.printStackTrace();
+        } catch (NoSuperUserException e) {
+            e.printStackTrace();
+        } catch (CouldNotOpenDatabase couldNotOpenDatabase) {
+            couldNotOpenDatabase.printStackTrace();
+        }
 
 
         // TODO: If exposing deep links into your app, handle intents here.

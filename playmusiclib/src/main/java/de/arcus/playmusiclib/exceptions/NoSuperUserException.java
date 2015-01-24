@@ -20,6 +20,10 @@
  * THE SOFTWARE.
  */
 
+package de.arcus.playmusiclib.exceptions;
 
-
-include ':app', ':framework', ':playmusiclib'
+/**
+ * Exception will thrown if the app dosen't have super user permissions
+ */
+public class NoSuperUserException extends Exception {
+}

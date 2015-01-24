@@ -113,7 +113,7 @@ public class SuperUser {
         // Starts the process
         if (sessionStart()) {
             // Test for superuser
-            SuperUserCommand superUserCommand = new SuperUserCommand("whoami");
+            SuperUserCommand superUserCommand = new SuperUserCommand("echo 'root'");
 
             Logger.getInstance().logInfo("SuperUser", "askForPermissions");
             if (superUserCommand.execute()) {

@@ -20,6 +20,10 @@
  * THE SOFTWARE.
  */
 
+package de.arcus.playmusiclib.exceptions;
 
-
-include ':app', ':framework', ':playmusiclib'
+/**
+ * Exception will thrown if PlayMusic is not installed
+ */
+public class PlayMusicNotFound extends Exception {
+}
