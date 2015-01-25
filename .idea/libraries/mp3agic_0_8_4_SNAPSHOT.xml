@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="mp3agic-0.8.4-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/playmusiclib/libs/mp3agic-0.8.4-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

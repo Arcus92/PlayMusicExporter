@@ -38,8 +38,6 @@ import javax.crypto.spec.SecretKeySpec;
  * Exports encrypted music files from Google Music All Access
  */
 public class AllAccessExporter {
-    private String mFileName;
-    private byte[] mCpData;
     private Cipher mCipher;
     private SecretKeySpec mKeySpec;
     private InputStream mInput;
@@ -60,15 +58,12 @@ public class AllAccessExporter {
      */
     public AllAccessExporter(String input, byte[] cpData) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException
     {
-        mFileName = input;
-        mCpData = cpData;
-
         // Select encryption mode
         mCipher = Cipher.getInstance("AES/CTR/NoPadding");
-        mKeySpec = new SecretKeySpec(mCpData, "AES");
+        mKeySpec = new SecretKeySpec(cpData, "AES");
 
         // Opens the source file
-        mInput = new FileInputStream(mFileName);
+        mInput = new FileInputStream(input);
 
         // Reads the first 4 bytes = MagicNumber
         mMagicNumber = new byte[4];

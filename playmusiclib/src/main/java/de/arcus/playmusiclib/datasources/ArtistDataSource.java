@@ -29,31 +29,28 @@ import android.text.TextUtils;
 import java.util.List;
 
 import de.arcus.playmusiclib.PlayMusicManager;
-import de.arcus.playmusiclib.items.Playlist;
+import de.arcus.playmusiclib.items.Artist;
 
 /**
- * Data source for playlists
+ * Data source for artists
  */
-public class PlaylistDataSource extends DataSource<Playlist> {
+public class ArtistDataSource extends DataSource<Artist> {
     // Tables
-    private final static String TABLE_LIST = "LISTS";
+    private final static String TABLE_MUSIC = "MUSIC";
 
     // All fields
-    private final static String COLUMN_ID = "LISTS.Id";
-    private final static String COLUMN_NAME = "LISTS.Name";
-    private final static String COLUMN_LIST_TYPE = "LISTS.ListType";
-    private final static String COLUMN_OWNER_NAME = "LISTS.OwnerName";
-    private final static String COLUMN_ARTWORK_FILE = "(SELECT ARTWORK_CACHE.LocalLocation FROM LISTITEMS LEFT JOIN MUSIC ON MUSIC.Id = LISTITEMS.MusicId LEFT JOIN ARTWORK_CACHE ON ARTWORK_CACHE.RemoteLocation = MUSIC.AlbumArtLocation WHERE LISTITEMS.ListId = LISTS.Id AND ARTWORK_CACHE.LocalLocation IS NOT NULL LIMIT 1) AS ArtworkFile";
+    private final static String COLUMN_ARTIST_ID = "ArtistId";
+    private final static String COLUMN_ARTIST = "Artist";
+    private final static String COLUMN_ARTWORK_FILE = "(SELECT ARTWORK_CACHE.LocalLocation FROM MUSIC AS MUSIC2 LEFT JOIN ARTWORK_CACHE ON ARTWORK_CACHE.RemoteLocation = MUSIC.AlbumArtLocation WHERE MUSIC2.ArtistId = MUSIC.ArtistId AND ARTWORK_CACHE.LocalLocation IS NOT NULL LIMIT 1) AS ArtworkFile";
 
     // All columns
-    private final static String[] COLUMNS_ALL = { COLUMN_ID, COLUMN_NAME,
-            COLUMN_LIST_TYPE, COLUMN_OWNER_NAME, COLUMN_ARTWORK_FILE};
+    private final static String[] COLUMNS_ALL = { COLUMN_ARTIST_ID, COLUMN_ARTIST, COLUMN_ARTWORK_FILE };
 
 
     /**
      * If this is set the data source will only load offline tracks
      */
-    private boolean mOfflineOnly; // TODO: Offline only has no effects on the playlist data sources
+    private boolean mOfflineOnly; // TODO: Offline only has no effects on the artists data sources
 
     /**
      * If the search key is set, this data source will only load items which contains this text
@@ -92,7 +89,7 @@ public class PlaylistDataSource extends DataSource<Playlist> {
      * Creates a new data source
      * @param playMusicManager The manager
      */
-    public PlaylistDataSource(PlayMusicManager playMusicManager) {
+    public ArtistDataSource(PlayMusicManager playMusicManager) {
         super(playMusicManager);
 
         // Load global settings
@@ -109,7 +106,7 @@ public class PlaylistDataSource extends DataSource<Playlist> {
         if (!TextUtils.isEmpty(mSearchKey)) {
             String searchKey = DatabaseUtils.sqlEscapeString("%" + mSearchKey + "%");
 
-            where = combineWhere(where, "(" + COLUMN_NAME + " LIKE " + searchKey + ")");
+            where = combineWhere(where, "(" + COLUMN_ARTIST + " LIKE " + searchKey + ")");
         }
 
         return where;
@@ -121,33 +118,31 @@ public class PlaylistDataSource extends DataSource<Playlist> {
      * @param cursor Data row
      * @return Data object
      */
-    protected Playlist getDataObject(Cursor cursor) {
-        Playlist instance = new Playlist(mPlayMusicManager);
+    protected Artist getDataObject(Cursor cursor) {
+        Artist instance = new Artist(mPlayMusicManager);
 
         // Read all properties from the data row
-        instance.setId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ID)));
-        instance.setName(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_NAME)));
-        instance.setListType(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_LIST_TYPE)));
-        instance.setOwnerName(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_OWNER_NAME)));
+        instance.setArtistId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTIST_ID)));
+        instance.setArtist(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTIST)));
         instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORK_FILE)));
 
         return instance;
     }
 
     /**
-     * Loads a playlist by Id
-     * @param id The playlist id
-     * @return Returns the playlist or null
+     * Loads a artist by Id
+     * @param id The artist id
+     * @return Returns the artist or null
      */
-    public Playlist getById(long id) {
-        return getItem(TABLE_LIST, COLUMNS_ALL, prepareWhere(COLUMN_ID + " = " + id));
+    public Artist getById(long id) {
+        return getItem(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ARTIST_ID + " = " + id));
     }
 
     /**
-     * Gets a list of all playlists
-     * @return Returns all playlists
+     * Gets a list of all artists
+     * @return Returns all artists
      */
-    public List<Playlist> getAll() {
-        return getItems(TABLE_LIST, COLUMNS_ALL, prepareWhere(COLUMN_LIST_TYPE + " != " + Playlist.TYPE_QUEUE), COLUMN_NAME);
+    public List<Artist> getAll() {
+        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(""), COLUMN_ARTIST);
     }
 }

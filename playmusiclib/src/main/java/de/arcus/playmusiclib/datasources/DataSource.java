@@ -23,7 +23,6 @@
 package de.arcus.playmusiclib.datasources;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import java.util.LinkedList;

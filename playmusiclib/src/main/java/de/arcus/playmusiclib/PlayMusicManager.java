@@ -29,9 +29,18 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import com.mpatric.mp3agic.ID3v1Genres;
+import com.mpatric.mp3agic.ID3v1Tag;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.ID3v22Tag;
+import com.mpatric.mp3agic.ID3v23Tag;
+import com.mpatric.mp3agic.ID3v24Tag;
+import com.mpatric.mp3agic.Mp3File;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import de.arcus.framework.logger.Logger;
 import de.arcus.framework.superuser.SuperUser;
 import de.arcus.framework.superuser.SuperUserTools;
 import de.arcus.framework.utils.FileTools;
@@ -39,6 +48,7 @@ import de.arcus.playmusiclib.exceptions.CouldNotOpenDatabase;
 import de.arcus.playmusiclib.exceptions.NoSuperUserException;
 import de.arcus.playmusiclib.exceptions.PlayMusicNotFound;
 import de.arcus.playmusiclib.items.MusicTrack;
+
 
 /**
  * Connects to the PlayMusic data
@@ -132,6 +142,88 @@ public class PlayMusicManager {
     }
 
     /**
+     * If this is set the exporter will add ID3 tag to the mp3 files
+     */
+    private boolean mID3Enable = true;
+
+    /**
+     * @return Gets whether the exporter adds ID3 tags to the mp3 files
+     */
+    public boolean getID3Enable() {
+        return mID3Enable;
+    }
+
+    /**
+     * @param id3Enable Sets whether the exporter adds ID3 tags to the mp3 files
+     */
+    public void setID3Enable(boolean id3Enable) {
+        mID3Enable = id3Enable;
+    }
+
+    /**
+     * If this is set the exporter will add the artwork to the ID2v2 tag
+     */
+    private boolean mID3ExportArtwork = true;
+
+    /**
+     * @return Gets whether the exporter adds the artwork image
+     */
+    public boolean getID3ExportArtwork() {
+        return mID3ExportArtwork;
+    }
+
+    /**
+     * @param id3ExportArtwork Sets whether the exporter adds the artwork image
+     */
+    public void setID3ExportArtwork(boolean id3ExportArtwork) {
+        mID3ExportArtwork = id3ExportArtwork;
+    }
+
+    /**
+     * If this is set the exporter will also adds ID3v1 tags
+     */
+    private boolean mID3ExportFallback = true;
+
+    /**
+     * @return Gets whether the exporter adds ID3v1 tags as fallback
+     */
+    public boolean getID3ExportFallback() {
+        return mID3ExportFallback;
+    }
+
+    /**
+     * @param id3ExportFallback Sets whether the exporter adds ID3v1 tags as fallback
+     */
+    public void setmID3ExportFallback(boolean id3ExportFallback) {
+        mID3ExportFallback = id3ExportFallback;
+    }
+
+    /**
+     * The ID3v2 sub version
+     */
+    public enum ID3v2Version { ID3v22, ID3v23, ID3v24 }
+
+    /**
+     * The sub version of ID3v2
+     * Use 2.3 for default to fix issues with the Windows Windows Media Player
+     */
+    private ID3v2Version mID3v2Version = ID3v2Version.ID3v23;
+
+    /**
+     * @return Gets the sub version of ID3v2
+     */
+    public ID3v2Version getID3v2Version() {
+        return mID3v2Version;
+    }
+
+    /**
+     * @param id3v2Version Sets the sub version of ID3v2
+     */
+    public void setID3v2Version(ID3v2Version id3v2Version) {
+        mID3v2Version = id3v2Version;
+    }
+
+    /**
      * Creates a new PlayMusic manager
      * @param context App context
      */
@@ -204,7 +296,7 @@ public class PlayMusicManager {
     }
 
     /**
-     * Reloads the database from playmusic
+     * Reloads the database from PlayMusic
      * @throws NoSuperUserException No super user permissions
      * @throws CouldNotOpenDatabase Could not open the database
      */
@@ -304,10 +396,189 @@ public class PlayMusicManager {
         if (!SuperUserTools.fileCopy(srcFile, fileTmp))
             return false;
 
-        // TODO
+        // Encrypt the file
+        if (musicTrack.isEncoded()) {
+            String fileTmpCrypt = getTempPath() + "/crypt.mp3";
 
+            // Encrypts the file
+            if (trackEncrypt(musicTrack, fileTmp, fileTmpCrypt)) {
+                // Remove the old tmp file
+                FileTools.fileDelete(fileTmp);
+
+                // New tmp file
+                fileTmp = fileTmpCrypt;
+            } else {
+                Logger.getInstance().logWarning("ExportMusicTrack", "Encrypting failed! Continue with decrypted file.");
+            }
+        }
+
+        // We want to export the ID3 tags
+        if (mID3Enable) {
+            // Adds the meta data
+            if (!trackWriteID3(musicTrack, fileTmp, dest)) {
+                Logger.getInstance().logWarning("ExportMusicTrack", "ID3 writer failed! Continue without ID3 tags.");
+
+                // Failed, moving without meta data
+                if (!FileTools.fileMove(fileTmp, dest)) {
+                    Logger.getInstance().logError("ExportMusicTrack", "Moving the raw file failed!");
+
+                    // Could not copy the file
+                    return false;
+                }
+            }
+        } else {
+            // Moving the file
+            if (!FileTools.fileMove(fileTmp, dest)) {
+                Logger.getInstance().logError("ExportMusicTrack", "Moving the raw file failed!");
+
+                // Could not copy the file
+                return false;
+            }
+        }
+
+        // Done
         return true;
     }
 
+    /**
+     * Copies the music file to a new path and adds the mp3 meta data
+     * @param musicTrack Track information
+     * @param src The source mp3 file
+     * @param dest The destination path
+     * return Return if the operation was successful
+     */
+    private boolean trackWriteID3(MusicTrack musicTrack, String src, String dest) {
+        try {
+            // Opens the mp3
+            Mp3File mp3File = new Mp3File(src);
 
+            // Removes all existing tags
+            mp3File.removeId3v1Tag();
+            mp3File.removeId3v2Tag();
+            mp3File.removeCustomTag();
+
+            // We want to add a fallback ID3v1 tag
+            if (mID3ExportFallback) {
+                // Create a new tag with ID3v1
+                ID3v1Tag tagID3v1 = new ID3v1Tag();
+
+                // Set all tag values
+                tagID3v1.setTrack(musicTrack.getTitle());
+                tagID3v1.setArtist(musicTrack.getArtist());
+                tagID3v1.setAlbum(musicTrack.getAlbum());
+                tagID3v1.setYear(musicTrack.getYear());
+
+                // Search the genre
+                for(int n=0; n<ID3v1Genres.GENRES.length; n++) {
+                    // Genre found
+                    if (ID3v1Genres.GENRES[n].equals(musicTrack.getGenre())) {
+                        tagID3v1.setGenre(n);
+                        break;
+                    }
+                }
+
+                mp3File.setId3v1Tag(tagID3v1);
+            }
+
+            // It can't be null
+            ID3v2 tagID3v2 = null;
+
+            // Creates the requested version
+            switch(mID3v2Version) {
+                case ID3v22:
+                    tagID3v2 = new ID3v22Tag();
+                    break;
+                case ID3v23:
+                    tagID3v2 = new ID3v23Tag();
+                    break;
+                case ID3v24:
+                    tagID3v2 = new ID3v24Tag();
+                    break;
+            }
+
+
+            // Set all tag values
+            tagID3v2.setTitle(musicTrack.getTitle());
+            tagID3v2.setArtist(musicTrack.getArtist());
+            tagID3v2.setAlbum(musicTrack.getTitle());
+            tagID3v2.setAlbumArtist(musicTrack.getAlbumArtist());
+            tagID3v2.setTrack("" + musicTrack.getTrackNumber());
+            tagID3v2.setPartOfSet("" + musicTrack.getDiscNumber());
+            tagID3v2.setYear(musicTrack.getYear());
+
+            try {
+                // Maybe the genre is not supported
+                tagID3v2.setGenreDescription(musicTrack.getGenre());
+            } catch (IllegalArgumentException e) {
+                Logger.getInstance().logWarning("TrackWriteID3", e.getMessage());
+            }
+
+            // Add the artwork to the meta data
+            if (mID3ExportArtwork) {
+                // Reads the artwork with root permissions (maybe it is in /data)
+                byte[] artwork = SuperUserTools.fileReadToByteArray(musicTrack.getArtworkPath());
+                if (artwork != null) {
+                    // The file extension is always .jpg even if the image is a PNG file,
+                    // so we need to check the magic number
+
+                    // JPEG is default
+                    String mimeType = "image/jpeg";
+
+                    // Check for other image formats
+                    if (artwork.length > 4) {
+                        // PNG-Header
+                        if (artwork[0] == -119 && artwork[1] == 80 && artwork[2] == 78 && artwork[3] == 71) {
+                            mimeType = "image/png";
+                        }
+                    }
+
+                    // Adds the artwork to the meta data
+                    tagID3v2.setAlbumImage(artwork, mimeType);
+                }
+            }
+
+            mp3File.setId3v2Tag(tagID3v2);
+
+
+            // Save the file
+            mp3File.save(dest);
+
+            // Done
+            return true;
+        } catch (Exception e) {
+            Logger.getInstance().logError("TrackWriteId3", e.toString());
+        }
+
+        // Failed
+        return false;
+    }
+
+    /**
+     * Encrypts a track and save it to a new path
+     * @param musicTrack The music track
+     * @param src The source mp3 file
+     * @param dest The destination path
+     * @return Return if the operation was successful
+     */
+    private boolean trackEncrypt(MusicTrack musicTrack, String src, String dest) {
+
+        try {
+            AllAccessExporter allAccessExporter = new AllAccessExporter(src, musicTrack.getCpData());
+
+            // Checks the magic number
+            if (!allAccessExporter.hasValidMagicNumber()) {
+                Logger.getInstance().logError("TrackEncrypt", "Invalid magic number! This is not an AllAccess file");
+                return false;
+            }
+
+            // Saves the file
+            return allAccessExporter.save(dest);
+        } catch (Exception e) {
+            Logger.getInstance().logError("TrackEncrypt", e.toString());
+        }
+
+        // Failed
+        return false;
+
+    }
 }

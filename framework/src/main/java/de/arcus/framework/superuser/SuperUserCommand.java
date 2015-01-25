@@ -22,9 +22,12 @@
 
 package de.arcus.framework.superuser;
 
+import org.apache.http.util.ByteArrayBuffer;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +47,63 @@ public class SuperUserCommand {
     private String[] mOutputStandard = new String[] {};
     private String[] mOutputError = new String[] {};
 
+    // If we want to get a binary return
+    private byte[] mOutputStandardBinary = new byte[] {};
+
+    /**
+     * Command failed?
+     */
     private boolean mSuperUserFailed;
+
+    /**
+     * If this value is set, the command will not store any standard output to the logger
+     */
+    private boolean mHideStandardOutput = false;
+    /**
+     * If this value is set, the command will not store any error output to the logger
+     */
+    private boolean mHideErrorOutput = false;
+
+    /**
+     * @return Gets whether the command hides the standard output log
+     */
+    public boolean getHideStandardOutput() {
+        return mHideStandardOutput;
+    }
+
+    /**
+     * @param hideStandardOutput Set this to hide the standard output to the logger
+     */
+    public void setHideStandardOutput(boolean hideStandardOutput) {
+        mHideStandardOutput = hideStandardOutput;
+    }
+
+    /**
+     * @return Gets whether the command hides the error output log
+     */
+    public boolean getHideErrorOutput() {
+        return mHideErrorOutput;
+    }
+
+    /**
+     * @param hideErrorOutput Set this to hide the error output to the logger
+     */
+    public void setHideErrorOutput(boolean hideErrorOutput) {
+        mHideErrorOutput = hideErrorOutput;
+    }
+
+    /**
+     * If this value is set the command will read the standard output as binary
+     */
+    private boolean mBinaryStandardOutput = false;
+
+    public boolean getBinaryStandardOutput() {
+        return mBinaryStandardOutput;
+    }
+
+    public void setBinaryStandardOutput(boolean binaryStandardOutput) {
+        mBinaryStandardOutput = binaryStandardOutput;
+    }
 
     /**
      * The timeout for this command in milliseconds
@@ -76,17 +135,24 @@ public class SuperUserCommand {
     }
 
     /**
-     * @return Get the standard output
+     * @return Gets the standard output
      */
     public String[] getStandardOutput() {
         return mOutputStandard;
     }
 
     /**
-     * @return Get the error output
+     * @return Gets the error output
      */
     public String[] getErrorOutput() {
         return mOutputError;
+    }
+
+    /**
+     * @return Gets the standard output as binary
+     */
+    public byte[] getStandardOutputBinary() {
+        return mOutputStandardBinary;
     }
 
     /**
@@ -174,20 +240,43 @@ public class SuperUserCommand {
                 if (timeNow - timeStarted >= mTimeout) break;
             }
 
-            // Reads the standard output
-            tmpList.clear();
-            while (bufferedInputReader.ready()) {
-                tmpLine = bufferedInputReader.readLine();
+            // We want to read the data as binary
+            if (mBinaryStandardOutput) {
+                int len;
+                byte[] buffer = new byte[1024];
 
-                // End of data
-                if (tmpLine == null) break;
+                // Byte buffer
+                ByteArrayBuffer byteArrayBuffer = new ByteArrayBuffer(1024);
 
-                Logger.getInstance().logInfo("SuperUser", "> " + tmpLine);
-                tmpList.add(tmpLine);
+                // Need the direct input stream
+                InputStream inputStream = SuperUser.getProcess().getInputStream();
+
+                while (bufferedInputReader.ready()) {
+                    // Read to buffer
+                    len = inputStream.read(buffer);
+
+                    // Write to buffer
+                    byteArrayBuffer.append(buffer, 0, len);
+                }
+
+                mOutputStandardBinary = byteArrayBuffer.toByteArray();
+            } else {
+                // Reads the standard output as text
+                tmpList.clear();
+                while (bufferedInputReader.ready()) {
+                    tmpLine = bufferedInputReader.readLine();
+
+                    // End of data
+                    if (tmpLine == null) break;
+
+                    if (!mHideStandardOutput)
+                        Logger.getInstance().logInfo("SuperUser", "> " + tmpLine);
+
+                    tmpList.add(tmpLine);
+                }
+                // Convert list to array
+                mOutputStandard = tmpList.toArray(new String[tmpList.size()]);
             }
-            // Convert list to array
-            mOutputStandard = tmpList.toArray(new String[tmpList.size()]);
-
 
             // Reads the error output
             tmpList.clear();
@@ -196,7 +285,9 @@ public class SuperUserCommand {
 
                 // End of data
                 if (tmpLine == null) break;
-                Logger.getInstance().logError("SuperUser", "> " + tmpLine);
+
+                if (!mHideErrorOutput)
+                    Logger.getInstance().logError("SuperUser", "> " + tmpLine);
 
                 tmpList.add(tmpLine);
             }

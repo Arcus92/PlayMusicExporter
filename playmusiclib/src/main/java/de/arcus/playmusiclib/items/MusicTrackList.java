@@ -22,8 +22,6 @@
 
 package de.arcus.playmusiclib.items;
 
-import android.content.Context;
-
 import java.util.List;
 
 import de.arcus.playmusiclib.PlayMusicManager;
@@ -32,7 +30,7 @@ import de.arcus.playmusiclib.PlayMusicManager;
  * List of {@link de.arcus.playmusiclib.items.MusicTrack MusicTracks}.
  * Eg. albums, playlists, etc...
  */
-public abstract class MusicList {
+public abstract class MusicTrackList {
     /**
      * The manager
      */
@@ -42,7 +40,7 @@ public abstract class MusicList {
      * Creates a data item
      * @param playMusicManager The manager
      */
-    public MusicList(PlayMusicManager playMusicManager) {
+    public MusicTrackList(PlayMusicManager playMusicManager) {
         mPlayMusicManager = playMusicManager;
     }
 
@@ -51,6 +49,17 @@ public abstract class MusicList {
      * This list will only be loaded if {@link #getMusicTrackList()} was called
      */
     protected List<MusicTrack> mMusicTrackList;
+
+    /**
+     * The filename of the artwork
+     */
+    protected String mArtworkFile;
+
+    /**
+     * The complet path of the artwork
+     */
+    protected String mArtworkPath;
+
 
     public List<MusicTrack> getMusicTrackList() {
         // List is requested for the fist time
@@ -61,17 +70,28 @@ public abstract class MusicList {
         return mMusicTrackList;
     }
 
+
+
+    /**
+     * Gets the artwork filename
+     */
+    public String getArtworkFile() {
+        return mArtworkFile;
+    }
+
+    /**
+     * @param artworkFile Sets the artwork filename
+     */
+    public void setArtworkFile(String artworkFile) {
+        mArtworkFile = artworkFile;
+    }
+
     /**
      * Loads all tracks from this list.
      * Must be overwritten in all extended classes
      */
     protected abstract void fetchTrackList();
 
-    /**
-     * Gets the artwork path
-     * @return Path to the artwork
-     */
-    public abstract String getArtworkPath();
 
     /**
      * Gets the title of the list
@@ -85,6 +105,17 @@ public abstract class MusicList {
      * @return Description
      */
     public abstract String getDescription();
+
+    /**
+     * Gets the artwork path
+     * @return Path to the artwork
+     */
+    public String getArtworkPath() {
+        // Search for the artwork path
+        if (mArtworkPath == null)
+            mArtworkPath = mPlayMusicManager.getArtworkPath(mArtworkFile);
+        return mArtworkPath;
+    }
 
     @Override
     public String toString() {

@@ -24,6 +24,7 @@ package de.arcus.playmusicexporter2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -32,18 +33,10 @@ import java.util.List;
 
 import de.arcus.framework.logger.Logger;
 import de.arcus.framework.crashhandler.CrashHandler;
-import de.arcus.framework.superuser.SuperUser;
-import de.arcus.framework.utils.FileTools;
 import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.datasources.AlbumDataSource;
-import de.arcus.playmusiclib.datasources.MusicTrackDataSource;
-import de.arcus.playmusiclib.datasources.PlaylistDataSource;
-import de.arcus.playmusiclib.exceptions.CouldNotOpenDatabase;
-import de.arcus.playmusiclib.exceptions.NoSuperUserException;
-import de.arcus.playmusiclib.exceptions.PlayMusicNotFound;
 import de.arcus.playmusiclib.items.Album;
 import de.arcus.playmusiclib.items.MusicTrack;
-import de.arcus.playmusiclib.items.Playlist;
 
 /**
  * An activity representing a list of Tracks. This activity
@@ -109,14 +102,11 @@ public class TrackListActivity extends ActionBarActivity
             playMusicManager.setOfflineOnly(true);
 
             AlbumDataSource albumDataSource = new AlbumDataSource(playMusicManager);
-            PlaylistDataSource playlistDataSource = new PlaylistDataSource(playMusicManager);
 
             albumDataSource.setSerchKey("Ed Sheeran");
-            playlistDataSource.setSerchKey("Playlist 1");
 
             // Load all albums
             List<Album> albums = albumDataSource.getAll();
-            List<Playlist> playlists = playlistDataSource.getAll();
 
             if (albums.size() > 0) {
                 // Gets the first album
@@ -129,27 +119,16 @@ public class TrackListActivity extends ActionBarActivity
                     // Gets the first track
                     MusicTrack track = tracks.get(0);
 
-                    String fileMusic = track.getSourceFile();
-                    String artwork = track.getArtworkPath();
+                    // Test: exports the track to the sd card
+                    String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/test.mp3";
+                    boolean success = playMusicManager.exportMusicTrack(track, filename);
 
-                    Log.d("Debug", "Breakpoint");
+                    Log.d("Debug", "Success: " + success);
                 }
             }
 
-            if (playlists.size() > 0) {
-                Playlist playlist = playlists.get(0);
-
-                List<MusicTrack> musicTracks = playlist.getMusicTrackList();
-
-                Log.d("Debug", "Breakpoint");
-            }
-
-        } catch (PlayMusicNotFound playMusicNotFound) {
-            playMusicNotFound.printStackTrace();
-        } catch (NoSuperUserException e) {
-            e.printStackTrace();
-        } catch (CouldNotOpenDatabase couldNotOpenDatabase) {
-            couldNotOpenDatabase.printStackTrace();
+        } catch (Exception e) {
+            Logger.getInstance().logError("Test", e.toString());
         }
 
 

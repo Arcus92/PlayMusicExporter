@@ -71,27 +71,27 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         // Information
         logBuilder.append("---------- Information -----------\n");
-        logBuilder.append("PackageName: " + mActivity.getPackageName() + "\n");
-        logBuilder.append("Crashed activity: " + mActivity.getLocalClassName() + "\n");
+        logBuilder.append("PackageName: ").append(mActivity.getPackageName()).append("\n");
+        logBuilder.append("Crashed activity: ").append(mActivity.getLocalClassName()).append("\n");
 
         logBuilder.append("----------- Exception ------------\n");
-        logBuilder.append(ex.getMessage() + "\n");
+        logBuilder.append(ex.getMessage()).append("\n");
 
         // Log stack trace
         for (StackTraceElement stackTraceElement : ex.getStackTrace())
         {
-            logBuilder.append("\t" + stackTraceElement.toString() + "\n");
+            logBuilder.append("\t").append(stackTraceElement.toString()).append("\n");
         }
 
         // Log Caused by
         if (ex.getCause() != null) {
             logBuilder.append("----------- Caused by ------------\n");
-            logBuilder.append(ex.getCause().getMessage() + "\n");
+            logBuilder.append(ex.getCause().getMessage()).append("\n");
 
             // Log stack trace
             for (StackTraceElement stackTraceElement : ex.getCause().getStackTrace())
             {
-                logBuilder.append("\t" + stackTraceElement.toString() + "\n");
+                logBuilder.append("\t").append(stackTraceElement.toString()).append("\n");
             }
         }
 

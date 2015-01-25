@@ -27,21 +27,18 @@ import de.arcus.playmusiclib.R;
 import de.arcus.playmusiclib.datasources.MusicTrackDataSource;
 
 /**
- * Created by david on 24.01.15.
+ * A playlist
  */
-public class Playlist extends MusicList {
+public class Playlist extends MusicTrackList {
     // Variables
     private long mId, mListType;
     private String mName;
     private String mOwnerName;
-    private String mArtworkFile;
 
     public final static long TYPE_USER = 0;
     public final static long TYPE_QUEUE = 10;
     public final static long TYPE_RADIO = 50;
     public final static long TYPE_PUBLIC = 71;
-
-    private String mArtworkPath;
 
     /**
      * Creates a data item
@@ -107,22 +104,10 @@ public class Playlist extends MusicList {
         this.mOwnerName = ownerName;
     }
 
-    /**
-     * @return Gets the artwork file name
-     */
-    public String getArtworFile() {
-        return mArtworkFile;
-    }
-    /**
-     * @param artworkfile Sets the artwork file name
-     */
-    public void setArtworkFile(String artworkfile) {
-        this.mArtworkFile = artworkfile;
-    }
 
     @Override
     /**
-     * Gets the album name
+     * Gets the playlist name
      */
     public String getTitle() {
         // Play queue
@@ -135,7 +120,7 @@ public class Playlist extends MusicList {
 
     @Override
     /**
-     * Gets the playlist name
+     * Gets the list owner name
      */
     public String getDescription() {
         // Play queue
@@ -161,16 +146,5 @@ public class Playlist extends MusicList {
 
         // Load the track list
         mMusicTrackList = musicTrackDataSource.getByPlaylist(this);
-    }
-
-    @Override
-    /**
-     * return Gets the full path to the artwork
-     */
-    public String getArtworkPath() {
-        // Search for the artwork path
-        if (mArtworkPath == null)
-            mArtworkPath = mPlayMusicManager.getArtworkPath(mArtworkFile);
-        return mArtworkPath;
     }
 }

@@ -51,13 +51,41 @@ public class SuperUserTools {
         return superUserCommand.commandWasSuccessful();
     }
 
-    public static boolean fileExists(String filename) {
-        SuperUserCommand superUserCommand = new SuperUserCommand("ls '" + filename + "'");
+    /**
+     * Checks if the file exists
+     * @param path The path to check
+     * @return Returns whether the path exists
+     */
+    public static boolean fileExists(String path) {
+        SuperUserCommand superUserCommand = new SuperUserCommand("ls '" + path + "'");
 
         // Executes the command
         superUserCommand.execute();
 
         // Superuser permissions and command are successful
         return superUserCommand.commandWasSuccessful();
+    }
+
+
+    /**
+     * Gets all bytes from one file
+     * @param path The path to the file
+     * @return Returns the byte array or null if the file doesn't exists
+     */
+    public static byte[] fileReadToByteArray(String path) {
+        SuperUserCommand superUserCommand = new SuperUserCommand("cat '" + path + "'");
+
+        // Don't spam the log with binary code
+        superUserCommand.setHideStandardOutput(true);
+        superUserCommand.setBinaryStandardOutput(true);
+
+        // Executes the command
+        superUserCommand.execute();
+
+        // Failed
+        if (!superUserCommand.commandWasSuccessful())
+            return null;
+
+        return superUserCommand.getStandardOutputBinary();
     }
 }

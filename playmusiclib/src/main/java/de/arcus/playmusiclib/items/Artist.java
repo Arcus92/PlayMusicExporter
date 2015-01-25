@@ -26,90 +26,74 @@ import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.datasources.MusicTrackDataSource;
 
 /**
- * An Album
+ * An artist
  */
-public class Album extends MusicTrackList {
+public class Artist extends MusicTrackList {
     // Variables
-    private long mAlbumId;
-    private String mAlbum, mAlbumArtist;
+    private long mArtistId;
+    private String mArtist;
 
     /**
      * Creates a data item
      * @param playMusicManager The manager
      */
-    public Album(PlayMusicManager playMusicManager) {
+    public Artist(PlayMusicManager playMusicManager) {
         super(playMusicManager);
     }
 
     /**
-     * @return Gets the album id
+     * @return Gets the id of the artist
      */
-    public long getAlbumId() {
-        return mAlbumId;
+    public long getArtistId() {
+        return mArtistId;
     }
 
     /**
-     * @param albumId Sets the album id
+     * @param artistId Sets the id of the artist
      */
-    public void setAlbumId(long albumId) {
-        this.mAlbumId = albumId;
+    public void setArtistId(long artistId) {
+        mArtistId = artistId;
     }
 
     /**
-     * @return Gets the name of the album
+     * @return Gets the name of the artist
      */
-    public String getAlbum() {
-        return mAlbum;
+    public String getArtist() {
+        return mArtist;
     }
 
     /**
-     * @param album Sets the name of the album
+     * @param artist Sets the name of the artist
      */
-    public void setAlbum(String album) {
-        this.mAlbum = album;
-    }
-
-    /**
-     * @return gets the album artist
-     */
-    public String getAlbumArtist() {
-        return mAlbumArtist;
-    }
-
-    /**
-     * @param albumArtist Sets the album artist
-     */
-    public void setAlbumArtist(String albumArtist) {
-        this.mAlbumArtist = albumArtist;
+    public void setArtist(String artist) {
+        mArtist = artist;
     }
 
     @Override
     /**
-     * Gets the album name
+     * Gets the artist name
      */
     public String getTitle() {
-        return getAlbum();
+        return getArtist();
     }
 
     @Override
     /**
-     * Gets the album artist
+     * Gets the artist name
      */
     public String getDescription() {
-        return getAlbumArtist();
+        return ""; // TODO
     }
 
     @Override
     /**
-     * Loads all tracks from this album
+     * Loads all tracks from this artist
      */
     protected void fetchTrackList() {
         // Music track data source
         MusicTrackDataSource musicTrackDataSource = new MusicTrackDataSource(mPlayMusicManager);
 
         // Load the track list
-        mMusicTrackList = musicTrackDataSource.getByAlbum(this);
+        mMusicTrackList = musicTrackDataSource.getByArtist(this);
     }
-
-
 }

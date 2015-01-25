@@ -24,6 +24,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.arcus.playmusicexporter2" >
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"

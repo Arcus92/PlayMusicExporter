@@ -30,6 +30,7 @@ import java.util.List;
 
 import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.items.Album;
+import de.arcus.playmusiclib.items.Artist;
 import de.arcus.playmusiclib.items.MusicTrack;
 import de.arcus.playmusiclib.items.Playlist;
 
@@ -48,25 +49,26 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
     private final static String COLUMN_LOCALCOPYTYPE = "MUSIC.LocalCopyType";
     private final static String COLUMN_LOCALCOPYSTORAGETYPE = "MUSIC.LocalCopyStorageType";
     private final static String COLUMN_TITLE = "MUSIC.Title";
+    private final static String COLUMN_ARTIST_ID = "MUSIC.ArtistID";
     private final static String COLUMN_ARTIST = "MUSIC.Artist";
-    private final static String COLUMN_ALBUMARTIST = "MUSIC.AlbumArtist";
+    private final static String COLUMN_ALBUM_ARTIST = "MUSIC.AlbumArtist";
     private final static String COLUMN_ALBUM = "MUSIC.Album";
     private final static String COLUMN_GENRE = "MUSIC.Genre";
     private final static String COLUMN_YEAR = "MUSIC.Year";
-    private final static String COLUMN_TRACKNUMBER = "MUSIC.TrackNumber";
-    private final static String COLUMN_DISCNUMBER = "MUSIC.DiscNumber";
+    private final static String COLUMN_TRACK_NUMBER = "MUSIC.TrackNumber";
+    private final static String COLUMN_DISC_NUMBER = "MUSIC.DiscNumber";
     private final static String COLUMN_DURATION = "MUSIC.Duration";
-    private final static String COLUMN_ALBUMID = "MUSIC.AlbumId";
-    private final static String COLUMN_CLIENTID = "MUSIC.ClientId";
-    private final static String COLUMN_SOURCEID = "MUSIC.SourceId";
+    private final static String COLUMN_ALBUM_ID = "MUSIC.AlbumId";
+    private final static String COLUMN_CLIENT_ID = "MUSIC.ClientId";
+    private final static String COLUMN_SOURCE_ID = "MUSIC.SourceId";
     private final static String COLUMN_CPDATA = "MUSIC.CpData";
-    private final static String COLUMN_ARTWORKFILE = "(SELECT LocalLocation FROM artwork_cache WHERE artwork_cache.RemoteLocation = AlbumArtLocation) AS ArtworkFile";
+    private final static String COLUMN_ARTWORK_FILE = "(SELECT LocalLocation FROM artwork_cache WHERE artwork_cache.RemoteLocation = AlbumArtLocation) AS ArtworkFile";
 
     // All columns
     private final static String[] COLUMNS_ALL = { COLUMN_ID, COLUMN_SIZE,
-            COLUMN_LOCALCOPYPATH, COLUMN_LOCALCOPYTYPE, COLUMN_LOCALCOPYSTORAGETYPE, COLUMN_TITLE, COLUMN_ARTIST, COLUMN_ALBUMARTIST,
-            COLUMN_ALBUM, COLUMN_GENRE, COLUMN_YEAR, COLUMN_TRACKNUMBER, COLUMN_DISCNUMBER, COLUMN_DURATION,
-            COLUMN_ALBUMID, COLUMN_CLIENTID, COLUMN_SOURCEID, COLUMN_ARTWORKFILE, COLUMN_CPDATA };
+            COLUMN_LOCALCOPYPATH, COLUMN_LOCALCOPYTYPE, COLUMN_LOCALCOPYSTORAGETYPE, COLUMN_TITLE, COLUMN_ARTIST_ID, COLUMN_ARTIST, COLUMN_ALBUM_ARTIST,
+            COLUMN_ALBUM, COLUMN_GENRE, COLUMN_YEAR, COLUMN_TRACK_NUMBER, COLUMN_DISC_NUMBER, COLUMN_DURATION,
+            COLUMN_ALBUM_ID, COLUMN_CLIENT_ID, COLUMN_SOURCE_ID, COLUMN_ARTWORK_FILE, COLUMN_CPDATA };
 
     /**
      * If this is set the data source will only load offline tracks
@@ -107,6 +109,16 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
     }
 
     /**
+     * The name of the container (eg. a playlist or an artist)
+     */
+    private String mContainerName;
+
+    /**
+     * The position of the track in the container
+     */
+    private long mContainerPosition;
+
+    /**
      * Creates a new data source
      * @param playMusicManager The manager
      */
@@ -136,7 +148,7 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
 
             String searchWhere = COLUMN_ALBUM + " LIKE " + searchKey;
             searchWhere += " OR " + COLUMN_TITLE + " LIKE " + searchKey;
-            searchWhere += " OR " + COLUMN_ALBUMARTIST + " LIKE " + searchKey;
+            searchWhere += " OR " + COLUMN_ALBUM_ARTIST + " LIKE " + searchKey;
             searchWhere += " OR " + COLUMN_ARTIST + " LIKE " + searchKey;
 
             where = combineWhere(where, searchWhere);
@@ -162,19 +174,25 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
         instance.setLocalCopyType(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_LOCALCOPYTYPE)));
         instance.setLocalCopyStorageType(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_LOCALCOPYSTORAGETYPE)));
         instance.setTitle(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_TITLE)));
+        instance.setArtistId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTIST_ID)));
         instance.setArtist(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTIST)));
-        instance.setAlbumArtist(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUMARTIST)));
+        instance.setAlbumArtist(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ARTIST)));
         instance.setAlbum(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM)));
         instance.setGenre(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_GENRE)));
         instance.setYear(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_YEAR)));
-        instance.setTrackNumber(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_TRACKNUMBER)));
-        instance.setDiscNumber(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_DISCNUMBER)));
+        instance.setTrackNumber(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_TRACK_NUMBER)));
+        instance.setDiscNumber(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_DISC_NUMBER)));
         instance.setDuration(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_DURATION)));
-        instance.setAlbumId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUMID)));
-        instance.setClientId(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_CLIENTID)));
-        instance.setSourceId(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_SOURCEID)));
+        instance.setAlbumId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ID)));
+        instance.setClientId(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_CLIENT_ID)));
+        instance.setSourceId(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_SOURCE_ID)));
         instance.setCpData(cursor.getBlob(getColumnsIndex(COLUMNS_ALL, COLUMN_CPDATA)));
-        instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORKFILE)));
+        instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORK_FILE)));
+
+        // Sets the container information
+        mContainerPosition++;
+        instance.setContainerName(mContainerName);
+        instance.setContainerPosition(mContainerPosition);
 
         return instance;
     }
@@ -185,6 +203,9 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
      * @return Returns the music track or null
      */
     public MusicTrack getById(long id) {
+        mContainerName = null;
+        mContainerPosition = 0;
+
         return getItem(TABLE_MUSIC, COLUMNS_ALL, prepareWhere("Id = " + id));
     }
 
@@ -194,15 +215,33 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
      * @return Returns the track list
      */
     public List<MusicTrack> getByAlbum(Album album) {
-        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere("AlbumId = " + album.getAlbumId()), COLUMN_DISCNUMBER + ", " + COLUMN_TRACKNUMBER);
+        mContainerName = null;
+        mContainerPosition = 0;
+
+        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere("AlbumId = " + album.getAlbumId()), COLUMN_DISC_NUMBER + ", " + COLUMN_TRACK_NUMBER);
     }
 
     /**
-     * Gets a list of tracks by an playlist
+     * Gets a list of tracks by a playlist
      * @param playlist The playlist
      * @return Returns the track list
      */
     public List<MusicTrack> getByPlaylist(Playlist playlist) {
+        mContainerName = playlist.getTitle();
+        mContainerPosition = 0;
+
         return getItems(TABLE_MUSIC_PLAYLIST, COLUMNS_ALL, prepareWhere("ListId = " + playlist.getId()), "LISTITEMS.ID");
+    }
+
+    /**
+     * Gets a list of tracks by an artist
+     * @param artist The artist
+     * @return Returns the track list
+     */
+    public List<MusicTrack> getByArtist(Artist artist) {
+        mContainerName = artist.getTitle();
+        mContainerPosition = 0;
+
+        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ARTIST_ID + " = " + artist.getArtistId()), COLUMN_ARTIST);
     }
 }

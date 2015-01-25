@@ -34,7 +34,7 @@ public class Logger {
     /**
      * Type of the log entry
      */
-    public enum LogEntryType { Verbose, Debug, Info, Warning, Error };
+    public enum LogEntryType { Verbose, Debug, Info, Warning, Error }
 
     /**
      * Instance of the logger

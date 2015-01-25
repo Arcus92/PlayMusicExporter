@@ -23,7 +23,11 @@
 package de.arcus.framework.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +119,59 @@ public class FileTools {
     }
 
     /**
+     * Copies a file
+     * @param src Soruce path
+     * @param dest Destination path
+     * @return Return whether the file was copied successful
+     */
+    public static boolean fileCopy(String src, String dest) {
+        Logger.getInstance().logVerbose("FileCopy", "From " + src + " to " + dest);
+
+        // The buffer size
+        final int BUFFER_SIZE = 1024;
+
+        // Will be set on true if the file was copied correctly
+        boolean success = false;
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            // Open the file streams
+            inputStream = new FileInputStream(src);
+            outputStream = new FileOutputStream(dest);
+
+            // The copy buffer
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int length;
+
+            // Copy block by block
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            // Copy was successful
+            success = true;
+        } catch (IOException ex) {
+            // Failed
+            Logger.getInstance().logError("FileCopy", "Failed: " + ex.toString());
+        }
+
+        try {
+            // Close all streams
+            if (inputStream != null)
+                inputStream.close();
+            if (outputStream != null)
+                outputStream.close();
+        } catch (IOException ex) {
+            // Failed
+            Logger.getInstance().logError("FileCopy", "Failed: " + ex.toString());
+        }
+
+        return success;
+    }
+
+    /**
      * Deletes a file
      * @param file Path of the file
      * @return Returns whether the deleting was successful
@@ -146,7 +203,7 @@ public class FileTools {
 
         try {
             // Checks whether the file / directory is a symbolic link
-            return (file.getAbsolutePath() == file.getCanonicalPath());
+            return (file.getAbsolutePath().equals(file.getCanonicalPath()));
         } catch (IOException e) {
             e.printStackTrace();
         }

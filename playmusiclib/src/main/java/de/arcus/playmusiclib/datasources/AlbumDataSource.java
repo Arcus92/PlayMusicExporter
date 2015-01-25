@@ -39,17 +39,17 @@ public class AlbumDataSource extends DataSource<Album> {
     private final static String TABLE_MUSIC = "MUSIC";
 
     // All fields
-    private final static String COLUMN_ALBUMID = "MUSIC.AlbumId";
+    private final static String COLUMN_ALBUM_ID = "MUSIC.AlbumId";
     private final static String COLUMN_ALBUM = "MUSIC.Album";
-    private final static String COLUMN_ALBUMARTIST = "MUSIC.AlbumArtist";
-    private final static String COLUMN_ALBUM_ARTWORKFILE = "(SELECT ARTWORK_CACHE.LocalLocation FROM MUSIC AS MUSIC2 LEFT JOIN ARTWORK_CACHE ON MUSIC2.AlbumArtLocation = ARTWORK_CACHE.RemoteLocation WHERE MUSIC2.AlbumID = MUSIC.AlbumID AND ARTWORK_CACHE.RemoteLocation IS NOT NULL LIMIT 1) AS ArtistArtworkPath";
+    private final static String COLUMN_ALBUM_ARTIST = "MUSIC.AlbumArtist";
+    private final static String COLUMN_ALBUM_ARTWORK_FILE = "(SELECT ARTWORK_CACHE.LocalLocation FROM MUSIC AS MUSIC2 LEFT JOIN ARTWORK_CACHE ON MUSIC2.AlbumArtLocation = ARTWORK_CACHE.RemoteLocation WHERE MUSIC2.AlbumID = MUSIC.AlbumID AND ARTWORK_CACHE.RemoteLocation IS NOT NULL LIMIT 1) AS ArtistArtworkPath";
 
     private final static String COLUMN_TITLE = "MUSIC.Title";
     private final static String COLUMN_ARTIST = "MUSIC.Artist";
 
     // All columns
-    private final static String[] COLUMNS_ALL = { COLUMN_ALBUMID, COLUMN_ALBUM,
-            COLUMN_ALBUMARTIST, COLUMN_ALBUM_ARTWORKFILE};
+    private final static String[] COLUMNS_ALL = {COLUMN_ALBUM_ID, COLUMN_ALBUM,
+            COLUMN_ALBUM_ARTIST, COLUMN_ALBUM_ARTWORK_FILE};
 
     /**
      * If this is set the data source will only load offline tracks
@@ -119,7 +119,7 @@ public class AlbumDataSource extends DataSource<Album> {
 
             String searchWhere = COLUMN_ALBUM + " LIKE " + searchKey;
             searchWhere += " OR " + COLUMN_TITLE + " LIKE " + searchKey;
-            searchWhere += " OR " + COLUMN_ALBUMARTIST + " LIKE " + searchKey;
+            searchWhere += " OR " + COLUMN_ALBUM_ARTIST + " LIKE " + searchKey;
             searchWhere += " OR " + COLUMN_ARTIST + " LIKE " + searchKey;
 
             where = combineWhere(where, searchWhere);
@@ -138,10 +138,10 @@ public class AlbumDataSource extends DataSource<Album> {
         Album instance = new Album(mPlayMusicManager);
 
         // Read all properties from the data row
-        instance.setAlbumId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUMID)));
+        instance.setAlbumId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ID)));
         instance.setAlbum(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM)));
-        instance.setAlbumArtist(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUMARTIST)));
-        instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ARTWORKFILE)));
+        instance.setAlbumArtist(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ARTIST)));
+        instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ARTWORK_FILE)));
 
         return instance;
     }
@@ -152,7 +152,7 @@ public class AlbumDataSource extends DataSource<Album> {
      * @return Returns the album or null
      */
     public Album getById(long id) {
-        return getItem(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ALBUMID + " = " + id));
+        return getItem(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ALBUM_ID + " = " + id));
     }
 
     /**

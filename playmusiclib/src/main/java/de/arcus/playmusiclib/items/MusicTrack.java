@@ -29,7 +29,7 @@ import de.arcus.playmusiclib.PlayMusicManager;
  */
 public class MusicTrack {
     // Variables
-    private long mId, mSize, mTrackNumber, mDiscNumber, mAlbumId, mLocalCopyType, mLocalCopyStorageType, mDuration;
+    private long mId, mSize, mTrackNumber, mDiscNumber, mAlbumId, mArtistId, mLocalCopyType, mLocalCopyStorageType, mDuration;
     private String mTitle, mArtist, mAlbum, mAlbumArtist, mLocalCopyPath, mGenre, mYear, mClientId, mSourceId, mArtworkFile;
     private byte[] mCpData;
 
@@ -60,7 +60,7 @@ public class MusicTrack {
      * @param id Sets the track id
      */
     public void setId(long id) {
-        this.mId = mId;
+        this.mId = id;
     }
 
     /**
@@ -190,6 +190,20 @@ public class MusicTrack {
     }
 
     /**
+     * @return Gets the artist is
+     */
+    public long getArtistId() {
+        return mArtistId;
+    }
+
+    /**
+     * @param artistId Sets the artist id
+     */
+    public void setArtistId(long artistId) {
+        this.mArtistId = artistId;
+    }
+
+    /**
      * @return Gets the artist
      */
     public String getArtist() {
@@ -315,6 +329,43 @@ public class MusicTrack {
         this.mArtworkFile = artworkFile;
     }
 
+    /**
+     * The name of the container (eg. a playlist or an artist)
+     */
+    private String mContainerName;
+
+    /**
+     * @return Gets the name of the container
+     */
+    public String getContainerName() {
+        return mContainerName;
+    }
+
+    /**
+     * @param containerName Sets the name of the container
+     */
+    public void setContainerName(String containerName) {
+        mContainerName = containerName;
+    }
+
+    /**
+     * The position of the track in the container
+     */
+    private long mContainerPosition;
+
+    /**
+     * @return Gets the position in the container
+     */
+    public long getContainerPosition() {
+        return mContainerPosition;
+    }
+
+    /**
+     * @param containerPosition Sets the position in the container
+     */
+    public void setContainerPosition(long containerPosition) {
+        mContainerPosition = containerPosition;
+    }
 
     /**
      * @return Returns the source file path
