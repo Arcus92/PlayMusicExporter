@@ -22,4 +22,4 @@
 
 
 
-include ':app', ':framework', ':playmusiclib'
+include ':playmusicexporter', ':framework', ':playmusiclib'
