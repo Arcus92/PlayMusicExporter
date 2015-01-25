@@ -44,6 +44,10 @@ public class SuperUserTools {
                 "chmod 0777 '" + dest + "'", // Change the access mode to all users (chown sdcard_r will fail on some devices)
                 "echo 'done'" // Fix to prevent the 'no output' bug in SuperUserCommand
         });
+
+        // Don't spam the log
+        superUserCommand.setHideStandardOutput(true);
+
         // Executes the command
         superUserCommand.execute();
 
@@ -58,6 +62,9 @@ public class SuperUserTools {
      */
     public static boolean fileExists(String path) {
         SuperUserCommand superUserCommand = new SuperUserCommand("ls '" + path + "'");
+
+        // Don't spam the log
+        superUserCommand.setHideStandardOutput(true);
 
         // Executes the command
         superUserCommand.execute();

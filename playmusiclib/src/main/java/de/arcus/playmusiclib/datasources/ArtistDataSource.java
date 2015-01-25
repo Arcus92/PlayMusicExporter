@@ -135,7 +135,7 @@ public class ArtistDataSource extends DataSource<Artist> {
      * @return Returns the artist or null
      */
     public Artist getById(long id) {
-        return getItem(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ARTIST_ID + " = " + id));
+        return getItem(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ARTIST_ID + " = " + id), null, COLUMN_ARTIST_ID);
     }
 
     /**
@@ -143,6 +143,6 @@ public class ArtistDataSource extends DataSource<Artist> {
      * @return Returns all artists
      */
     public List<Artist> getAll() {
-        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(""), COLUMN_ARTIST);
+        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(""), COLUMN_ARTIST, COLUMN_ARTIST_ID);
     }
 }

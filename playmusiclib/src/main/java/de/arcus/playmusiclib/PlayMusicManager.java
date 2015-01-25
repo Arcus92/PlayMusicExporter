@@ -44,6 +44,7 @@ import de.arcus.framework.logger.Logger;
 import de.arcus.framework.superuser.SuperUser;
 import de.arcus.framework.superuser.SuperUserTools;
 import de.arcus.framework.utils.FileTools;
+import de.arcus.framework.utils.MediaScanner;
 import de.arcus.playmusiclib.exceptions.CouldNotOpenDatabase;
 import de.arcus.playmusiclib.exceptions.NoSuperUserException;
 import de.arcus.playmusiclib.exceptions.PlayMusicNotFound;
@@ -436,6 +437,11 @@ public class PlayMusicManager {
             }
         }
 
+        cleanUp();
+
+        // Adds the file to the media system
+        new MediaScanner(mContext, dest);
+
         // Done
         return true;
     }
@@ -500,7 +506,7 @@ public class PlayMusicManager {
             // Set all tag values
             tagID3v2.setTitle(musicTrack.getTitle());
             tagID3v2.setArtist(musicTrack.getArtist());
-            tagID3v2.setAlbum(musicTrack.getTitle());
+            tagID3v2.setAlbum(musicTrack.getAlbum());
             tagID3v2.setAlbumArtist(musicTrack.getAlbumArtist());
             tagID3v2.setTrack("" + musicTrack.getTrackNumber());
             tagID3v2.setPartOfSet("" + musicTrack.getDiscNumber());
@@ -515,25 +521,30 @@ public class PlayMusicManager {
 
             // Add the artwork to the meta data
             if (mID3ExportArtwork) {
-                // Reads the artwork with root permissions (maybe it is in /data)
-                byte[] artwork = SuperUserTools.fileReadToByteArray(musicTrack.getArtworkPath());
-                if (artwork != null) {
-                    // The file extension is always .jpg even if the image is a PNG file,
-                    // so we need to check the magic number
+                String artworkPath = musicTrack.getArtworkPath();
 
-                    // JPEG is default
-                    String mimeType = "image/jpeg";
+                if (artworkPath != null) {
 
-                    // Check for other image formats
-                    if (artwork.length > 4) {
-                        // PNG-Header
-                        if (artwork[0] == -119 && artwork[1] == 80 && artwork[2] == 78 && artwork[3] == 71) {
-                            mimeType = "image/png";
+                    // Reads the artwork with root permissions (maybe it is in /data)
+                    byte[] artworkData = SuperUserTools.fileReadToByteArray(artworkPath);
+                    if (artworkData != null) {
+                        // The file extension is always .jpg even if the image is a PNG file,
+                        // so we need to check the magic number
+
+                        // JPEG is default
+                        String mimeType = "image/jpeg";
+
+                        // Check for other image formats
+                        if (artworkData.length > 4) {
+                            // PNG-Header
+                            if (artworkData[0] == -119 && artworkData[1] == 80 && artworkData[2] == 78 && artworkData[3] == 71) {
+                                mimeType = "image/png";
+                            }
                         }
-                    }
 
-                    // Adds the artwork to the meta data
-                    tagID3v2.setAlbumImage(artwork, mimeType);
+                        // Adds the artwork to the meta data
+                        tagID3v2.setAlbumImage(artworkData, mimeType);
+                    }
                 }
             }
 
@@ -580,5 +591,13 @@ public class PlayMusicManager {
         // Failed
         return false;
 
+    }
+
+    /**
+     * Deletes all cache files
+     */
+    private void cleanUp() {
+        FileTools.fileDelete(getTempPath() + "/tmp.mp3");
+        FileTools.fileDelete(getTempPath() + "/crypt.mp3");
     }
 }

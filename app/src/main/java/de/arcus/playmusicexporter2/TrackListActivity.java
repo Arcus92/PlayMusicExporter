@@ -35,8 +35,11 @@ import de.arcus.framework.logger.Logger;
 import de.arcus.framework.crashhandler.CrashHandler;
 import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.datasources.AlbumDataSource;
+import de.arcus.playmusiclib.datasources.PlaylistDataSource;
 import de.arcus.playmusiclib.items.Album;
 import de.arcus.playmusiclib.items.MusicTrack;
+import de.arcus.playmusiclib.items.MusicTrackList;
+import de.arcus.playmusiclib.items.Playlist;
 
 /**
  * An activity representing a list of Tracks. This activity
@@ -101,29 +104,23 @@ public class TrackListActivity extends ActionBarActivity
             playMusicManager.startUp();
             playMusicManager.setOfflineOnly(true);
 
-            AlbumDataSource albumDataSource = new AlbumDataSource(playMusicManager);
+            PlaylistDataSource playlistDataSource = new PlaylistDataSource(playMusicManager);
 
-            albumDataSource.setSerchKey("Ed Sheeran");
+            playlistDataSource.setSerchKey("Angesagte Songs");
 
             // Load all albums
-            List<Album> albums = albumDataSource.getAll();
+            List<Playlist> playlists = playlistDataSource.getAll();
 
-            if (albums.size() > 0) {
-                // Gets the first album
-                Album album = albums.get(0);
-
+            for (Playlist playlist : playlists) {
                 // Load tracks from album
-                List<MusicTrack> tracks = album.getMusicTrackList();
+                List<MusicTrack> tracks = playlist.getMusicTrackList();
 
-                if (tracks.size() > 0) {
-                    // Gets the first track
-                    MusicTrack track = tracks.get(0);
-
+                for (MusicTrack track : tracks) {
                     // Test: exports the track to the sd card
-                    String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/test.mp3";
+                    String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/"+track.getTitle()+".mp3";
                     boolean success = playMusicManager.exportMusicTrack(track, filename);
 
-                    Log.d("Debug", "Success: " + success);
+                    Log.d("Debug", track.getTitle() + ": " + success);
                 }
             }
 

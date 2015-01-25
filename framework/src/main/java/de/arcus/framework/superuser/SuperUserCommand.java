@@ -251,13 +251,24 @@ public class SuperUserCommand {
                 // Need the direct input stream
                 InputStream inputStream = SuperUser.getProcess().getInputStream();
 
-                while (bufferedInputReader.ready()) {
-                    // Read to buffer
-                    len = inputStream.read(buffer);
+                do {
+                    while (bufferedInputReader.ready()) {
+                        // Read to buffer
+                        len = inputStream.read(buffer);
 
-                    // Write to buffer
-                    byteArrayBuffer.append(buffer, 0, len);
-                }
+                        // Write to buffer
+                        byteArrayBuffer.append(buffer, 0, len);
+                    }
+
+                    // Fix: Wait for the buffer and try again
+                    try {
+                        // Sometimes cat is to slow.
+                        // If there is no data anymore we will wait 100ms and check again.
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } while(bufferedInputReader.ready());
 
                 mOutputStandardBinary = byteArrayBuffer.toByteArray();
             } else {

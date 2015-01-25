@@ -86,6 +86,19 @@ public abstract class DataSource<T> {
      * @return Returns a list with all items
      */
     protected List<T> getItems(String table, String[] columns, String where, String orderBy) {
+        return getItems(table, columns, where, orderBy, null);
+    }
+
+    /**
+     * Loads all items from the database
+     * @param table The table
+     * @param columns All columns
+     * @param where The where-command
+     * @param orderBy Order
+     * @param groupBy Group
+     * @return Returns a list with all items
+     */
+    protected List<T> getItems(String table, String[] columns, String where, String orderBy, String groupBy) {
         // No connection; abort
         if (!mPlayMusicManager.getDatabase().isOpen()) return null;
 
@@ -94,7 +107,7 @@ public abstract class DataSource<T> {
 
         try {
             // Gets the first data row
-            Cursor cursor = mPlayMusicManager.getDatabase().query(table, columns, where, null, null, null, orderBy);
+            Cursor cursor = mPlayMusicManager.getDatabase().query(table, columns, where, null, groupBy, null, orderBy);
 
             // SQL error
             if (cursor == null) return null;
@@ -141,8 +154,21 @@ public abstract class DataSource<T> {
      * @return Returns the item
      */
     protected T getItem(String table, String[] columns, String where, String orderBy) {
+        return getItem(table, columns, where, orderBy, null);
+    }
+
+    /**
+     * Loads one item from the database
+     * @param table The table
+     * @param columns All columns
+     * @param where The where-command
+     * @param orderBy Order
+     * @param groupBy Group
+     * @return Returns the item
+     */
+    protected T getItem(String table, String[] columns, String where, String orderBy, String groupBy) {
         // Loads the list
-        List<T> items = getItems(table, columns, where, orderBy);
+        List<T> items = getItems(table, columns, where, orderBy, groupBy);
 
         // Gets the first item
         if (items.size() > 0)

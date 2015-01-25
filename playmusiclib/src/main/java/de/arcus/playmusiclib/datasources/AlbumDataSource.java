@@ -30,6 +30,7 @@ import java.util.List;
 
 import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.items.Album;
+import de.arcus.playmusiclib.items.Artist;
 
 /**
  * Data source for albums
@@ -152,7 +153,15 @@ public class AlbumDataSource extends DataSource<Album> {
      * @return Returns the album or null
      */
     public Album getById(long id) {
-        return getItem(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ALBUM_ID + " = " + id));
+        return getItem(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ALBUM_ID + " = " + id), null, COLUMN_ALBUM_ID);
+    }
+
+    /**
+     * Gets a list of all albums by an artist
+     * @return Returns albums
+     */
+    public List<Album> getByArtist(Artist artist) {
+        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ALBUM_ARTIST + " = " + DatabaseUtils.sqlEscapeString(artist.getArtist())), COLUMN_ALBUM, COLUMN_ALBUM_ID);
     }
 
     /**
@@ -160,6 +169,6 @@ public class AlbumDataSource extends DataSource<Album> {
      * @return Returns all albums
      */
     public List<Album> getAll() {
-        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(""), COLUMN_ALBUM);
+        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(""), COLUMN_ALBUM, COLUMN_ALBUM_ID);
     }
 }
