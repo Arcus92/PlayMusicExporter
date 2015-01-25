@@ -36,8 +36,10 @@ public class Playlist extends MusicList {
     private String mOwnerName;
     private String mArtworkFile;
 
-    private final static long TYPE_QUEUE = 10;
-    private final static long TYPE_RADIO = 50;
+    public final static long TYPE_USER = 0;
+    public final static long TYPE_QUEUE = 10;
+    public final static long TYPE_RADIO = 50;
+    public final static long TYPE_PUBLIC = 71;
 
     private String mArtworkPath;
 

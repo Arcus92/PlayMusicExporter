@@ -23,6 +23,7 @@
 package de.arcus.playmusiclib.datasources;
 
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.text.TextUtils;
 
 import java.util.List;
@@ -41,24 +42,24 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
     private final static String TABLE_MUSIC_PLAYLIST = "MUSIC LEFT JOIN LISTITEMS ON MUSIC.ID = LISTITEMS.MusicID";
 
     // All fields
-    private final static String COLUMN_ID = "Id";
-    private final static String COLUMN_SIZE = "Size";
-    private final static String COLUMN_LOCALCOPYPATH = "LocalCopyPath";
-    private final static String COLUMN_LOCALCOPYTYPE = "LocalCopyType";
-    private final static String COLUMN_LOCALCOPYSTORAGETYPE = "LocalCopyStorageType";
-    private final static String COLUMN_TITLE = "Title";
-    private final static String COLUMN_ARTIST = "Artist";
-    private final static String COLUMN_ALBUMARTIST = "AlbumArtist";
-    private final static String COLUMN_ALBUM = "Album";
-    private final static String COLUMN_GENRE = "Genre";
-    private final static String COLUMN_YEAR = "Year";
-    private final static String COLUMN_TRACKNUMBER = "TrackNumber";
-    private final static String COLUMN_DISCNUMBER = "DiscNumber";
-    private final static String COLUMN_DURATION = "Duration";
-    private final static String COLUMN_ALBUMID = "AlbumId";
-    private final static String COLUMN_CLIENTID = "ClientId";
-    private final static String COLUMN_SOURCEID = "SourceId";
-    private final static String COLUMN_CPDATA = "CpData";
+    private final static String COLUMN_ID = "MUSIC.Id";
+    private final static String COLUMN_SIZE = "MUSIC.Size";
+    private final static String COLUMN_LOCALCOPYPATH = "MUSIC.LocalCopyPath";
+    private final static String COLUMN_LOCALCOPYTYPE = "MUSIC.LocalCopyType";
+    private final static String COLUMN_LOCALCOPYSTORAGETYPE = "MUSIC.LocalCopyStorageType";
+    private final static String COLUMN_TITLE = "MUSIC.Title";
+    private final static String COLUMN_ARTIST = "MUSIC.Artist";
+    private final static String COLUMN_ALBUMARTIST = "MUSIC.AlbumArtist";
+    private final static String COLUMN_ALBUM = "MUSIC.Album";
+    private final static String COLUMN_GENRE = "MUSIC.Genre";
+    private final static String COLUMN_YEAR = "MUSIC.Year";
+    private final static String COLUMN_TRACKNUMBER = "MUSIC.TrackNumber";
+    private final static String COLUMN_DISCNUMBER = "MUSIC.DiscNumber";
+    private final static String COLUMN_DURATION = "MUSIC.Duration";
+    private final static String COLUMN_ALBUMID = "MUSIC.AlbumId";
+    private final static String COLUMN_CLIENTID = "MUSIC.ClientId";
+    private final static String COLUMN_SOURCEID = "MUSIC.SourceId";
+    private final static String COLUMN_CPDATA = "MUSIC.CpData";
     private final static String COLUMN_ARTWORKFILE = "(SELECT LocalLocation FROM artwork_cache WHERE artwork_cache.RemoteLocation = AlbumArtLocation) AS ArtworkFile";
 
     // All columns
@@ -122,27 +123,24 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
      * @return The new where command
      */
     private String prepareWhere(String where) {
-        // The new where
-        String newWhere = "LocalCopyType != 300";
+        // Ignore non-PlayMusic tracks
+        where = combineWhere(where, "LocalCopyType != 300");
 
         // Loads only offline tracks
         if (mOfflineOnly)
-            newWhere += " AND LocalCopyPath IS NOT NULL";
+            where = combineWhere(where, "LocalCopyPath IS NOT NULL");
 
         // Search only items which contains the key
         if (!TextUtils.isEmpty(mSearchKey)) {
-            String searchKey = mSearchKey.replace("'", "''");
+            String searchKey = DatabaseUtils.sqlEscapeString("%" + mSearchKey + "%");
 
-            newWhere += " AND (" + COLUMN_ALBUM + " LIKE '%" + searchKey + "%'";
-            newWhere += " OR " + COLUMN_TITLE + " LIKE '%" + searchKey + "%'";
-            newWhere += " OR " + COLUMN_ALBUMARTIST + " LIKE '%" + searchKey + "%'";
-            newWhere += " OR " + COLUMN_ARTIST + " LIKE '%" + searchKey + "%')";
+            String searchWhere = COLUMN_ALBUM + " LIKE " + searchKey;
+            searchWhere += " OR " + COLUMN_TITLE + " LIKE " + searchKey;
+            searchWhere += " OR " + COLUMN_ALBUMARTIST + " LIKE " + searchKey;
+            searchWhere += " OR " + COLUMN_ARTIST + " LIKE " + searchKey;
+
+            where = combineWhere(where, searchWhere);
         }
-
-        // Adds an 'and' if needed
-        if (!TextUtils.isEmpty(where)) where = "(" + where + ") AND ";
-
-        where += newWhere;
 
         return where;
     }
@@ -205,6 +203,6 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
      * @return Returns the track list
      */
     public List<MusicTrack> getByPlaylist(Playlist playlist) {
-        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere("ListId = " + playlist.getId()), "LISTITEMS.ID");
+        return getItems(TABLE_MUSIC_PLAYLIST, COLUMNS_ALL, prepareWhere("ListId = " + playlist.getId()), "LISTITEMS.ID");
     }
 }

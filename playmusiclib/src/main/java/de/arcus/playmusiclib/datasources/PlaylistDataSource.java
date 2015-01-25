@@ -29,32 +29,31 @@ import android.text.TextUtils;
 import java.util.List;
 
 import de.arcus.playmusiclib.PlayMusicManager;
-import de.arcus.playmusiclib.items.Album;
+import de.arcus.playmusiclib.items.Playlist;
 
 /**
- * Data source for albums
+ * Data source for playlists
  */
-public class AlbumDataSource extends DataSource<Album> {
+public class PlaylistDataSource extends DataSource<Playlist> {
     // Tables
-    private final static String TABLE_MUSIC = "MUSIC";
+    private final static String TABLE_LIST = "LISTS";
 
     // All fields
-    private final static String COLUMN_ALBUMID = "MUSIC.AlbumId";
-    private final static String COLUMN_ALBUM = "MUSIC.Album";
-    private final static String COLUMN_ALBUMARTIST = "MUSIC.AlbumArtist";
-    private final static String COLUMN_ALBUM_ARTWORKFILE = "(SELECT ARTWORK_CACHE.LocalLocation FROM MUSIC AS MUSIC2 LEFT JOIN ARTWORK_CACHE ON MUSIC2.AlbumArtLocation = ARTWORK_CACHE.RemoteLocation WHERE MUSIC2.AlbumID = MUSIC.AlbumID AND ARTWORK_CACHE.RemoteLocation IS NOT NULL LIMIT 1) AS ArtistArtworkPath";
-
-    private final static String COLUMN_TITLE = "MUSIC.Title";
-    private final static String COLUMN_ARTIST = "MUSIC.Artist";
+    private final static String COLUMN_ID = "LISTS.Id";
+    private final static String COLUMN_NAME = "LISTS.Name";
+    private final static String COLUMN_LISTTYPE = "LISTS.ListType";
+    private final static String COLUMN_OWNERNAME = "LISTS.OwnerName";
+    private final static String COLUMN_ARTWORKFILE = "(SELECT ARTWORK_CACHE.LocalLocation FROM LISTITEMS LEFT JOIN MUSIC ON MUSIC.Id = LISTITEMS.MusicId LEFT JOIN ARTWORK_CACHE ON ARTWORK_CACHE.RemoteLocation = MUSIC.AlbumArtLocation WHERE LISTITEMS.ListId = LISTS.Id AND ARTWORK_CACHE.LocalLocation IS NOT NULL LIMIT 1) AS ArtworkFile";
 
     // All columns
-    private final static String[] COLUMNS_ALL = { COLUMN_ALBUMID, COLUMN_ALBUM,
-            COLUMN_ALBUMARTIST, COLUMN_ALBUM_ARTWORKFILE};
+    private final static String[] COLUMNS_ALL = { COLUMN_ID, COLUMN_NAME,
+            COLUMN_LISTTYPE, COLUMN_OWNERNAME, COLUMN_ARTWORKFILE};
+
 
     /**
      * If this is set the data source will only load offline tracks
      */
-    private boolean mOfflineOnly;
+    private boolean mOfflineOnly; // TODO: Offline only has no effects on the playlist data sources
 
     /**
      * If the search key is set, this data source will only load items which contains this text
@@ -93,7 +92,7 @@ public class AlbumDataSource extends DataSource<Album> {
      * Creates a new data source
      * @param playMusicManager The manager
      */
-    public AlbumDataSource(PlayMusicManager playMusicManager) {
+    public PlaylistDataSource(PlayMusicManager playMusicManager) {
         super(playMusicManager);
 
         // Load global settings
@@ -106,23 +105,11 @@ public class AlbumDataSource extends DataSource<Album> {
      * @return The new where command
      */
     private String prepareWhere(String where) {
-        // Ignore non-PlayMusic tracks
-        where = combineWhere(where, "LocalCopyType != 300");
-
-        // Loads only offline tracks
-        if (mOfflineOnly)
-            where = combineWhere(where, "LocalCopyPath IS NOT NULL");
-
         // Search only items which contains the key
         if (!TextUtils.isEmpty(mSearchKey)) {
             String searchKey = DatabaseUtils.sqlEscapeString("%" + mSearchKey + "%");
 
-            String searchWhere = COLUMN_ALBUM + " LIKE " + searchKey;
-            searchWhere += " OR " + COLUMN_TITLE + " LIKE " + searchKey;
-            searchWhere += " OR " + COLUMN_ALBUMARTIST + " LIKE " + searchKey;
-            searchWhere += " OR " + COLUMN_ARTIST + " LIKE " + searchKey;
-
-            where = combineWhere(where, searchWhere);
+            where = combineWhere(where, "(" + COLUMN_NAME + " LIKE " + searchKey + ")");
         }
 
         return where;
@@ -134,32 +121,33 @@ public class AlbumDataSource extends DataSource<Album> {
      * @param cursor Data row
      * @return Data object
      */
-    protected Album getDataObject(Cursor cursor) {
-        Album instance = new Album(mPlayMusicManager);
+    protected Playlist getDataObject(Cursor cursor) {
+        Playlist instance = new Playlist(mPlayMusicManager);
 
         // Read all properties from the data row
-        instance.setAlbumId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUMID)));
-        instance.setAlbum(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM)));
-        instance.setAlbumArtist(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUMARTIST)));
-        instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ARTWORKFILE)));
+        instance.setId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ID)));
+        instance.setName(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_NAME)));
+        instance.setListType(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_LISTTYPE)));
+        instance.setOwnerName(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_OWNERNAME)));
+        instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORKFILE)));
 
         return instance;
     }
 
     /**
-     * Loads an album by Id
-     * @param id The album id
-     * @return Returns the album or null
+     * Loads a playlist by Id
+     * @param id The playlist id
+     * @return Returns the playlist or null
      */
-    public Album getById(long id) {
-        return getItem(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(COLUMN_ALBUMID + " = " + id));
+    public Playlist getById(long id) {
+        return getItem(TABLE_LIST, COLUMNS_ALL, prepareWhere(COLUMN_ID + " = " + id));
     }
 
     /**
-     * Gets a list of all albums
-     * @return Returns all albums
+     * Gets a list of all playlists
+     * @return Returns all playlists
      */
-    public List<Album> getAll() {
-        return getItems(TABLE_MUSIC, COLUMNS_ALL, prepareWhere(""), COLUMN_ALBUM);
+    public List<Playlist> getAll() {
+        return getItems(TABLE_LIST, COLUMNS_ALL, prepareWhere(COLUMN_LISTTYPE + " != " + Playlist.TYPE_QUEUE), COLUMN_NAME);
     }
 }

@@ -29,8 +29,12 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.arcus.framework.superuser.SuperUser;
 import de.arcus.framework.superuser.SuperUserTools;
+import de.arcus.framework.utils.FileTools;
 import de.arcus.playmusiclib.exceptions.CouldNotOpenDatabase;
 import de.arcus.playmusiclib.exceptions.NoSuperUserException;
 import de.arcus.playmusiclib.exceptions.PlayMusicNotFound;
@@ -137,7 +141,10 @@ public class PlayMusicManager {
 
 
     /**
-     * Loads all needed information
+     * Loads all needed information and opens the database
+     * @throws PlayMusicNotFound PlayMusic is not installed
+     * @throws NoSuperUserException No super user permissions
+     * @throws CouldNotOpenDatabase Could not open the database
      */
     public void startUp() throws PlayMusicNotFound, NoSuperUserException, CouldNotOpenDatabase {
         // Gets the package manager
@@ -151,13 +158,38 @@ public class PlayMusicManager {
             throw new PlayMusicNotFound();
         }
 
+
         // Path to the private data
         mPathPrivateData = mPlayMusicApplicationInfo.dataDir;
-        mPathPublicData = new String[] {}; // TODO: Get sdcards
 
+        List<String> publicDataList = new ArrayList<>();
+        // Search on all sdcards
+        for (String storage : FileTools.getStorages()) {
+            String publicData = storage + "/Android/data/com.google.android.music";
+
+            // Directory exists
+            if (FileTools.directoryExists(publicData))
+                publicDataList.add(publicData);
+        }
+        // Convert to array
+        mPathPublicData = publicDataList.toArray(new String[publicDataList.size()]);
+
+        // Loads the database
+        loadDatabase();
+    }
+
+    /**
+     * Copies the database to a temp directory and opens it
+     * @throws NoSuperUserException No super user permissions
+     * @throws CouldNotOpenDatabase Could not open the database
+     */
+    private void loadDatabase() throws NoSuperUserException, CouldNotOpenDatabase {
         // Ask for super user
         if (!SuperUser.askForPermissions())
             throw new NoSuperUserException();
+
+        // Close the database
+        closeDatabase();
 
         // Copy the database to the temp folder
         if (!SuperUserTools.fileCopy(getDatabasePath(), getTempDatabasePath()))
@@ -165,15 +197,20 @@ public class PlayMusicManager {
 
         // Opens the database
         try {
-            // Close the database
-            closeDatabase();
-
             mDatabase = SQLiteDatabase.openDatabase(getTempDatabasePath(), null, SQLiteDatabase.OPEN_READONLY);
         } catch (SQLException e) {
             throw new CouldNotOpenDatabase();
         }
     }
 
+    /**
+     * Reloads the database from playmusic
+     * @throws NoSuperUserException No super user permissions
+     * @throws CouldNotOpenDatabase Could not open the database
+     */
+    public void realoadDatabase() throws NoSuperUserException, CouldNotOpenDatabase {
+        loadDatabase();
+    }
 
     /**
      * Closes the database if it's open
@@ -205,6 +242,13 @@ public class PlayMusicManager {
         // Music file exists
         if (SuperUserTools.fileExists(path)) return path;
 
+        // Search in the public data
+        for (String publicData : mPathPublicData) {
+            path = publicData + "/files/music/" + localCopyPath;
+
+            if (FileTools.fileExists(path)) return path;
+        }
+
         return null;
     }
 
@@ -224,10 +268,17 @@ public class PlayMusicManager {
         // Artwork path is empty
         if (TextUtils.isEmpty(artworkPath)) return null;
 
-        // Private music path
+        // Private artwork path
         String path = getPrivateFilesPath() + "/" + artworkPath;
-        // Music file exists
+        // Artwork file exists
         if (SuperUserTools.fileExists(path)) return path;
+
+        // Search in the public data
+        for (String publicData : mPathPublicData) {
+            path = publicData + "/files/" + artworkPath;
+
+            if (FileTools.fileExists(path)) return path;
+        }
 
         return null;
     }

@@ -24,6 +24,7 @@ package de.arcus.playmusiclib.datasources;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -149,5 +150,39 @@ public abstract class DataSource<T> {
             return items.get(0);
         else
             return null;
+    }
+
+    /**
+     * Combines two SQL where commands with an AND operator
+     * @param whereA Where command A
+     * @param whereB Where command B
+     * @return Returns a combined where command
+     */
+    protected static String combineWhere(String whereA, String whereB) {
+        return combineWhere(whereA, whereB, "AND");
+    }
+
+    /**
+     * Combines two SQL where commands
+     * @param whereA Where command A
+     * @param whereB Where command B
+     * @param operator The operator word to use (AND or OR)
+     * @return Returns a combined where command
+     */
+    protected static String combineWhere(String whereA, String whereB, String operator) {
+        // Combine both
+        if (!TextUtils.isEmpty(whereA) && !TextUtils.isEmpty(whereB))
+            return "((" + whereA + ") " + operator + " (" + whereB + "))";
+
+        // Use only whereA
+        if (!TextUtils.isEmpty(whereA) && TextUtils.isEmpty(whereB))
+            return whereA;
+
+        // Use only whereB
+        if (TextUtils.isEmpty(whereA) && !TextUtils.isEmpty(whereB))
+            return whereB;
+
+        // No where is set
+        return "";
     }
 }

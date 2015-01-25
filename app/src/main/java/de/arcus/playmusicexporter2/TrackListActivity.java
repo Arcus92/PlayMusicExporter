@@ -33,14 +33,17 @@ import java.util.List;
 import de.arcus.framework.logger.Logger;
 import de.arcus.framework.crashhandler.CrashHandler;
 import de.arcus.framework.superuser.SuperUser;
+import de.arcus.framework.utils.FileTools;
 import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.datasources.AlbumDataSource;
 import de.arcus.playmusiclib.datasources.MusicTrackDataSource;
+import de.arcus.playmusiclib.datasources.PlaylistDataSource;
 import de.arcus.playmusiclib.exceptions.CouldNotOpenDatabase;
 import de.arcus.playmusiclib.exceptions.NoSuperUserException;
 import de.arcus.playmusiclib.exceptions.PlayMusicNotFound;
 import de.arcus.playmusiclib.items.Album;
 import de.arcus.playmusiclib.items.MusicTrack;
+import de.arcus.playmusiclib.items.Playlist;
 
 /**
  * An activity representing a list of Tracks. This activity
@@ -106,10 +109,14 @@ public class TrackListActivity extends ActionBarActivity
             playMusicManager.setOfflineOnly(true);
 
             AlbumDataSource albumDataSource = new AlbumDataSource(playMusicManager);
-            albumDataSource.setSerchKey("A bird story");
+            PlaylistDataSource playlistDataSource = new PlaylistDataSource(playMusicManager);
+
+            albumDataSource.setSerchKey("Ed Sheeran");
+            playlistDataSource.setSerchKey("Playlist 1");
 
             // Load all albums
             List<Album> albums = albumDataSource.getAll();
+            List<Playlist> playlists = playlistDataSource.getAll();
 
             if (albums.size() > 0) {
                 // Gets the first album
@@ -127,6 +134,14 @@ public class TrackListActivity extends ActionBarActivity
 
                     Log.d("Debug", "Breakpoint");
                 }
+            }
+
+            if (playlists.size() > 0) {
+                Playlist playlist = playlists.get(0);
+
+                List<MusicTrack> musicTracks = playlist.getMusicTrackList();
+
+                Log.d("Debug", "Breakpoint");
             }
 
         } catch (PlayMusicNotFound playMusicNotFound) {
