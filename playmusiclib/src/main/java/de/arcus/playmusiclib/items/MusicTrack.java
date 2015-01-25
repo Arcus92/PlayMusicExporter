@@ -24,8 +24,6 @@ package de.arcus.playmusiclib.items;
 
 import android.text.TextUtils;
 
-import org.w3c.dom.Text;
-
 import de.arcus.playmusiclib.PlayMusicManager;
 
 /**
