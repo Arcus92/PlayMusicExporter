@@ -102,6 +102,13 @@ public class ArtistDataSource extends DataSource<Artist> {
      * @return The new where command
      */
     private String prepareWhere(String where) {
+        // Ignore non-PlayMusic tracks
+        where = combineWhere(where, "LocalCopyType != 300");
+
+        // Loads only offline tracks
+        if (mOfflineOnly)
+            where = combineWhere(where, "LocalCopyPath IS NOT NULL");
+
         // Search only items which contains the key
         if (!TextUtils.isEmpty(mSearchKey)) {
             String searchKey = DatabaseUtils.sqlEscapeString("%" + mSearchKey + "%");

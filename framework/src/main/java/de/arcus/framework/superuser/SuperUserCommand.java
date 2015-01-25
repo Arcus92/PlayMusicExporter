@@ -207,113 +207,116 @@ public class SuperUserCommand {
             return false;
         }
 
-        try {
-            // Gets the streams
-            DataOutputStream dataOutputStream = new DataOutputStream(SuperUser.getProcess().getOutputStream());
-            BufferedReader bufferedInputReader = new BufferedReader(new InputStreamReader(SuperUser.getProcess().getInputStream()));
-            BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(SuperUser.getProcess().getErrorStream()));
+        // Thread safe
+        synchronized (SuperUser.getProcess()) {
+            try {
+                // Gets the streams
+                DataOutputStream dataOutputStream = new DataOutputStream(SuperUser.getProcess().getOutputStream());
+                BufferedReader bufferedInputReader = new BufferedReader(new InputStreamReader(SuperUser.getProcess().getInputStream()));
+                BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(SuperUser.getProcess().getErrorStream()));
 
-            // Sends the command
-            for (String command : mCommands) {
-                Logger.getInstance().logInfo("SuperUser", "< " + command);
-                dataOutputStream.writeBytes(command + "\n");
-            }
-            dataOutputStream.flush();
-
-            // TODO: This class cannot execute commands without any output (standard and error). These commands will run until the timeout will kill them!
-
-            // Start waiting
-            long timeStarted = System.currentTimeMillis();
-
-            // Wait for first data
-            while (!bufferedInputReader.ready() && !bufferedErrorReader.ready()) {
-                try {
-                    // Waiting
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                // Sends the command
+                for (String command : mCommands) {
+                    Logger.getInstance().logInfo("SuperUser", "< " + command);
+                    dataOutputStream.writeBytes(command + "\n");
                 }
+                dataOutputStream.flush();
 
-                long timeNow = System.currentTimeMillis();
+                // TODO: This class cannot execute commands without any output (standard and error). These commands will run until the timeout will kill them!
 
-                // TimeOut
-                if (timeNow - timeStarted >= mTimeout) break;
-            }
+                // Start waiting
+                long timeStarted = System.currentTimeMillis();
 
-            // We want to read the data as binary
-            if (mBinaryStandardOutput) {
-                int len;
-                byte[] buffer = new byte[1024];
-
-                // Byte buffer
-                ByteArrayBuffer byteArrayBuffer = new ByteArrayBuffer(1024);
-
-                // Need the direct input stream
-                InputStream inputStream = SuperUser.getProcess().getInputStream();
-
-                do {
-                    while (bufferedInputReader.ready()) {
-                        // Read to buffer
-                        len = inputStream.read(buffer);
-
-                        // Write to buffer
-                        byteArrayBuffer.append(buffer, 0, len);
-                    }
-
-                    // Fix: Wait for the buffer and try again
+                // Wait for first data
+                while (!bufferedInputReader.ready() && !bufferedErrorReader.ready()) {
                     try {
-                        // Sometimes cat is to slow.
-                        // If there is no data anymore we will wait 100ms and check again.
-                        Thread.sleep(100);
+                        // Waiting
+                        Thread.sleep(10);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                } while(bufferedInputReader.ready());
 
-                mOutputStandardBinary = byteArrayBuffer.toByteArray();
-            } else {
-                // Reads the standard output as text
+                    long timeNow = System.currentTimeMillis();
+
+                    // TimeOut
+                    if (timeNow - timeStarted >= mTimeout) break;
+                }
+
+                // We want to read the data as binary
+                if (mBinaryStandardOutput) {
+                    int len;
+                    byte[] buffer = new byte[1024];
+
+                    // Byte buffer
+                    ByteArrayBuffer byteArrayBuffer = new ByteArrayBuffer(1024);
+
+                    // Need the direct input stream
+                    InputStream inputStream = SuperUser.getProcess().getInputStream();
+
+                    do {
+                        while (bufferedInputReader.ready()) {
+                            // Read to buffer
+                            len = inputStream.read(buffer);
+
+                            // Write to buffer
+                            byteArrayBuffer.append(buffer, 0, len);
+                        }
+
+                        // Fix: Wait for the buffer and try again
+                        try {
+                            // Sometimes cat is to slow.
+                            // If there is no data anymore we will wait 100ms and check again.
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } while (bufferedInputReader.ready());
+
+                    mOutputStandardBinary = byteArrayBuffer.toByteArray();
+                } else {
+                    // Reads the standard output as text
+                    tmpList.clear();
+                    while (bufferedInputReader.ready()) {
+                        tmpLine = bufferedInputReader.readLine();
+
+                        // End of data
+                        if (tmpLine == null) break;
+
+                        if (!mHideStandardOutput)
+                            Logger.getInstance().logInfo("SuperUser", "> " + tmpLine);
+
+                        tmpList.add(tmpLine);
+                    }
+                    // Convert list to array
+                    mOutputStandard = tmpList.toArray(new String[tmpList.size()]);
+                }
+
+                // Reads the error output
                 tmpList.clear();
-                while (bufferedInputReader.ready()) {
-                    tmpLine = bufferedInputReader.readLine();
+                while (bufferedErrorReader.ready()) {
+                    tmpLine = bufferedErrorReader.readLine();
 
                     // End of data
                     if (tmpLine == null) break;
 
-                    if (!mHideStandardOutput)
-                        Logger.getInstance().logInfo("SuperUser", "> " + tmpLine);
+                    if (!mHideErrorOutput)
+                        Logger.getInstance().logError("SuperUser", "> " + tmpLine);
 
                     tmpList.add(tmpLine);
                 }
                 // Convert list to array
-                mOutputStandard = tmpList.toArray(new String[tmpList.size()]);
+                mOutputError = tmpList.toArray(new String[tmpList.size()]);
+
+                // Done
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                mSuperUserFailed = true;
+
+                // Command failed
+                return false;
             }
-
-            // Reads the error output
-            tmpList.clear();
-            while (bufferedErrorReader.ready()) {
-                tmpLine = bufferedErrorReader.readLine();
-
-                // End of data
-                if (tmpLine == null) break;
-
-                if (!mHideErrorOutput)
-                    Logger.getInstance().logError("SuperUser", "> " + tmpLine);
-
-                tmpList.add(tmpLine);
-            }
-            // Convert list to array
-            mOutputError = tmpList.toArray(new String[tmpList.size()]);
-
-            // Done
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            mSuperUserFailed = true;
-
-            // Command failed
-            return false;
         }
     }
 }

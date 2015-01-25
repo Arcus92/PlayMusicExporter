@@ -45,9 +45,10 @@ import de.arcus.framework.superuser.SuperUser;
 import de.arcus.framework.superuser.SuperUserTools;
 import de.arcus.framework.utils.FileTools;
 import de.arcus.framework.utils.MediaScanner;
-import de.arcus.playmusiclib.exceptions.CouldNotOpenDatabase;
+import de.arcus.playmusiclib.enums.ID3v2Version;
+import de.arcus.playmusiclib.exceptions.CouldNotOpenDatabaseException;
 import de.arcus.playmusiclib.exceptions.NoSuperUserException;
-import de.arcus.playmusiclib.exceptions.PlayMusicNotFound;
+import de.arcus.playmusiclib.exceptions.PlayMusicNotFoundException;
 import de.arcus.playmusiclib.items.MusicTrack;
 
 
@@ -164,45 +165,40 @@ public class PlayMusicManager {
     /**
      * If this is set the exporter will add the artwork to the ID2v2 tag
      */
-    private boolean mID3ExportArtwork = true;
+    private boolean mID3EnableArtwork = true;
 
     /**
      * @return Gets whether the exporter adds the artwork image
      */
-    public boolean getID3ExportArtwork() {
-        return mID3ExportArtwork;
+    public boolean getID3EnableArtwork() {
+        return mID3EnableArtwork;
     }
 
     /**
-     * @param id3ExportArtwork Sets whether the exporter adds the artwork image
+     * @param id3EnableArtwork Sets whether the exporter adds the artwork image
      */
-    public void setID3ExportArtwork(boolean id3ExportArtwork) {
-        mID3ExportArtwork = id3ExportArtwork;
+    public void setID3EnableArtwork(boolean id3EnableArtwork) {
+        mID3EnableArtwork = id3EnableArtwork;
     }
 
     /**
      * If this is set the exporter will also adds ID3v1 tags
      */
-    private boolean mID3ExportFallback = true;
+    private boolean mID3EnableFallback = true;
 
     /**
      * @return Gets whether the exporter adds ID3v1 tags as fallback
      */
-    public boolean getID3ExportFallback() {
-        return mID3ExportFallback;
+    public boolean getID3EnableFallback() {
+        return mID3EnableFallback;
     }
 
     /**
-     * @param id3ExportFallback Sets whether the exporter adds ID3v1 tags as fallback
+     * @param id3EnableFallback Sets whether the exporter adds ID3v1 tags as fallback
      */
-    public void setmID3ExportFallback(boolean id3ExportFallback) {
-        mID3ExportFallback = id3ExportFallback;
+    public void setID3EnableFallback(boolean id3EnableFallback) {
+        mID3EnableFallback = id3EnableFallback;
     }
-
-    /**
-     * The ID3v2 sub version
-     */
-    public enum ID3v2Version { ID3v22, ID3v23, ID3v24 }
 
     /**
      * The sub version of ID3v2
@@ -235,11 +231,11 @@ public class PlayMusicManager {
 
     /**
      * Loads all needed information and opens the database
-     * @throws PlayMusicNotFound PlayMusic is not installed
+     * @throws de.arcus.playmusiclib.exceptions.PlayMusicNotFoundException PlayMusic is not installed
      * @throws NoSuperUserException No super user permissions
-     * @throws CouldNotOpenDatabase Could not open the database
+     * @throws de.arcus.playmusiclib.exceptions.CouldNotOpenDatabaseException Could not open the database
      */
-    public void startUp() throws PlayMusicNotFound, NoSuperUserException, CouldNotOpenDatabase {
+    public void startUp() throws PlayMusicNotFoundException, NoSuperUserException, CouldNotOpenDatabaseException {
         // Gets the package manager
         PackageManager packageManager = mContext.getPackageManager();
 
@@ -248,7 +244,7 @@ public class PlayMusicManager {
             mPlayMusicApplicationInfo = packageManager.getApplicationInfo(PLAYMUSIC_PACKAGE_ID, 0);
         } catch (PackageManager.NameNotFoundException e) {
             // No PlayMusic
-            throw new PlayMusicNotFound();
+            throw new PlayMusicNotFoundException();
         }
 
 
@@ -274,9 +270,9 @@ public class PlayMusicManager {
     /**
      * Copies the database to a temp directory and opens it
      * @throws NoSuperUserException No super user permissions
-     * @throws CouldNotOpenDatabase Could not open the database
+     * @throws de.arcus.playmusiclib.exceptions.CouldNotOpenDatabaseException Could not open the database
      */
-    private void loadDatabase() throws NoSuperUserException, CouldNotOpenDatabase {
+    private void loadDatabase() throws NoSuperUserException, CouldNotOpenDatabaseException {
         // Ask for super user
         if (!SuperUser.askForPermissions())
             throw new NoSuperUserException();
@@ -286,22 +282,22 @@ public class PlayMusicManager {
 
         // Copy the database to the temp folder
         if (!SuperUserTools.fileCopy(getDatabasePath(), getTempDatabasePath()))
-            throw new CouldNotOpenDatabase();
+            throw new CouldNotOpenDatabaseException();
 
         // Opens the database
         try {
             mDatabase = SQLiteDatabase.openDatabase(getTempDatabasePath(), null, SQLiteDatabase.OPEN_READONLY);
         } catch (SQLException e) {
-            throw new CouldNotOpenDatabase();
+            throw new CouldNotOpenDatabaseException();
         }
     }
 
     /**
      * Reloads the database from PlayMusic
      * @throws NoSuperUserException No super user permissions
-     * @throws CouldNotOpenDatabase Could not open the database
+     * @throws de.arcus.playmusiclib.exceptions.CouldNotOpenDatabaseException Could not open the database
      */
-    public void realoadDatabase() throws NoSuperUserException, CouldNotOpenDatabase {
+    public void realoadDatabase() throws NoSuperUserException, CouldNotOpenDatabaseException {
         loadDatabase();
     }
 
@@ -464,7 +460,7 @@ public class PlayMusicManager {
             mp3File.removeCustomTag();
 
             // We want to add a fallback ID3v1 tag
-            if (mID3ExportFallback) {
+            if (mID3EnableFallback) {
                 // Create a new tag with ID3v1
                 ID3v1Tag tagID3v1 = new ID3v1Tag();
 
@@ -520,7 +516,7 @@ public class PlayMusicManager {
             }
 
             // Add the artwork to the meta data
-            if (mID3ExportArtwork) {
+            if (mID3EnableArtwork) {
                 String artworkPath = musicTrack.getArtworkPath();
 
                 if (artworkPath != null) {

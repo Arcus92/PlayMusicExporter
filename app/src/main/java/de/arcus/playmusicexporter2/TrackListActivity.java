@@ -34,11 +34,9 @@ import java.util.List;
 import de.arcus.framework.logger.Logger;
 import de.arcus.framework.crashhandler.CrashHandler;
 import de.arcus.playmusiclib.PlayMusicManager;
-import de.arcus.playmusiclib.datasources.AlbumDataSource;
 import de.arcus.playmusiclib.datasources.PlaylistDataSource;
-import de.arcus.playmusiclib.items.Album;
+import de.arcus.playmusiclib.enums.ID3v2Version;
 import de.arcus.playmusiclib.items.MusicTrack;
-import de.arcus.playmusiclib.items.MusicTrackList;
 import de.arcus.playmusiclib.items.Playlist;
 
 /**
@@ -103,6 +101,12 @@ public class TrackListActivity extends ActionBarActivity
             // Simple play ground
             playMusicManager.startUp();
             playMusicManager.setOfflineOnly(true);
+
+
+            playMusicManager.setID3Enable(true);
+            playMusicManager.setID3EnableArtwork(true);
+            playMusicManager.setID3EnableFallback(true);
+            playMusicManager.setID3v2Version(ID3v2Version.ID3v23);
 
             PlaylistDataSource playlistDataSource = new PlaylistDataSource(playMusicManager);
 

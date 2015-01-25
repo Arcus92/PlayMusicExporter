@@ -22,6 +22,10 @@
 
 package de.arcus.playmusiclib.items;
 
+import android.text.TextUtils;
+
+import org.w3c.dom.Text;
+
 import de.arcus.playmusiclib.PlayMusicManager;
 
 /**
@@ -392,6 +396,13 @@ public class MusicTrack {
      */
     public boolean isEncoded() {
         return (mCpData != null);
+    }
+
+    /**
+     * @return Returns true if this track is offline available
+     */
+    public boolean isOfflineAvailable() {
+        return !TextUtils.isEmpty(mLocalCopyPath);
     }
 
     @Override

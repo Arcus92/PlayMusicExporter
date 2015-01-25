@@ -25,5 +25,5 @@ package de.arcus.playmusiclib.exceptions;
 /**
  * Exception will thrown if PlayMusic is not installed
  */
-public class PlayMusicNotFound extends Exception {
+public class PlayMusicNotFoundException extends Exception {
 }
