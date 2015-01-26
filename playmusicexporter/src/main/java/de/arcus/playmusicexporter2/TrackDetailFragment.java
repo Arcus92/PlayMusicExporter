@@ -29,8 +29,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import de.arcus.playmusiclib.items.MusicTrackList;
 
-import de.arcus.playmusicexporter2.dummy.DummyContent;
 
 /**
  * A fragment representing a single Track detail screen.
@@ -43,12 +43,14 @@ public class TrackDetailFragment extends Fragment {
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_MUSIC_TRACK_LIST = "music_track_list";
 
     /**
-     * The dummy content this fragment is presenting.
+     * The track list
      */
-    private DummyContent.DummyItem mItem;
+    private MusicTrackList mMusicTrackList;
+
+    private String mTest;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -61,11 +63,12 @@ public class TrackDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments().containsKey(ARG_MUSIC_TRACK_LIST)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            // mMusicTrackList = (MusicTrackList)getArguments().getSerializable(ARG_MUSIC_TRACK_LIST);
+            mTest = getArguments().getString(ARG_MUSIC_TRACK_LIST);
         }
     }
 
@@ -75,8 +78,8 @@ public class TrackDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_track_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.track_detail)).setText(mItem.content);
+        if (mTest != null) {
+            ((TextView) rootView.findViewById(R.id.track_detail)).setText(mTest);
         }
 
         return rootView;

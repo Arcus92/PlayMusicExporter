@@ -95,4 +95,19 @@ public class SuperUserTools {
 
         return superUserCommand.getStandardOutputBinary();
     }
+
+    /**
+     * Gets all bytes from one file
+     * @param path The path to the file
+     * @param callback The callback
+     */
+    public static void fileReadToByteArrayAsync(String path, SuperUserCommandCallback callback) {
+        SuperUserCommand superUserCommand = new SuperUserCommand("cat '" + path + "'");
+
+        // Don't spam the log with binary code
+        superUserCommand.setHideStandardOutput(true);
+        superUserCommand.setBinaryStandardOutput(true);
+
+        superUserCommand.executeAsync(callback);
+    }
 }

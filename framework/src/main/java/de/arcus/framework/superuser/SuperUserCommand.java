@@ -22,6 +22,8 @@
 
 package de.arcus.framework.superuser;
 
+import android.app.Activity;
+
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.io.BufferedReader;
@@ -97,10 +99,16 @@ public class SuperUserCommand {
      */
     private boolean mBinaryStandardOutput = false;
 
+    /**
+     * @return Gets whether the output will be binary
+     */
     public boolean getBinaryStandardOutput() {
         return mBinaryStandardOutput;
     }
 
+    /**
+     * @param binaryStandardOutput Set this if you want a binary output
+     */
     public void setBinaryStandardOutput(boolean binaryStandardOutput) {
         mBinaryStandardOutput = binaryStandardOutput;
     }
@@ -170,6 +178,16 @@ public class SuperUserCommand {
     }
 
     /**
+     * The async execution thread
+     */
+    private SuperUserCommandThread mThread;
+
+    /**
+     * The async callback
+     */
+    private SuperUserCommandCallback mCallback;
+
+    /**
      * Creates a command with one command line
      * @param command The command
      */
@@ -189,9 +207,40 @@ public class SuperUserCommand {
     }
 
     /**
+     * Execute the command asynchronously.
+     * Please notice that the commands will only executed one after another.
+     * The command will wait until the su process is free.
+     * @param callback The callback instance
+     */
+    public void executeAsync(SuperUserCommandCallback callback) {
+        mCallback = callback;
+
+        // Thread is running
+        if (mThread != null) return;
+
+        // Create a new thread
+        mThread = new SuperUserCommandThread();
+
+        // Starts a thread
+        mThread.start();
+    }
+
+    /**
+     * Execute the command asynchronously.
+     * Please notice that the commands will only executed one after another.
+     * The command will wait until the su process is free.
+     * @param callback The callback instance
+     * @param activity Set the activity to execute the callback on the UI thread
+     */
+    public void executeAsync(SuperUserCommandCallback callback, Activity activity) {
+
+    }
+
+    /**
      * Execute the command and return whether the command was executed.
      * It will only return false if the app wasn't granted superuser permissions, like {@link #superuserWasSuccessful()}.
      * It will also return true if the command itself returns error outputs. To check this case you should use {@link #commandWasSuccessful()} instead.
+     * Please consider to use {@link #executeAsync} instead of this and execute the command asynchronously.
      * @return Gets whether the execution was successful.
      */
     public boolean execute() {
@@ -317,6 +366,24 @@ public class SuperUserCommand {
                 // Command failed
                 return false;
             }
+        }
+    }
+
+
+    /**
+     * Thread to executes the command asynchronously
+     */
+    private class SuperUserCommandThread extends Thread {
+        @Override
+        public void run() {
+
+            super.run();
+
+            // Executes the command
+            execute();
+
+            if (mCallback != null)
+                mCallback.onFinished(SuperUserCommand.this);
         }
     }
 }

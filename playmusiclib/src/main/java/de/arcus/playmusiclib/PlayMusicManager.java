@@ -27,6 +27,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import com.mpatric.mp3agic.ID3v1Genres;
@@ -311,6 +312,13 @@ public class PlayMusicManager {
     }
 
     /**
+     * Debug function to get the database
+     */
+    public void copyDatabaseToSdCard() {
+        FileTools.fileCopy(getTempDatabasePath(), Environment.getExternalStorageDirectory() + "/music.db");
+    }
+
+    /**
      * @return Gets the path to the private music
      */
     public String getPrivateMusicPath() {
@@ -326,10 +334,7 @@ public class PlayMusicManager {
         // LocalCopyPath is empty
         if (TextUtils.isEmpty(localCopyPath)) return null;
 
-        // Private music path
-        String path = getPrivateMusicPath() + "/" + localCopyPath;
-        // Music file exists
-        if (SuperUserTools.fileExists(path)) return path;
+        String path;
 
         // Search in the public data
         for (String publicData : mPathPublicData) {
@@ -338,7 +343,13 @@ public class PlayMusicManager {
             if (FileTools.fileExists(path)) return path;
         }
 
-        return null;
+
+        // Private music path
+        path = getPrivateMusicPath() + "/" + localCopyPath;
+        // Don't check if the file exists, this will freeze the UI thread
+        //if (SuperUserTools.fileExists(path)) return path;
+
+        return path;
     }
 
     /**
@@ -357,10 +368,7 @@ public class PlayMusicManager {
         // Artwork path is empty
         if (TextUtils.isEmpty(artworkPath)) return null;
 
-        // Private artwork path
-        String path = getPrivateFilesPath() + "/" + artworkPath;
-        // Artwork file exists
-        if (SuperUserTools.fileExists(path)) return path;
+        String path;
 
         // Search in the public data
         for (String publicData : mPathPublicData) {
@@ -369,7 +377,13 @@ public class PlayMusicManager {
             if (FileTools.fileExists(path)) return path;
         }
 
-        return null;
+        // Private artwork path
+        path = getPrivateFilesPath() + "/" + artworkPath;
+
+        // Don't check if the file exists, this will freeze the UI thread
+        // if (SuperUserTools.fileExists(path)) return path;
+
+        return path;
     }
 
     /**

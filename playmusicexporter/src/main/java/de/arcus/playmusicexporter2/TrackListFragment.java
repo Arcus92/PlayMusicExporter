@@ -26,11 +26,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
-import de.arcus.playmusicexporter2.dummy.DummyContent;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.arcus.playmusicexporter2.adapter.MusicTrackListAdapter;
+import de.arcus.playmusiclib.items.MusicTrackList;
 
 /**
  * A list fragment representing a list of Tracks. This fragment
@@ -82,6 +85,8 @@ public class TrackListFragment extends ListFragment {
         }
     };
 
+    private MusicTrackListAdapter mMusicTrackListAdapter;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -89,16 +94,30 @@ public class TrackListFragment extends ListFragment {
     public TrackListFragment() {
     }
 
+    /**
+     * @param list Set the list
+     */
+    public void setList(List<? extends MusicTrackList> list) {
+        // Create a new list
+        List<MusicTrackList> newList = new ArrayList<>();
+
+        // Copy the list
+        for(MusicTrackList musicTrackList : list) {
+            newList.add(musicTrackList);
+        }
+
+        // Set the list in the adapter
+        mMusicTrackListAdapter.setList(newList);
+        getListView().invalidateViews();
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
+        mMusicTrackListAdapter = new MusicTrackListAdapter(getActivity());
+        setListAdapter(mMusicTrackListAdapter);
     }
 
     @Override
@@ -138,7 +157,7 @@ public class TrackListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(mMusicTrackListAdapter.getList().get(position).getTitle());
     }
 
     @Override
