@@ -15,7 +15,7 @@ This project uses the [mp3agic library](https://github.com/mpatric/mp3agic) by [
 This project will be rewritten and the complete source will be a available soon.
 The android package id is currently <em>"de.arcus.playmusicexporter2"</em>. This will be replaced by the old id <em>"de.arcus.playmusicexporter"</em> when the new code is done.
 
-You can get the <em>old</em> working version here: https://www.david-schulte.de/en/play-music-exporter-updater/
+You can get the <em>old</em> working version [here](https://www.david-schulte.de/en/play-music-exporter-updater/)!
 
 ### Copyright
 
