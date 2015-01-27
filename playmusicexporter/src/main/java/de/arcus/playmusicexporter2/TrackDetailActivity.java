@@ -61,8 +61,13 @@ public class TrackDetailActivity extends ActionBarActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(TrackDetailFragment.ARG_MUSIC_TRACK_LIST,
-                    getIntent().getStringExtra(TrackDetailFragment.ARG_MUSIC_TRACK_LIST));
+
+            arguments.putLong(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID,
+                    getIntent().getLongExtra(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID, 0));
+
+            arguments.putString(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE,
+                    getIntent().getStringExtra(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE));
+
             TrackDetailFragment fragment = new TrackDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

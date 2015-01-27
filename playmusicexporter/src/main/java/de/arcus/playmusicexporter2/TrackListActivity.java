@@ -32,6 +32,7 @@ import de.arcus.framework.crashhandler.CrashHandler;
 import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.datasources.AlbumDataSource;
 import de.arcus.playmusiclib.enums.ID3v2Version;
+import de.arcus.playmusiclib.items.MusicTrackList;
 
 /**
  * An activity representing a list of Tracks. This activity
@@ -88,30 +89,36 @@ public class TrackListActivity extends ActionBarActivity
                     .setActivateOnItemClick(true);
         }
 
+        // Gets the running instance
+        PlayMusicManager playMusicManager = PlayMusicManager.getInstance();
 
-        PlayMusicManager playMusicManager = new PlayMusicManager(this);
+        // Create a new instance
+        if (playMusicManager == null) {
+            playMusicManager = new PlayMusicManager(this);
 
-        try {
-            // Simple play ground
-            playMusicManager.startUp();
-            playMusicManager.setOfflineOnly(true);
+            try {
+                // Simple play ground
+                playMusicManager.startUp();
+                playMusicManager.setOfflineOnly(true);
 
+                // Setup ID3
+                playMusicManager.setID3Enable(true);
+                playMusicManager.setID3EnableArtwork(true);
+                playMusicManager.setID3EnableFallback(true);
+                playMusicManager.setID3v2Version(ID3v2Version.ID3v23);
 
-            playMusicManager.setID3Enable(true);
-            playMusicManager.setID3EnableArtwork(true);
-            playMusicManager.setID3EnableFallback(true);
-            playMusicManager.setID3v2Version(ID3v2Version.ID3v23);
-
-            playMusicManager.copyDatabaseToSdCard();
-
-            AlbumDataSource albumDataSource = new AlbumDataSource(playMusicManager);
-
-            ((TrackListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.track_list)).setList(albumDataSource.getAll());
-
-        } catch (Exception e) {
-            Logger.getInstance().logError("Test", e.toString());
+            } catch (Exception e) {
+                Logger.getInstance().logError("Test", e.toString());
+            }
         }
+
+
+        // Load all albums to the list
+        AlbumDataSource albumDataSource = new AlbumDataSource(playMusicManager);
+
+        ((TrackListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.track_list)).setMusicTrackList(albumDataSource.getAll());
+
     }
 
     /**
@@ -119,13 +126,14 @@ public class TrackListActivity extends ActionBarActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(MusicTrackList musicTrackList) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(TrackDetailFragment.ARG_MUSIC_TRACK_LIST, id);
+            arguments.putLong(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID, musicTrackList.getMusicTrackListID());
+            arguments.putString(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE, musicTrackList.getMusicTrackListType());
             TrackDetailFragment fragment = new TrackDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -136,7 +144,8 @@ public class TrackListActivity extends ActionBarActivity
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, TrackDetailActivity.class);
-            detailIntent.putExtra(TrackDetailFragment.ARG_MUSIC_TRACK_LIST, id);
+            detailIntent.putExtra(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID, musicTrackList.getMusicTrackListID());
+            detailIntent.putExtra(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE, musicTrackList.getMusicTrackListType());
             startActivity(detailIntent);
         }
     }

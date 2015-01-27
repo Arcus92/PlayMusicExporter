@@ -27,8 +27,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import de.arcus.playmusicexporter2.adapter.MusicTrackAdapter;
+import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.items.MusicTrackList;
 
 
@@ -43,14 +47,13 @@ public class TrackDetailFragment extends Fragment {
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
-    public static final String ARG_MUSIC_TRACK_LIST = "music_track_list";
+    public static final String ARG_MUSIC_TRACK_LIST_ID = "music_track_list_id";
+    public static final String ARG_MUSIC_TRACK_LIST_TYPE = "music_track_list_type";
 
     /**
      * The track list
      */
     private MusicTrackList mMusicTrackList;
-
-    private String mTest;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -63,12 +66,18 @@ public class TrackDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_MUSIC_TRACK_LIST)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            // mMusicTrackList = (MusicTrackList)getArguments().getSerializable(ARG_MUSIC_TRACK_LIST);
-            mTest = getArguments().getString(ARG_MUSIC_TRACK_LIST);
+        if (getArguments().containsKey(ARG_MUSIC_TRACK_LIST_ID)
+         && getArguments().containsKey(ARG_MUSIC_TRACK_LIST_TYPE)) {
+
+            // Loads the track list
+            long id = getArguments().getLong(ARG_MUSIC_TRACK_LIST_ID);
+            String type = getArguments().getString(ARG_MUSIC_TRACK_LIST_TYPE);
+
+            PlayMusicManager playMusicManager = PlayMusicManager.getInstance();
+
+            if (playMusicManager != null) {
+                mMusicTrackList = MusicTrackList.deserialize(playMusicManager, id, type);
+            }
         }
     }
 
@@ -78,8 +87,14 @@ public class TrackDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_track_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mTest != null) {
-            ((TextView) rootView.findViewById(R.id.track_detail)).setText(mTest);
+        if (mMusicTrackList != null) {
+            ListView listView = (ListView)rootView.findViewById(R.id.list_music_track);
+
+            MusicTrackAdapter musicTrackAdapter = new MusicTrackAdapter(getActivity());
+
+            musicTrackAdapter.setList(mMusicTrackList.getMusicTrackList());
+
+            listView.setAdapter(musicTrackAdapter);
         }
 
         return rootView;

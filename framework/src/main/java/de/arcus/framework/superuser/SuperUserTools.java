@@ -83,6 +83,7 @@ public class SuperUserTools {
         SuperUserCommand superUserCommand = new SuperUserCommand("cat '" + path + "'");
 
         // Don't spam the log with binary code
+        superUserCommand.setHideInput(true);
         superUserCommand.setHideStandardOutput(true);
         superUserCommand.setBinaryStandardOutput(true);
 
@@ -105,6 +106,7 @@ public class SuperUserTools {
         SuperUserCommand superUserCommand = new SuperUserCommand("cat '" + path + "'");
 
         // Don't spam the log with binary code
+        superUserCommand.setHideInput(true);
         superUserCommand.setHideStandardOutput(true);
         superUserCommand.setBinaryStandardOutput(true);
 

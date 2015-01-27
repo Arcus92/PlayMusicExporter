@@ -138,6 +138,21 @@ public class Playlist extends MusicTrackList {
 
     @Override
     /**
+     * Gets the id of the track list
+     */
+    public long getMusicTrackListID() {
+        return getId();
+    }
+
+    /**
+     * @return Playlist tracks should show the album artwork
+     */
+    public boolean getShowArtworkInTrack() {
+        return true;
+    }
+
+    @Override
+    /**
      * Loads all tracks from this playlist
      */
     protected void fetchTrackList() {

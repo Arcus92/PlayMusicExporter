@@ -63,6 +63,18 @@ public class PlayMusicManager {
     public static final String PLAYMUSIC_PACKAGE_ID = "com.google.android.music";
 
     /**
+     * The last created instance
+     */
+    private static PlayMusicManager instance;
+
+    /**
+     * @return Gets the last created instance or returns null if there is no instance
+     */
+    public static PlayMusicManager getInstance() {
+        return instance;
+    }
+
+    /**
      * Context of the app, needed to access to the package manager
      */
     private Context mContext;
@@ -227,14 +239,15 @@ public class PlayMusicManager {
      */
     public PlayMusicManager(Context context) {
         mContext = context;
+        instance = this;
     }
 
 
     /**
      * Loads all needed information and opens the database
-     * @throws de.arcus.playmusiclib.exceptions.PlayMusicNotFoundException PlayMusic is not installed
+     * @throws PlayMusicNotFoundException PlayMusic is not installed
      * @throws NoSuperUserException No super user permissions
-     * @throws de.arcus.playmusiclib.exceptions.CouldNotOpenDatabaseException Could not open the database
+     * @throws CouldNotOpenDatabaseException Could not open the database
      */
     public void startUp() throws PlayMusicNotFoundException, NoSuperUserException, CouldNotOpenDatabaseException {
         // Gets the package manager
@@ -296,9 +309,10 @@ public class PlayMusicManager {
     /**
      * Reloads the database from PlayMusic
      * @throws NoSuperUserException No super user permissions
-     * @throws de.arcus.playmusiclib.exceptions.CouldNotOpenDatabaseException Could not open the database
+     * @throws CouldNotOpenDatabaseException Could not open the database
      */
     public void realoadDatabase() throws NoSuperUserException, CouldNotOpenDatabaseException {
+        // Reload database
         loadDatabase();
     }
 

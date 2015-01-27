@@ -25,6 +25,9 @@ package de.arcus.playmusiclib.items;
 import java.util.List;
 
 import de.arcus.playmusiclib.PlayMusicManager;
+import de.arcus.playmusiclib.datasources.AlbumDataSource;
+import de.arcus.playmusiclib.datasources.ArtistDataSource;
+import de.arcus.playmusiclib.datasources.PlaylistDataSource;
 
 /**
  * List of {@link de.arcus.playmusiclib.items.MusicTrack MusicTracks}.
@@ -107,6 +110,24 @@ public abstract class MusicTrackList {
     public abstract String getDescription();
 
     /**
+     * Gets the id of the track list
+     */
+    public abstract long getMusicTrackListID();
+
+    /**
+     * Gets the type of the track list
+     */
+    public String getMusicTrackListType() {
+        return this.getClass().getSimpleName();
+    }
+
+    /**
+     * @return Returns whether the music track should also show its album art in the list view
+     * Needed for playlists and artists
+     */
+    public abstract boolean getShowArtworkInTrack();
+
+    /**
      * Gets the artwork path
      * @return Path to the artwork
      */
@@ -115,6 +136,34 @@ public abstract class MusicTrackList {
         if (mArtworkPath == null)
             mArtworkPath = mPlayMusicManager.getArtworkPath(mArtworkFile);
         return mArtworkPath;
+    }
+
+    /**
+     * Loads a music track list by type and id
+     * @param playMusicManager The PlayMusicManager
+     * @param id The id of the list
+     * @param type The type of the list
+     * @return Returns the music track list
+     */
+    public static MusicTrackList deserialize(PlayMusicManager playMusicManager, long id, String type) {
+        // Loads the music track list
+        switch (type) {
+            case "Album":
+                AlbumDataSource albumDataSource = new AlbumDataSource(playMusicManager);
+                albumDataSource.setOfflineOnly(false);
+                return albumDataSource.getById(id);
+            case "Artist":
+                ArtistDataSource artistDataSource = new ArtistDataSource(playMusicManager);
+                artistDataSource.setOfflineOnly(false);
+                return artistDataSource.getById(id);
+            case "Playlist":
+                PlaylistDataSource playlistDataSource = new PlaylistDataSource(playMusicManager);
+                playlistDataSource.setOfflineOnly(false);
+                return playlistDataSource.getById(id);
+        }
+
+        // Failed
+        return null;
     }
 
     @Override

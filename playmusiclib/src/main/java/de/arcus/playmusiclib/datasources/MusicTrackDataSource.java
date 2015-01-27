@@ -126,7 +126,7 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
         super(playMusicManager);
 
         // Load global settings
-        setOfflineOnly(playMusicManager.getOfflineOnly());
+        //setOfflineOnly(playMusicManager.getOfflineOnly());
     }
 
     /**

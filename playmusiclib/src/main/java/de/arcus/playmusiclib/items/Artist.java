@@ -87,6 +87,21 @@ public class Artist extends MusicTrackList {
 
     @Override
     /**
+     * Gets the id of the track list
+     */
+    public long getMusicTrackListID() {
+        return getArtistId();
+    }
+
+    /**
+     * @return Artists tracks should show the album artwork
+     */
+    public boolean getShowArtworkInTrack() {
+        return true;
+    }
+
+    @Override
+    /**
      * Loads all tracks from this artist
      */
     protected void fetchTrackList() {

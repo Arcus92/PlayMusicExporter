@@ -96,7 +96,7 @@ public class PlaylistDataSource extends DataSource<Playlist> {
         super(playMusicManager);
 
         // Load global settings
-        setOfflineOnly(playMusicManager.getOfflineOnly());
+        //setOfflineOnly(playMusicManager.getOfflineOnly());
     }
 
     /**

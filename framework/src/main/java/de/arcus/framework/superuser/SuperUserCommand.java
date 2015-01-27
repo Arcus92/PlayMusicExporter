@@ -58,6 +58,10 @@ public class SuperUserCommand {
     private boolean mSuperUserFailed;
 
     /**
+     * If this value is set, the command will not store any input to the logger
+     */
+    private boolean mHideInput = false;
+    /**
      * If this value is set, the command will not store any standard output to the logger
      */
     private boolean mHideStandardOutput = false;
@@ -65,6 +69,20 @@ public class SuperUserCommand {
      * If this value is set, the command will not store any error output to the logger
      */
     private boolean mHideErrorOutput = false;
+
+    /**
+     * @return Gets whether the command hides the input log
+     */
+    public boolean getHideInput() {
+        return mHideInput;
+    }
+
+    /**
+     * @param hideInput Set this to hide the input to the logger
+     */
+    public void setHideInput(boolean hideInput) {
+        mHideInput = hideInput;
+    }
 
     /**
      * @return Gets whether the command hides the standard output log
@@ -266,7 +284,8 @@ public class SuperUserCommand {
 
                 // Sends the command
                 for (String command : mCommands) {
-                    Logger.getInstance().logInfo("SuperUser", "< " + command);
+                    if (!mHideInput) // Check if we want to hide this
+                        Logger.getInstance().logInfo("SuperUser", "< " + command);
                     dataOutputStream.writeBytes(command + "\n");
                 }
                 dataOutputStream.flush();

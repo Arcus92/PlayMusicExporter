@@ -101,6 +101,21 @@ public class Album extends MusicTrackList {
 
     @Override
     /**
+     * Gets the id of the track list
+     */
+    public long getMusicTrackListID() {
+        return getAlbumId();
+    }
+
+    /**
+     * @return Albums tracks shouldn't show the album artwork again
+     */
+    public boolean getShowArtworkInTrack() {
+        return false;
+    }
+
+    @Override
+    /**
      * Loads all tracks from this album
      */
     protected void fetchTrackList() {

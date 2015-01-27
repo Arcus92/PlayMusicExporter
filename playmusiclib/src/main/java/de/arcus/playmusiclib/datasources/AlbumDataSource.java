@@ -98,7 +98,7 @@ public class AlbumDataSource extends DataSource<Album> {
         super(playMusicManager);
 
         // Load global settings
-        setOfflineOnly(playMusicManager.getOfflineOnly());
+        //setOfflineOnly(playMusicManager.getOfflineOnly());
     }
 
     /**

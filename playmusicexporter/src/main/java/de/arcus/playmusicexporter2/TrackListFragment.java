@@ -72,7 +72,7 @@ public class TrackListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(MusicTrackList musicTrackList);
     }
 
     /**
@@ -81,7 +81,7 @@ public class TrackListFragment extends ListFragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(MusicTrackList musicTrackList) {
         }
     };
 
@@ -97,7 +97,7 @@ public class TrackListFragment extends ListFragment {
     /**
      * @param list Set the list
      */
-    public void setList(List<? extends MusicTrackList> list) {
+    public void setMusicTrackList(List<? extends MusicTrackList> list) {
         // Create a new list
         List<MusicTrackList> newList = new ArrayList<>();
 
@@ -157,7 +157,7 @@ public class TrackListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(mMusicTrackListAdapter.getList().get(position).getTitle());
+        mCallbacks.onItemSelected(mMusicTrackListAdapter.getList().get(position));
     }
 
     @Override

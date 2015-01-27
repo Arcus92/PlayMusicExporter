@@ -93,7 +93,7 @@ public class ArtistDataSource extends DataSource<Artist> {
         super(playMusicManager);
 
         // Load global settings
-        setOfflineOnly(playMusicManager.getOfflineOnly());
+        //setOfflineOnly(playMusicManager.getOfflineOnly());
     }
 
     /**
