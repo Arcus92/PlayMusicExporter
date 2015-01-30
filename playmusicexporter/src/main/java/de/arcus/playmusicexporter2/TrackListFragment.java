@@ -117,6 +117,8 @@ public class TrackListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         mMusicTrackListAdapter = new MusicTrackListAdapter(getActivity());
+
+
         setListAdapter(mMusicTrackListAdapter);
     }
 
@@ -157,7 +159,7 @@ public class TrackListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(mMusicTrackListAdapter.getList().get(position));
+        mCallbacks.onItemSelected(mMusicTrackListAdapter.getItem(position));
     }
 
     @Override

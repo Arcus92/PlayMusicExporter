@@ -148,6 +148,6 @@ public class PlaylistDataSource extends DataSource<Playlist> {
      * @return Returns all playlists
      */
     public List<Playlist> getAll() {
-        return getItems(TABLE_LIST, COLUMNS_ALL, prepareWhere(COLUMN_LIST_TYPE + " != " + Playlist.TYPE_QUEUE), COLUMN_NAME);
+        return getItems(TABLE_LIST, COLUMNS_ALL, prepareWhere(COLUMN_LIST_TYPE + " != " + Playlist.TYPE_QUEUE), COLUMN_LIST_TYPE + ", " + COLUMN_NAME);
     }
 }

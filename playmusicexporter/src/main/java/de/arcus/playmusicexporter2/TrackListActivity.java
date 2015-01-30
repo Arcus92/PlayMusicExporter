@@ -31,6 +31,7 @@ import de.arcus.framework.logger.Logger;
 import de.arcus.framework.crashhandler.CrashHandler;
 import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.datasources.AlbumDataSource;
+import de.arcus.playmusiclib.datasources.PlaylistDataSource;
 import de.arcus.playmusiclib.enums.ID3v2Version;
 import de.arcus.playmusiclib.items.MusicTrackList;
 
@@ -115,6 +116,9 @@ public class TrackListActivity extends ActionBarActivity
 
         // Load all albums to the list
         AlbumDataSource albumDataSource = new AlbumDataSource(playMusicManager);
+        //PlaylistDataSource playlistDataSource = new PlaylistDataSource(playMusicManager);
+
+        albumDataSource.setOfflineOnly(true);
 
         ((TrackListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.track_list)).setMusicTrackList(albumDataSource.getAll());

@@ -22,6 +22,14 @@
   -->
 
 <resources>
-    <color name="applicationMainColor">#ef6c00</color>
-    <color name="applicationMainColorDark">#e65100</color>
+    <color name="application_main">#ef6c00</color>
+    <color name="application_main_dark">#e65100</color>
+
+    <color name="text_music_number">#ff000000</color>
+    <color name="text_music_title">#ff000000</color>
+    <color name="text_music_description">#88000000</color>
+
+    <color name="text_music_disable_number">#44000000</color>
+    <color name="text_music_disable_title">#44000000</color>
+    <color name="text_music_disable_description">#22000000</color>
 </resources>

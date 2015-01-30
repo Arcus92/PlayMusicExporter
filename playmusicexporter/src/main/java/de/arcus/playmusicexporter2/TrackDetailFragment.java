@@ -24,6 +24,7 @@ package de.arcus.playmusicexporter2;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,13 +89,35 @@ public class TrackDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mMusicTrackList != null) {
-            ListView listView = (ListView)rootView.findViewById(R.id.list_music_track);
+            final ListView listView = (ListView)rootView.findViewById(R.id.list_music_track);
+
 
             MusicTrackAdapter musicTrackAdapter = new MusicTrackAdapter(getActivity());
 
             musicTrackAdapter.setList(mMusicTrackList.getMusicTrackList());
 
             listView.setAdapter(musicTrackAdapter);
+            listView.setDrawSelectorOnTop(false);
+            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            listView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                    Log.d("onItemSelected", "pos: " + position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d("onItemClick", "pos: " + position);
+                    listView.setItemChecked(position, true);
+                }
+            });
         }
 
         return rootView;

@@ -27,6 +27,7 @@ import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -38,86 +39,35 @@ import de.arcus.playmusiclib.items.MusicTrack;
 /**
  * Adapter for the music tracks
  */
-public class MusicTrackAdapter implements ListAdapter {
+public class MusicTrackAdapter extends ArrayAdapter<MusicTrack> {
     /**
      * The context of the app
      */
     private Context mContext;
 
     /**
-     * The list
-     */
-    private List<MusicTrack> mList;
-
-    /**
-     * @param list Sets a new list
-     */
-    public void setList(List<MusicTrack> list) {
-        mList = list;
-    }
-
-    /**
-     * @return Gets the list
-     */
-    public List<MusicTrack> getList() {
-        return mList;
-    }
-
-    /**
      * Create a new track adapter
      * @param context The app context
      */
     public MusicTrackAdapter(Context context) {
+        super(context, R.layout.adapter_music_track);
         mContext = context;
     }
 
-    @Override
-    public boolean areAllItemsEnabled() {
-        return false;
-    }
+    public void setList(List<MusicTrack> musicTracks) {
+        // Clear all items
+        clear();
 
-    @Override
-    public boolean isEnabled(int position) {
-        return false;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public int getCount() {
-        if (mList == null) return 0;
-        return mList.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return mList.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        // We don't have ids
-        return 0;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        // We don't have ids
-        return false;
+        // Add the new items
+        for(MusicTrack musicTrack : musicTracks) {
+            add(musicTrack);
+        }
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // The track
-        MusicTrack musicTrack = mList.get(position);
+        MusicTrack musicTrack = getItem(position);
 
         View view = convertView;
 
@@ -131,38 +81,32 @@ public class MusicTrackAdapter implements ListAdapter {
 
         // Set the track number
         textView = (TextView)view.findViewById(R.id.text_music_track_number);
-        if (musicTrack.getTrackNumber() > 0)
-            textView.setText("" + musicTrack.getTrackNumber());
+        long trackPosition = musicTrack.getTrackNumber();
+
+        if (musicTrack.getContainerName() != null)
+            trackPosition = musicTrack.getContainerPosition();
+
+        if (trackPosition > 0)
+            textView.setText("" + trackPosition);
         else
             textView.setText("");
+        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_number : R.color.text_music_disable_number));
 
         // Set the title
         textView = (TextView)view.findViewById(R.id.text_music_track_title);
         textView.setText(musicTrack.getTitle());
+        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_title : R.color.text_music_disable_title));
 
         // Set the artist
         textView = (TextView)view.findViewById(R.id.text_music_track_artist);
         textView.setText(musicTrack.getArtist());
+        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_description : R.color.text_music_disable_description));
 
+        // Track is available?
         view.setEnabled(musicTrack.isOfflineAvailable());
 
         return view;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        // We don't have view types
-        return 0;
-    }
 
-    @Override
-    public int getViewTypeCount() {
-        // We don't have view types
-        return 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return (mList == null || mList.isEmpty());
-    }
 }

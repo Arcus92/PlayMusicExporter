@@ -27,6 +27,7 @@ import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -35,81 +36,40 @@ import java.util.List;
 
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.utils.ImageViewLoader;
+import de.arcus.playmusiclib.items.MusicTrack;
 import de.arcus.playmusiclib.items.MusicTrackList;
 
 /**
  * Adapter for the music track lists
  */
-public class MusicTrackListAdapter implements ListAdapter {
+public class MusicTrackListAdapter extends ArrayAdapter<MusicTrackList> {
     /**
      * The context of the app
      */
     private Context mContext;
 
     /**
-     * The list
-     */
-    private List<MusicTrackList> mList;
-
-    /**
-     * @param list Sets a new list
-     */
-    public void setList(List<MusicTrackList> list) {
-        mList = list;
-    }
-
-    /**
-     * @return Gets the list
-     */
-    public List<MusicTrackList> getList() {
-        return mList;
-    }
-
-    /**
      * Create a new track list adapter
      * @param context The app context
      */
     public MusicTrackListAdapter(Context context) {
+        super(context, R.layout.adapter_music_track);
         mContext = context;
     }
 
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
+    public void setList(List<MusicTrackList> musicTrackLists) {
+        // Clear all items
+        clear();
 
+        // Add the new items
+        for(MusicTrackList musicTrackList : musicTrackLists) {
+            add(musicTrackList);
+        }
     }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public int getCount() {
-        if (mList == null) return 0;
-        return mList.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return mList.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        // We don't have ids
-        return 0;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        // We don't have ids
-        return false;
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // The track list
-        MusicTrackList musicTrackList = mList.get(position);
+        MusicTrackList musicTrackList = getItem(position);
 
         View view = convertView;
 
@@ -146,32 +106,5 @@ public class MusicTrackListAdapter implements ListAdapter {
 
 
         return view;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        // We don't have view types
-        return 0;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        // We don't have view types
-        return 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return (mList == null || mList.isEmpty());
-    }
-
-    @Override
-    public boolean areAllItemsEnabled() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return true;
     }
 }
