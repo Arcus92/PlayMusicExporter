@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2015 David Schulte
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in
+  ~ all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  ~ THE SOFTWARE.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:background="@color/navigation_drawer_background">
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_type_album"
+        android:drawableStart="@drawable/ic_type_album"
+        android:text="@string/title_view_album"
+        android:id="@+id/button_type_album"
+        style="@style/AppTheme.Button" />
+
+    <Button
+        style="@style/AppTheme.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_type_artist"
+        android:drawableStart="@drawable/ic_type_artist"
+        android:text="@string/title_view_artist"
+        android:id="@+id/button_type_artist" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_type_playlist"
+        android:drawableStart="@drawable/ic_type_playlist"
+        android:text="@string/title_view_playlist"
+        android:id="@+id/button_type_playlist"
+        style="@style/AppTheme.Button" />
+
+    <Button
+        style="@style/AppTheme.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_type_rated"
+        android:drawableStart="@drawable/ic_type_rated"
+        android:text="@string/title_view_rated"
+        android:id="@+id/button_type_rated" />
+
+    <Button
+        style="@style/AppTheme.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/ic_action_settings"
+        android:drawableStart="@drawable/ic_action_settings"
+        android:text="@string/title_settings"
+        android:id="@+id/button_setting" />
+
+
+</LinearLayout>

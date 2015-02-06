@@ -20,30 +20,35 @@
  * THE SOFTWARE.
  */
 
-package de.arcus.playmusicexporter2;
+package de.arcus.playmusicexporter2.fragments;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.adapter.MusicTrackAdapter;
+import de.arcus.playmusicexporter2.utils.ImageViewLoader;
+import de.arcus.playmusicexporter2.utils.MusicPathBuilder;
 import de.arcus.playmusiclib.PlayMusicManager;
+import de.arcus.playmusiclib.items.MusicTrack;
 import de.arcus.playmusiclib.items.MusicTrackList;
 
 
 /**
  * A fragment representing a single Track detail screen.
- * This fragment is either contained in a {@link TrackListActivity}
- * in two-pane mode (on tablets) or a {@link TrackDetailActivity}
+ * This fragment is either contained in a {@link de.arcus.playmusicexporter2.activitys.MusicTrackListActivity}
+ * in two-pane mode (on tablets) or a {@link de.arcus.playmusicexporter2.activitys.MusicTrackDetailActivity}
  * on handsets.
  */
-public class TrackDetailFragment extends Fragment {
+public class MusicTrackDetailFragment extends Fragment {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -60,7 +65,7 @@ public class TrackDetailFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public TrackDetailFragment() {
+    public MusicTrackDetailFragment() {
     }
 
     @Override
@@ -90,32 +95,67 @@ public class TrackDetailFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         if (mMusicTrackList != null) {
             final ListView listView = (ListView)rootView.findViewById(R.id.list_music_track);
+            final MusicTrackAdapter musicTrackAdapter = new MusicTrackAdapter(getActivity());
 
+            musicTrackAdapter.setShowArtworks(mMusicTrackList.getShowArtworkInTrack());
 
-            MusicTrackAdapter musicTrackAdapter = new MusicTrackAdapter(getActivity());
+            View headerView = inflater.inflate(R.layout.header_music_track_list, listView, false);
+            headerView.setEnabled(false);
+
+            TextView textView;
+            ImageView imageView;
+
+            // Sets the artwork image
+            imageView = (ImageView)headerView.findViewById(R.id.image_music_track_artwork);
+            imageView.setImageResource(R.drawable.cd_case);
+            String artworkPath = mMusicTrackList.getArtworkPath();
+            if (artworkPath != null)
+                ImageViewLoader.loadImage(imageView, artworkPath);
+
+            // Sets the title
+            textView = (TextView)headerView.findViewById(R.id.text_music_track_list_title);
+            textView.setText(mMusicTrackList.getTitle());
+
+            // Sets the description
+            textView = (TextView)headerView.findViewById(R.id.text_music_track_list_description);
+            textView.setText(mMusicTrackList.getDescription());
+
+            listView.addHeaderView(headerView);
 
             musicTrackAdapter.setList(mMusicTrackList.getMusicTrackList());
 
             listView.setAdapter(musicTrackAdapter);
-            listView.setDrawSelectorOnTop(false);
+            //listView.setDrawSelectorOnTop(false);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-            listView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            listView.setItemsCanFocus(false);
 
-                    Log.d("onItemSelected", "pos: " + position);
-                }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d("onItemClick", "pos: " + position);
-                    listView.setItemChecked(position, true);
+                    // The header is not clicked
+                    if (position > 0) {
+                        // We need to subtract the header view
+                        position -= 1;
+
+                        // Gets the selected track
+                        MusicTrack musicTrack = musicTrackAdapter.getItem(position);
+
+                        // Track is available
+                        if (musicTrack.isOfflineAvailable()) {
+                            // Build the path
+                            String path = MusicPathBuilder.Build(musicTrack, "{album-artist}/{album}/{disc=CD $}/{no=$$.} {title}.mp3");
+
+                            // Path to the public music folder
+                            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + path;
+
+                            PlayMusicManager playMusicManager = PlayMusicManager.getInstance();
+
+                            if (playMusicManager != null) {
+                                playMusicManager.exportMusicTrack(musicTrack, path);
+                            }
+                        }
+                    }
                 }
             });
         }

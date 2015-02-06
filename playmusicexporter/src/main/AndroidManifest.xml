@@ -32,7 +32,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".TrackListActivity"
+            android:name=".activitys.MusicTrackListActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,12 +41,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TrackDetailActivity"
+            android:name=".activitys.MusicTrackDetailActivity"
             android:label="@string/title_track_detail"
-            android:parentActivityName=".TrackListActivity" >
+            android:parentActivityName=".activitys.MusicTrackListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".TrackListActivity" />
+                android:value=".activitys.MusicTrackListActivity" />
         </activity>
 
         <meta-data android:name="crashhandler.email" android:value="mail@david-schulte.de" />

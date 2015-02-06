@@ -30,10 +30,15 @@
         android:layout_width="@dimen/music_track_list_artwork_size"
         android:layout_height="@dimen/music_track_list_artwork_size"
         android:id="@+id/image_music_track_artwork"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/cd_case" />
+
+    <ImageView
+        android:layout_width="@dimen/music_track_list_artwork_size"
+        android:layout_height="@dimen/music_track_list_artwork_size"
+        android:id="@+id/image_music_track_artwork_overlay"
+        android:scaleType="centerCrop"
+        android:src="@drawable/cd_overlay" />
 
     <RelativeLayout
         android:layout_width="fill_parent"

@@ -244,17 +244,6 @@ public class SuperUserCommand {
     }
 
     /**
-     * Execute the command asynchronously.
-     * Please notice that the commands will only executed one after another.
-     * The command will wait until the su process is free.
-     * @param callback The callback instance
-     * @param activity Set the activity to execute the callback on the UI thread
-     */
-    public void executeAsync(SuperUserCommandCallback callback, Activity activity) {
-
-    }
-
-    /**
      * Execute the command and return whether the command was executed.
      * It will only return false if the app wasn't granted superuser permissions, like {@link #superuserWasSuccessful()}.
      * It will also return true if the command itself returns error outputs. To check this case you should use {@link #commandWasSuccessful()} instead.

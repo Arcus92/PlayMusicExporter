@@ -23,4 +23,8 @@
 
 <resources>
     <dimen name="music_track_list_artwork_size">86dp</dimen>
+    <dimen name="music_track_list_header_artwork_size">128dp</dimen>
+    <dimen name="music_track_artwork_size">86dp</dimen>
+
+    <dimen name="navigation_drawer_width">280dp</dimen>
 </resources>

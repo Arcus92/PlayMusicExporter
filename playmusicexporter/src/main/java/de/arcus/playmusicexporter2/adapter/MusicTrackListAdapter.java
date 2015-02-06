@@ -23,20 +23,17 @@
 package de.arcus.playmusicexporter2.adapter;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.List;
 
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.utils.ImageViewLoader;
-import de.arcus.playmusiclib.items.MusicTrack;
 import de.arcus.playmusiclib.items.MusicTrackList;
 
 /**

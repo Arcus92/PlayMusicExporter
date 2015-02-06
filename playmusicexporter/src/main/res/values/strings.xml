@@ -26,4 +26,14 @@
     <string name="app_name">Play Music Exporter</string>
     <string name="title_track_detail">Track Detail</string>
 
+    <string name="navigation_drawer_open">Open drawer</string>
+    <string name="navigation_drawer_close">Close drawer</string>
+
+    <string name="view_type_selection_title">View</string>
+    <string name="title_view_album">Albums</string>
+    <string name="title_view_artist">Artists</string>
+    <string name="title_view_playlist">Playlists</string>
+    <string name="title_view_rated">Good rated</string>
+
+    <string name="title_settings">Settings</string>
 </resources>

@@ -22,26 +22,14 @@
   -->
 
 <resources>
-    <color name="application_main">#ef6c00</color>
-    <color name="application_main_dark">#e65100</color>
-
-    <color name="text_music_number">#ff000000</color>
-    <color name="text_music_disc_number">#88000000</color>
-    <color name="text_music_title">#ff000000</color>
-    <color name="text_music_description">#88000000</color>
-
-    <color name="text_music_disable_number">#44000000</color>
-    <color name="text_music_disable_disc_number">#22000000</color>
-    <color name="text_music_disable_title">#44000000</color>
-    <color name="text_music_disable_description">#22000000</color>
-
-    <color name="navigation_drawer_background">#f5f5f5</color>
-
-
-    <color name="button_navigation_drawer_normal">#00000000</color>
-    <color name="button_navigation_drawer_selected">#11000000</color>
-    <color name="button_navigation_drawer_hover">#808080</color>
-    <color name="button_navigation_drawer_active">#11000000</color>
-    <color name="button_navigation_drawer_text">#88000000</color>
-    <color name="button_navigation_drawer_text_active">#ef6c00</color>
+    <string name="app_name">Play Music Exporter</string>
+    <string name="navigation_drawer_close">Drawer schließen</string>
+    <string name="view_type_selection_title">Ansicht</string>
+    <string name="title_view_rated">Positiv bewertet</string>
+    <string name="title_view_playlist">Playlists</string>
+    <string name="title_view_artist">Interpreten</string>
+    <string name="title_view_album">Alben</string>
+    <string name="navigation_drawer_open">Drawer öffnen</string>
+    <string name="title_track_detail">Titeldetails</string>
+    <string name="title_settings">Einstellungen</string>
 </resources>

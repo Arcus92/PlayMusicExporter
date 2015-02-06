@@ -24,29 +24,65 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp">
+    android:gravity="center_vertical">
 
-    <TextView
-        android:layout_width="64dp"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="1"
-        android:id="@+id/text_music_track_number"
-        android:gravity="center"
-        android:layout_centerVertical="true"
-        android:textSize="20dp"
-        android:textColor="@color/text_music_number" />
+        android:id="@+id/relative_layout_left"
+        android:layout_centerVertical="true">
+
+        <RelativeLayout
+            android:layout_width="@dimen/music_track_artwork_size"
+            android:layout_height="wrap_content"
+            android:id="@+id/relative_layout_number"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="1"
+                android:id="@+id/text_music_track_number"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:textColor="@color/text_music_number" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="CD 1"
+                android:id="@+id/text_music_track_disc_number"
+                android:layout_below="@+id/text_music_track_number"
+                android:gravity="center" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="@dimen/music_track_artwork_size"
+            android:layout_height="@dimen/music_track_artwork_size"
+            android:id="@+id/relative_layout_artwork"
+            android:layout_marginRight="16dp">
+
+            <ImageView
+                android:layout_width="@dimen/music_track_artwork_size"
+                android:layout_height="@dimen/music_track_artwork_size"
+                android:id="@+id/image_music_track_artwork"
+                android:scaleType="centerCrop" />
+        </RelativeLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/text_music_track_number"
-        android:layout_toEndOf="@+id/text_music_track_number"
-        android:paddingLeft="8dp"
+        android:layout_toEndOf="@+id/relative_layout_left"
         android:paddingRight="8dp"
-        android:id="@+id/relativeLayout">
+        android:id="@+id/relative_layout_title"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/relative_layout_left"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
 
         <TextView
             android:layout_width="wrap_content"

@@ -100,7 +100,7 @@ public abstract class DataSource<T> {
      */
     protected List<T> getItems(String table, String[] columns, String where, String orderBy, String groupBy) {
         // No connection; abort
-        if (!mPlayMusicManager.getDatabase().isOpen()) return null;
+        if (mPlayMusicManager.getDatabase() == null || !mPlayMusicManager.getDatabase().isOpen()) return null;
 
         // Creates the list
         List<T> items = new LinkedList<>();

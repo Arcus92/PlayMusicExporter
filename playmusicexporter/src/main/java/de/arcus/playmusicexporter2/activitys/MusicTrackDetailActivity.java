@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package de.arcus.playmusicexporter2;
+package de.arcus.playmusicexporter2.activitys;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,17 +28,20 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import de.arcus.playmusicexporter2.R;
+import de.arcus.playmusicexporter2.fragments.MusicTrackDetailFragment;
+
 
 /**
  * An activity representing a single Track detail screen. This
  * activity is only used on handset devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a {@link TrackListActivity}.
+ * in a {@link MusicTrackListActivity}.
  * <p/>
  * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link TrackDetailFragment}.
+ * more than a {@link de.arcus.playmusicexporter2.fragments.MusicTrackDetailFragment}.
  */
-public class TrackDetailActivity extends ActionBarActivity {
+public class MusicTrackDetailActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +65,13 @@ public class TrackDetailActivity extends ActionBarActivity {
             // using a fragment transaction.
             Bundle arguments = new Bundle();
 
-            arguments.putLong(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID,
-                    getIntent().getLongExtra(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID, 0));
+            arguments.putLong(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID,
+                    getIntent().getLongExtra(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID, 0));
 
-            arguments.putString(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE,
-                    getIntent().getStringExtra(TrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE));
+            arguments.putString(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE,
+                    getIntent().getStringExtra(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE));
 
-            TrackDetailFragment fragment = new TrackDetailFragment();
+            MusicTrackDetailFragment fragment = new MusicTrackDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.track_detail_container, fragment)
@@ -87,7 +90,7 @@ public class TrackDetailActivity extends ActionBarActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            NavUtils.navigateUpTo(this, new Intent(this, TrackListActivity.class));
+            NavUtils.navigateUpTo(this, new Intent(this, MusicTrackListActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

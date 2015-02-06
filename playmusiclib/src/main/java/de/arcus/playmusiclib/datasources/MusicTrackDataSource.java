@@ -58,6 +58,7 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
     private final static String COLUMN_TRACK_NUMBER = "MUSIC.TrackNumber";
     private final static String COLUMN_DISC_NUMBER = "MUSIC.DiscNumber";
     private final static String COLUMN_DURATION = "MUSIC.Duration";
+    private final static String COLUMN_RATING = "MUSIC.Rating";
     private final static String COLUMN_ALBUM_ID = "MUSIC.AlbumId";
     private final static String COLUMN_CLIENT_ID = "MUSIC.ClientId";
     private final static String COLUMN_SOURCE_ID = "MUSIC.SourceId";
@@ -67,7 +68,7 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
     // All columns
     private final static String[] COLUMNS_ALL = { COLUMN_ID, COLUMN_SIZE,
             COLUMN_LOCALCOPYPATH, COLUMN_LOCALCOPYTYPE, COLUMN_LOCALCOPYSTORAGETYPE, COLUMN_TITLE, COLUMN_ARTIST_ID, COLUMN_ARTIST, COLUMN_ALBUM_ARTIST,
-            COLUMN_ALBUM, COLUMN_GENRE, COLUMN_YEAR, COLUMN_TRACK_NUMBER, COLUMN_DISC_NUMBER, COLUMN_DURATION,
+            COLUMN_ALBUM, COLUMN_GENRE, COLUMN_YEAR, COLUMN_TRACK_NUMBER, COLUMN_DISC_NUMBER, COLUMN_DURATION, COLUMN_RATING,
             COLUMN_ALBUM_ID, COLUMN_CLIENT_ID, COLUMN_SOURCE_ID, COLUMN_ARTWORK_FILE, COLUMN_CPDATA };
 
     /**
@@ -183,6 +184,7 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
         instance.setTrackNumber(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_TRACK_NUMBER)));
         instance.setDiscNumber(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_DISC_NUMBER)));
         instance.setDuration(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_DURATION)));
+        instance.setRating(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_RATING)));
         instance.setAlbumId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ID)));
         instance.setClientId(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_CLIENT_ID)));
         instance.setSourceId(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_SOURCE_ID)));

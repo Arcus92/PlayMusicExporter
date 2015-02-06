@@ -27,5 +27,24 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/application_main</item>
         <item name="colorPrimaryDark">@color/application_main_dark</item>
+        <item name="actionBarStyle">@style/AppTheme.ActionBar</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <!-- Removes the shadow from the action bar -->
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="AppTheme.Button">
+        <item name="android:background">@drawable/button_navigation_drawer</item>
+        <item name="android:buttonStyle">@null</item>
+        <item name="android:textColor">@color/button_navigation_drawer_text</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:gravity">start|center_vertical</item>
     </style>
 </resources>

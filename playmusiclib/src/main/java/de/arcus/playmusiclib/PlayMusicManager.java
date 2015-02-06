@@ -38,6 +38,7 @@ import com.mpatric.mp3agic.ID3v23Tag;
 import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.Mp3File;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -437,6 +438,11 @@ public class PlayMusicManager {
             }
         }
 
+        // Creates the destination directory
+        String directory = new File(dest).getParent();
+        if (directory != null && !FileTools.directoryExists(directory))
+            FileTools.directoryCreate(directory);
+
         // We want to export the ID3 tags
         if (mID3Enable) {
             // Adds the meta data
@@ -536,11 +542,13 @@ public class PlayMusicManager {
             tagID3v2.setPartOfSet("" + musicTrack.getDiscNumber());
             tagID3v2.setYear(musicTrack.getYear());
 
-            try {
-                // Maybe the genre is not supported
-                tagID3v2.setGenreDescription(musicTrack.getGenre());
-            } catch (IllegalArgumentException e) {
-                Logger.getInstance().logWarning("TrackWriteID3", e.getMessage());
+            if (!TextUtils.isEmpty(musicTrack.getGenre())) {
+                try {
+                    // Maybe the genre is not supported
+                    tagID3v2.setGenreDescription(musicTrack.getGenre());
+                } catch (IllegalArgumentException e) {
+                    Logger.getInstance().logWarning("TrackWriteID3", e.getMessage());
+                }
             }
 
             // Add the artwork to the meta data

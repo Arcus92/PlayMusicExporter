@@ -31,7 +31,7 @@ import de.arcus.playmusiclib.PlayMusicManager;
  */
 public class MusicTrack {
     // Variables
-    private long mId, mSize, mTrackNumber, mDiscNumber, mAlbumId, mArtistId, mLocalCopyType, mLocalCopyStorageType, mDuration;
+    private long mId, mSize, mTrackNumber, mDiscNumber, mAlbumId, mArtistId, mLocalCopyType, mLocalCopyStorageType, mDuration, mRating;
     private String mTitle, mArtist, mAlbum, mAlbumArtist, mLocalCopyPath, mGenre, mYear, mClientId, mSourceId, mArtworkFile;
     private byte[] mCpData;
 
@@ -119,6 +119,20 @@ public class MusicTrack {
      */
     public void setDuration(long duration) {
         this.mDuration = duration;
+    }
+
+    /**
+     * @return Gets the rating of the track
+     */
+    public long getRating() {
+        return mRating;
+    }
+
+    /**
+     * @param rating Sets the rating of the track
+     */
+    public void setRating(long rating) {
+        this.mRating = rating;
     }
 
     /**

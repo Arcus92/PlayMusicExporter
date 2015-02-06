@@ -63,6 +63,11 @@ public class AlbumDataSource extends DataSource<Album> {
     private String mSearchKey;
 
     /**
+     * If this is set the data source will only load tracks which are positive rated
+     */
+    private boolean mRatedOnly;
+
+    /**
      * @return Returns whether the data source should only load offline tracks
      */
     public boolean getOfflineOnly() {
@@ -91,6 +96,20 @@ public class AlbumDataSource extends DataSource<Album> {
     }
 
     /**
+     * @return Returns whether the data source should only load positive rated tracks
+     */
+    public boolean getRatedOnly() {
+        return mRatedOnly;
+    }
+
+    /**
+     * @param ratedOnly Sets whether the data source should only load positive rated tracks
+     */
+    public void setRatedOnly(boolean ratedOnly) {
+        mRatedOnly = ratedOnly;
+    }
+
+    /**
      * Creates a new data source
      * @param playMusicManager The manager
      */
@@ -113,6 +132,10 @@ public class AlbumDataSource extends DataSource<Album> {
         // Loads only offline tracks
         if (mOfflineOnly)
             where = combineWhere(where, "LocalCopyPath IS NOT NULL");
+
+        // Loads only positive rated tracks
+        if (mRatedOnly)
+            where = combineWhere(where, "Rating > 0");
 
         // Search only items which contains the key
         if (!TextUtils.isEmpty(mSearchKey)) {
