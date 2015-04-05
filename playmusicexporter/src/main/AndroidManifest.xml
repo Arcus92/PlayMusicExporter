@@ -48,6 +48,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activitys.MusicTrackListActivity" />
         </activity>
+        <activity
+            android:name=".activitys.SettingsActivity"
+            android:label="@string/title_settings"
+            android:parentActivityName=".activitys.MusicTrackListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activitys.MusicTrackListActivity" />
+        </activity>
+        <service android:name="de.arcus.playmusicexporter2.services.ExportService"/>
 
         <meta-data android:name="crashhandler.email" android:value="mail@david-schulte.de" />
         <meta-data android:name="crashhandler.supporturl" android:value="http://www.david-schulte.de/" />

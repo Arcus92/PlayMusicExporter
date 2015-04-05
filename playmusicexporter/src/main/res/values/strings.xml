@@ -36,4 +36,47 @@
     <string name="title_view_rated">Good rated</string>
 
     <string name="title_settings">Settings</string>
+
+    <string name="notification_export_working_summery">Export track %1$d of %2$d&#8230;</string>
+    <string name="notification_export_working_single_summery">Export track&#8230;</string>
+
+    <string name="notification_export_finished_title">Export finished!</string>
+    <string name="notification_export_finished_summery">%1$d tracks were exported successfully!</string>
+    <string name="notification_export_finished_single_summery">Track was exported successfully!</string>
+
+    <string name="settings_category_export">Export settings</string>
+    <string name="settings_category_extra">Extras</string>
+    <string name="settings_category_about_me">About me</string>
+    <string name="settings_category_thanks">Thanks to</string>
+
+    <string name="settings_export_path">Location</string>
+    <string name="settings_export_structure_albums">Subdirectory structure for albums</string>
+    <string name="settings_export_structure_groups">Subdirectory structure for playlists</string>
+
+    <string name="settings_export_id3">MP3 metadata</string>
+    <string name="settings_export_id3_with_cover">Metadata with cover</string>
+    <string name="settings_export_id3_without_cover">Metadata without cover</string>
+    <string name="settings_export_id3_disabled">No metadata</string>
+
+    <string-array name="settings_export_id3_value_names">
+        <item>@string/settings_export_id3_with_cover</item>
+        <item>@string/settings_export_id3_without_cover</item>
+        <item>@string/settings_export_id3_disabled</item>
+    </string-array>
+    <string-array name="settings_export_id3_values">
+        <item>id3_with_cover</item>
+        <item>id3_without_cover</item>
+        <item>id3_disabled</item>
+    </string-array>
+
+    <string name="settings_open_homepage_title" translatable="false">David-Schulte.de</string>
+    <string name="settings_open_homepage_url" translatable="false"><![CDATA[http://www.david-schulte.de/]]></string>
+
+    <string name="settings_mp3agic_title" translatable="false">Mp3agic ID3 Libary</string>
+    <string name="settings_mp3agic_summery" translatable="false">Michael Patricios &#169; 2006&#8211;2013</string>
+    <string name="settings_mp3agic_url" translatable="false"><![CDATA[https://github.com/mpatric/mp3agic]]></string>
+
+    <string name="settings_donation_title">Support me</string>
+    <string name="settings_donation_summery">Donate to me via PayPal</string>
+    <string name="settings_donation_url" translatable="false"><![CDATA[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A2VD24Z5E32RU]]></string>
 </resources>

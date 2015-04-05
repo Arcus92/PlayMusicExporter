@@ -140,9 +140,8 @@ public class MusicTrackListActivity extends ActionBarActivity
             }
         }
 
-        loadList(NavigationDrawerFragment.ViewType.Album);
-
-
+        // Loads the list
+        loadList(mNavigationDrawerFragment.getViewType());
     }
 
     /**

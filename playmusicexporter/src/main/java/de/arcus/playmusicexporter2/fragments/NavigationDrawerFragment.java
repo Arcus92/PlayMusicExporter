@@ -23,11 +23,10 @@
 package de.arcus.playmusicexporter2.fragments;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -43,7 +42,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 
+import de.arcus.framework.settings.AppSettings;
 import de.arcus.playmusicexporter2.R;
+import de.arcus.playmusicexporter2.activitys.SettingsActivity;
+import de.arcus.playmusicexporter2.settings.PlayMusicExporterSettings;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -51,18 +53,6 @@ import de.arcus.playmusicexporter2.R;
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
 public class NavigationDrawerFragment extends Fragment {
-
-    /**
-     * Remember the position of the selected item.
-     */
-    private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-
-    /**
-     * Per the design guidelines, you should show the drawer on launch until the user manually
-     * expands it. This shared preference tracks this.
-     */
-    private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
-
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
@@ -76,8 +66,6 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private View mFragmentContainerView;
 
-    private int mCurrentSelectedPosition = 0;
-    private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
     private Button mButtonTypeAlbum;
@@ -109,10 +97,15 @@ public class NavigationDrawerFragment extends Fragment {
         setButtonActive(mButtonTypePlaylist, viewType == ViewType.Playlist);
         setButtonActive(mButtonTypeRated, viewType == ViewType.Rated);
 
+        // Callback the parent activity
         if (viewType != mViewType)
             if (mCallbacks != null) mCallbacks.onViewTypeChanged(viewType);
 
         mViewType = viewType;
+
+        // Save the selection
+        PlayMusicExporterSettings appSettings = new PlayMusicExporterSettings(getActivity());
+        appSettings.setEnum(PlayMusicExporterSettings.PREF_DRAWER_SELECTED_TYPE, viewType);
 
         // Close the drawer
         if (mDrawerLayout != null)
@@ -126,15 +119,11 @@ public class NavigationDrawerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Read in the flag indicating whether or not the user has demonstrated awareness of the
-        // drawer. See PREF_USER_LEARNED_DRAWER for details.
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
+        // Load the settings
+        PlayMusicExporterSettings appSettings = new PlayMusicExporterSettings(getActivity());
+        mUserLearnedDrawer = appSettings.getBoolean(PlayMusicExporterSettings.PREF_DRAWER_LEARNED, false);
+        mViewType = appSettings.getEnum(PlayMusicExporterSettings.PREF_DRAWER_SELECTED_TYPE, ViewType.Album);
 
-        if (savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-            mFromSavedInstanceState = true;
-        }
 
     }
 
@@ -160,7 +149,7 @@ public class NavigationDrawerFragment extends Fragment {
         mButtonSettings = (Button)view.findViewById(R.id.button_setting);
 
         // Set the default
-        setViewType(ViewType.Album);
+        setViewType(mViewType);
 
         // Click on album
         mButtonTypeAlbum.setOnClickListener(new View.OnClickListener() {
@@ -191,6 +180,18 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 setViewType(ViewType.Rated);
+            }
+        });
+
+        // Click on settings
+        mButtonSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentSettings = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intentSettings);
+
+                // Close the drawer
+                mDrawerLayout.closeDrawers();
             }
         });
 
@@ -284,9 +285,8 @@ public class NavigationDrawerFragment extends Fragment {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
                     // the navigation drawer automatically in the future.
                     mUserLearnedDrawer = true;
-                    SharedPreferences sp = PreferenceManager
-                            .getDefaultSharedPreferences(getActivity());
-                    sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).commit();
+                    PlayMusicExporterSettings appSettings = new PlayMusicExporterSettings(getActivity());
+                    appSettings.setBoolean(PlayMusicExporterSettings.PREF_DRAWER_LEARNED, mUserLearnedDrawer);
                 }
 
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
@@ -295,7 +295,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
         // per the navigation drawer design guidelines.
-        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
+        if (!mUserLearnedDrawer) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
 
@@ -324,12 +324,6 @@ public class NavigationDrawerFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mCallbacks = null;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
 
     @Override

@@ -22,6 +22,7 @@
 
 package de.arcus.playmusicexporter2.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,7 @@ import android.widget.TextView;
 
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.adapter.MusicTrackAdapter;
+import de.arcus.playmusicexporter2.services.ExportService;
 import de.arcus.playmusicexporter2.utils.ImageViewLoader;
 import de.arcus.playmusicexporter2.utils.MusicPathBuilder;
 import de.arcus.playmusiclib.PlayMusicManager;
@@ -149,11 +151,17 @@ public class MusicTrackDetailFragment extends Fragment {
                             // Path to the public music folder
                             path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + path;
 
-                            PlayMusicManager playMusicManager = PlayMusicManager.getInstance();
 
-                            if (playMusicManager != null) {
-                                playMusicManager.exportMusicTrack(musicTrack, path);
-                            }
+                            Intent intent = new Intent(MusicTrackDetailFragment.this.getActivity(), ExportService.class);
+
+                            // Puts the export parameter
+                            intent.putExtra(ExportService.ARG_EXPORT_TRACK_ID, musicTrack.getId());
+                            intent.putExtra(ExportService.ARG_EXPORT_PATH, path);
+
+                            // Starts the service
+                            MusicTrackDetailFragment.this.getActivity().startService(intent);
+                            //playMusicManager.exportMusicTrack(musicTrack, path);
+
                         }
                     }
                 }

@@ -32,7 +32,7 @@ public class AppSettings {
     /**
      * The default settings file
      */
-    private static final String DEFAULT_SETTINGS_FILENAME = "app_settings";
+    public static final String DEFAULT_SETTINGS_FILENAME = "app_settings";
 
     /**
      * The preferences
@@ -106,6 +106,26 @@ public class AppSettings {
     }
 
     /**
+     * Gets an enum value from the settings
+     * @param key Key of the setting
+     * @param defValue Default value which is returned if the key doesn't exists
+     * @param <E> The enum type
+     * @return Value
+     */
+    public <E extends Enum<E>> E getEnum(String key, E defValue) {
+        String value = mSharedPreferences.getString(key, defValue.name());
+
+        // Checks all enum values
+        for (E constant : ((Class<E>)defValue.getClass()).getEnumConstants()) {
+            if (value.equals(constant.name()))
+                return constant;
+        }
+
+        // Return default
+        return defValue;
+    }
+
+    /**
      * Returns whether the settings contains a specific key
      * @param key Key of the setting
      * @return Returns whether the settings contains a specific key
@@ -126,7 +146,7 @@ public class AppSettings {
         editor.remove(key);
 
         // Commits the change
-        editor.apply();
+        editor.commit();
     }
 
     /**
@@ -141,7 +161,7 @@ public class AppSettings {
         editor.putString(key, value);
 
         // Commits the change
-        editor.apply();
+        editor.commit();
     }
 
     /**
@@ -156,7 +176,7 @@ public class AppSettings {
         editor.putBoolean(key, value);
 
         // Commits the change
-        editor.apply();
+        editor.commit();
     }
 
     /**
@@ -171,7 +191,7 @@ public class AppSettings {
         editor.putFloat(key, value);
 
         // Commits the change
-        editor.apply();
+        editor.commit();
     }
 
     /**
@@ -186,7 +206,7 @@ public class AppSettings {
         editor.putInt(key, value);
 
         // Commits the change
-        editor.apply();
+        editor.commit();
     }
 
     /**
@@ -201,9 +221,22 @@ public class AppSettings {
         editor.putLong(key, value);
 
         // Commits the change
-        editor.apply();
+        editor.commit();
     }
 
 
+    /**
+     * Saves an enum value to the settings
+     * @param key Key of the setting
+     * @param value Value
+     */
+    public <E extends Enum<E>> void setEnum(String key, E value) {
+        // Opens the editor
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
 
+        editor.putString(key, value.name());
+
+        // Commits the change
+        editor.commit();
+    }
 }

@@ -26,6 +26,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/application_main</item>
+        <item name="colorAccent">@color/application_main</item>
         <item name="colorPrimaryDark">@color/application_main_dark</item>
         <item name="actionBarStyle">@style/AppTheme.ActionBar</item>
     </style>

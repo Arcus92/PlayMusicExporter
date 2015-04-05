@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -48,7 +47,8 @@ public class MusicTrackAdapter extends ArrayAdapter<MusicTrack> {
     private Context mContext;
 
     /**
-     * If this is set the music track shows it artwork instead of the track number
+     * If this is set the music track shows it artwork instead of the track number.
+     * Used for playlists.
      */
     private boolean mShowArtworks = true;
 
@@ -92,7 +92,6 @@ public class MusicTrackAdapter extends ArrayAdapter<MusicTrack> {
             view = inflater.inflate(R.layout.adapter_music_track, parent, false);
         }
 
-
         TextView textView;
 
         // Sets the track number
@@ -106,6 +105,7 @@ public class MusicTrackAdapter extends ArrayAdapter<MusicTrack> {
             textView.setText("" + trackPosition);
         else
             textView.setText("");
+
         textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_number : R.color.text_music_disable_number));
 
         // Sets the disc number
@@ -116,6 +116,7 @@ public class MusicTrackAdapter extends ArrayAdapter<MusicTrack> {
             textView.setVisibility(View.VISIBLE);
         else
             textView.setVisibility(View.GONE);
+
         textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_disc_number : R.color.text_music_disable_disc_number));
 
 
@@ -127,6 +128,7 @@ public class MusicTrackAdapter extends ArrayAdapter<MusicTrack> {
             view.findViewById(R.id.relative_layout_artwork).setVisibility(View.GONE);
         }
 
+        // Shows the artwork
         if (mShowArtworks) {
             ImageView imageView = (ImageView) view.findViewById(R.id.image_music_track_artwork);
             imageView.setImageResource(R.drawable.cd_case);

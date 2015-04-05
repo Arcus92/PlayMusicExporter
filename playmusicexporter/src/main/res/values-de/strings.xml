@@ -32,4 +32,22 @@
     <string name="navigation_drawer_open">Drawer öffnen</string>
     <string name="title_track_detail">Titeldetails</string>
     <string name="title_settings">Einstellungen</string>
+    <string name="settings_category_about_me">Über mich</string>
+    <string name="settings_category_export">Export-Einstellungen</string>
+    <string name="settings_category_extra">Extras</string>
+    <string name="settings_category_thanks">Dank an</string>
+    <string name="settings_donation_summery">Spende über PayPal</string>
+    <string name="settings_donation_title">Unterstützt mich</string>
+    <string name="settings_export_path">Speicherort</string>
+    <string name="settings_export_structure_albums">Verzeichnisbaum für Alben</string>
+    <string name="settings_export_structure_groups">Verzeichnisbaum für Playlists</string>
+    <string name="settings_export_id3">MP3 Metadaten</string>
+    <string name="settings_export_id3_disabled">Ohne Metadaten</string>
+    <string name="settings_export_id3_with_cover">Metadaten mit Bild</string>
+    <string name="settings_export_id3_without_cover">Metadaten ohne Bild</string>
+    <string name="notification_export_finished_single_summery">Der Titel wurde erfolgreich exportiert!</string>
+    <string name="notification_export_working_single_summery">Titel wird exportiert&#8230;</string>
+    <string name="notification_export_working_summery">Titel %1$d von %2$d wird exportiert&#8230;</string>
+    <string name="notification_export_finished_summery">%1$d Titel wurden erfolgreich exportiert!</string>
+    <string name="notification_export_finished_title">Export abgeschlossen!</string>
 </resources>

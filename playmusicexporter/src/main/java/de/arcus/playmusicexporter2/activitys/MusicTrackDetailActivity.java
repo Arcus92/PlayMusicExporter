@@ -28,6 +28,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import de.arcus.framework.crashhandler.CrashHandler;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.fragments.MusicTrackDetailFragment;
 
@@ -47,6 +48,9 @@ public class MusicTrackDetailActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_detail);
+
+        // Adds the crash handler to this class
+        CrashHandler.addCrashHandler(this);
 
         // Show the Up button in the action bar.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

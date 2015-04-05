@@ -109,6 +109,7 @@ public class MusicTrackListFragment extends ListFragment {
         // Set the list in the adapter
         mMusicTrackListAdapter.setList(newList);
         getListView().invalidateViews();
+        getListView().setSelection(0);
     }
 
 
