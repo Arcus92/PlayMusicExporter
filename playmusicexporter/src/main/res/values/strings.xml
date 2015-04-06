@@ -44,6 +44,8 @@
     <string name="notification_export_finished_summery">%1$d tracks were exported successfully!</string>
     <string name="notification_export_finished_single_summery">Track was exported successfully!</string>
 
+    <string name="search">Search</string>
+
     <string name="settings_category_export">Export settings</string>
     <string name="settings_category_extra">Extras</string>
     <string name="settings_category_about_me">About me</string>

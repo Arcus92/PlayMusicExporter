@@ -41,8 +41,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-
-import de.arcus.framework.settings.AppSettings;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.activitys.SettingsActivity;
 import de.arcus.playmusicexporter2.settings.PlayMusicExporterSettings;
@@ -207,9 +205,6 @@ public class NavigationDrawerFragment extends Fragment {
      * @param active Active
      */
     public void setButtonActive(Button button, boolean active) {
-        // Gets the button
-        //Button button = (Button)parentView.findViewById(resID);
-
         int colorText;
         int colorBackground;
 

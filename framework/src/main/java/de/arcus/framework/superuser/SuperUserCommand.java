@@ -22,8 +22,6 @@
 
 package de.arcus.framework.superuser;
 
-import android.app.Activity;
-
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.io.BufferedReader;

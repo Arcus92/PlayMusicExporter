@@ -24,9 +24,14 @@ package de.arcus.playmusicexporter2.activitys;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import de.arcus.framework.logger.Logger;
 import de.arcus.framework.crashhandler.CrashHandler;
@@ -59,11 +64,13 @@ import de.arcus.playmusiclib.items.MusicTrackList;
  */
 public class MusicTrackListActivity extends ActionBarActivity
         implements MusicTrackListFragment.Callbacks
-        , NavigationDrawerFragment.NavigationDrawerCallbacks {
+        , NavigationDrawerFragment.NavigationDrawerCallbacks,
+        SearchView.OnQueryTextListener {
 
     @Override
     public void onViewTypeChanged(NavigationDrawerFragment.ViewType viewType) {
-        loadList(viewType);
+        mViewType = viewType;
+        loadList();
     }
 
     /**
@@ -75,6 +82,12 @@ public class MusicTrackListActivity extends ActionBarActivity
     private PlayMusicManager mPlayMusicManager;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
+
+    private String mSearchKeyword;
+
+    private NavigationDrawerFragment.ViewType mViewType;
+
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,13 +154,14 @@ public class MusicTrackListActivity extends ActionBarActivity
         }
 
         // Loads the list
-        loadList(mNavigationDrawerFragment.getViewType());
+        mViewType = mNavigationDrawerFragment.getViewType();
+        loadList();
     }
 
     /**
      * Loads the music list with the current view type
      */
-    private void loadList(NavigationDrawerFragment.ViewType viewType) {
+    private void loadList() {
         // Manager is not loaded
         if (mPlayMusicManager == null) return;
 
@@ -155,23 +169,26 @@ public class MusicTrackListActivity extends ActionBarActivity
         MusicTrackListFragment musicTrackListFragment = (MusicTrackListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.track_list);
 
-        switch(viewType) {
+        switch(mViewType) {
             case Album:
                 // Load all albums to the list
                 AlbumDataSource dataSourceAlbum = new AlbumDataSource(mPlayMusicManager);
                 dataSourceAlbum.setOfflineOnly(true);
+                dataSourceAlbum.setSerchKey(mSearchKeyword);
                 musicTrackListFragment.setMusicTrackList(dataSourceAlbum.getAll());
                 break;
             case Artist:
                 // Load all artists to the list
                 ArtistDataSource dataSourceArtist = new ArtistDataSource(mPlayMusicManager);
                 dataSourceArtist.setOfflineOnly(true);
+                dataSourceArtist.setSerchKey(mSearchKeyword);
                 musicTrackListFragment.setMusicTrackList(dataSourceArtist.getAll());
                 break;
             case Playlist:
                 // Load all playlists to the list
                 PlaylistDataSource dataSourcePlaylist = new PlaylistDataSource(mPlayMusicManager);
                 dataSourcePlaylist.setOfflineOnly(true);
+                dataSourcePlaylist.setSerchKey(mSearchKeyword);
                 musicTrackListFragment.setMusicTrackList(dataSourcePlaylist.getAll());
                 break;
             case Rated:
@@ -179,6 +196,7 @@ public class MusicTrackListActivity extends ActionBarActivity
                 AlbumDataSource dataSourceRatedAlbum = new AlbumDataSource(mPlayMusicManager);
                 dataSourceRatedAlbum.setOfflineOnly(true);
                 dataSourceRatedAlbum.setRatedOnly(true);
+                dataSourceRatedAlbum.setSerchKey(mSearchKeyword);
                 musicTrackListFragment.setMusicTrackList(dataSourceRatedAlbum.getAll());
                 break;
         }
@@ -211,5 +229,37 @@ public class MusicTrackListActivity extends ActionBarActivity
             detailIntent.putExtra(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE, musicTrackList.getMusicTrackListType());
             startActivity(detailIntent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.music_track_list, menu);
+
+        // Finds the search item and create the search view
+        MenuItem itemSearch = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView)MenuItemCompat.getActionView(itemSearch);
+
+        if (mSearchView != null) {
+            // Sets the search listener
+            mSearchView.setOnQueryTextListener(this);
+            mSearchView.setIconifiedByDefault(false);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String keyword) {
+        mSearchView.clearFocus();
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String keyword) {
+        mSearchKeyword = keyword;
+        loadList();
+
+        return false;
     }
 }
