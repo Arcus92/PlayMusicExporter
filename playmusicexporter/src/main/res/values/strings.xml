@@ -26,6 +26,10 @@
     <string name="app_name">Play Music Exporter</string>
     <string name="title_track_detail">Track Detail</string>
 
+    <string name="action_export">Export</string>
+    <string name="action_play">Play</string>
+    <string name="action_share">Share</string>
+
     <string name="navigation_drawer_open">Open drawer</string>
     <string name="navigation_drawer_close">Close drawer</string>
 
@@ -45,6 +49,7 @@
     <string name="notification_export_finished_single_summery">Track was exported successfully!</string>
 
     <string name="search">Search</string>
+    <string name="button_export_group">Export all tracks</string>
 
     <string name="settings_category_export">Export settings</string>
     <string name="settings_category_extra">Extras</string>

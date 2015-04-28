@@ -29,6 +29,7 @@
         <item name="colorAccent">@color/application_main</item>
         <item name="colorPrimaryDark">@color/application_main_dark</item>
         <item name="actionBarStyle">@style/AppTheme.ActionBar</item>
+        <item name="actionModeBackground">@color/application_main</item>
     </style>
 
     <style name="AppTheme.ActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">

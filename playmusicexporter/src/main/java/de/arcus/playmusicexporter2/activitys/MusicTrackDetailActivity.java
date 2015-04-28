@@ -31,6 +31,8 @@ import android.view.MenuItem;
 import de.arcus.framework.crashhandler.CrashHandler;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.fragments.MusicTrackDetailFragment;
+import de.arcus.playmusiclib.PlayMusicManager;
+import de.arcus.playmusiclib.items.MusicTrackList;
 
 
 /**
@@ -69,12 +71,25 @@ public class MusicTrackDetailActivity extends ActionBarActivity {
             // using a fragment transaction.
             Bundle arguments = new Bundle();
 
-            arguments.putLong(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID,
-                    getIntent().getLongExtra(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID, 0));
+            // Loads the track list
+            long id = getIntent().getLongExtra(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID, 0);
+            String type = getIntent().getStringExtra(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE);
 
-            arguments.putString(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE,
-                    getIntent().getStringExtra(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE));
 
+            PlayMusicManager playMusicManager = PlayMusicManager.getInstance();
+            if (playMusicManager != null) {
+                MusicTrackList musicTrackList = MusicTrackList.deserialize(playMusicManager, id, type);
+
+                // Sets the title
+                setTitle(musicTrackList.getTitle());
+            }
+
+            // Puts the track list information to the fragment
+            arguments.putLong(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_ID, id);
+            arguments.putString(MusicTrackDetailFragment.ARG_MUSIC_TRACK_LIST_TYPE, type);
+
+
+            // Loads the fragment
             MusicTrackDetailFragment fragment = new MusicTrackDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

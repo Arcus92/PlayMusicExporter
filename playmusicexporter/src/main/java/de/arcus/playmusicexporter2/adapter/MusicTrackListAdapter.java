@@ -90,17 +90,11 @@ public class MusicTrackListAdapter extends ArrayAdapter<MusicTrackList> {
         // Final for the callback
         imageView = (ImageView)view.findViewById(R.id.image_music_track_artwork);
 
-        // Default icon
-        imageView.setImageResource(R.drawable.cd_case);
-
         // Gets the artwork
         String artworkPath = musicTrackList.getArtworkPath();
 
-        if (artworkPath != null) {
-            ImageViewLoader.loadImage(imageView, artworkPath);
-        }
-
-
+        // Loads the artwork
+        ImageViewLoader.loadImage(imageView, artworkPath, R.drawable.cd_case);
 
         return view;
     }

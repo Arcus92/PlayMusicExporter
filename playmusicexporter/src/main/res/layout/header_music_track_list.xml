@@ -75,5 +75,6 @@
             android:layout_alignRight="@+id/text_music_track_list_title"
             android:layout_alignEnd="@+id/text_music_track_list_title"
             android:maxLines="2" />
+
     </RelativeLayout>
 </RelativeLayout>

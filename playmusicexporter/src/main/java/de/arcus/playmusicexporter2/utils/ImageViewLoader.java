@@ -24,6 +24,7 @@ package de.arcus.playmusicexporter2.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
@@ -65,19 +66,25 @@ public class ImageViewLoader {
     private String mNewImagePath;
 
     /**
+     * The default image of the image view
+     */
+    private int mDefaultImage;
+
+    /**
      * @return Gets the path of the image we want to load
      */
     public String getImagePath() {
         return mImagePath;
     }
 
-    public static void loadImage(ImageView imageView, String path) {
+    public static void loadImage(ImageView imageView, String path, int defaultImage) {
         // Checks for an old artwork loader on this image view
         ImageViewLoader imageViewLoader = (ImageViewLoader)imageView.getTag();
 
-        if (imageViewLoader == null) {
-            imageViewLoader = new ImageViewLoader(imageView, path);
+        if (path == null) path = "";
 
+        if (imageViewLoader == null) {
+            imageViewLoader = new ImageViewLoader(imageView, path, defaultImage);
 
             // Save the loader in the tag
             // If someone wants to load another artwork to this view
@@ -95,68 +102,85 @@ public class ImageViewLoader {
      * @param imageView The image view we want to set
      * @param path The path to load
      */
-    private ImageViewLoader(ImageView imageView, String path) {
+    private ImageViewLoader(ImageView imageView, String path, int defaultImage) {
         mImageView = new WeakReference<>(imageView);
         mImagePath = path;
+        mDefaultImage = defaultImage;
     }
 
     /**
      * Loads the image asynchronously
      */
     private void loadImage() {
-        mIsLoading = true;
+        // Show the default icon while loading
+        final ImageView imageViewDefault = mImageView.get();
+        if (imageViewDefault != null) {
+            // Sets the bitmap in the UI thread
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    // Default icon
+                    imageViewDefault.setImageResource(mDefaultImage);
+                }
+            };
+            imageViewDefault.post(runnable);
+        }
 
-        // Be careful! Don't scroll to fast! This will spam the superuser to do list!
-        SuperUserTools.fileReadToByteArrayAsync(mImagePath, new SuperUserCommandCallback() {
-            @Override
-            public void onFinished(SuperUserCommand command) {
+        if (!TextUtils.isEmpty(mImagePath)) {
+            mIsLoading = true;
 
-                final ImageView imageView = mImageView.get();
+            // Be careful! Don't scroll to fast! This will spam the superuser to do list!
+            SuperUserTools.fileReadToByteArrayAsync(mImagePath, new SuperUserCommandCallback() {
+                @Override
+                public void onFinished(SuperUserCommand command) {
 
-                if (imageView != null) {
+                    final ImageView imageView = mImageView.get();
 
-                    // Success
-                    if (command.commandWasSuccessful()) {
-                        // Binary data
-                        byte[] bitmapData = command.getStandardOutputBinary();
+                    if (imageView != null) {
 
-                        // Loads the bitmap
-                        try {
-                            // We already want to load a new image, so we don't need to set this
-                            if (mNewImagePath == null) {
-                                // Loads the bitmap
-                                final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+                        // Success
+                        if (command.commandWasSuccessful()) {
+                            // Binary data
+                            byte[] bitmapData = command.getStandardOutputBinary();
 
-                                // The the bitmap in the UI thread
-                                Runnable runnable = new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        imageView.setImageBitmap(bitmap);
-                                    }
-                                };
-                                imageView.post(runnable);
+                            // Loads the bitmap
+                            try {
+                                // We already want to load a new image, so we don't need to set this
+                                if (mNewImagePath == null) {
+                                    // Loads the bitmap
+                                    final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+
+                                    // Sets the bitmap in the UI thread
+                                    Runnable runnable = new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            imageView.setImageBitmap(bitmap);
+                                        }
+                                    };
+                                    imageView.post(runnable);
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } else {
+                            // File not found
+                            imageView.setImageResource(R.drawable.cd_case);
                         }
-                    } else {
-                        // File not found
-                        imageView.setImageResource(R.drawable.cd_case);
+                    }
+
+                    mIsLoading = false;
+
+                    // Loads the next image
+                    if (mNewImagePath != null) {
+                        mImagePath = mNewImagePath;
+                        mNewImagePath = null;
+
+                        loadImage();
                     }
                 }
-
-                mIsLoading = false;
-
-                // Loads the next image
-                if (mNewImagePath != null) {
-                    mImagePath = mNewImagePath;
-                    mNewImagePath = null;
-
-                    loadImage();
-                }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -165,7 +189,9 @@ public class ImageViewLoader {
      */
     private void updateImage(String path) {
         // The same artwork; nothing to do
-        if (path.equals(mImagePath)) return;
+        if (path.equals(mImagePath)) {
+            return;
+        }
 
         if (mIsLoading) {
             mNewImagePath = path;

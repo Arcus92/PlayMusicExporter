@@ -51,4 +51,8 @@
     <string name="notification_export_finished_summery">%1$d Titel wurden erfolgreich exportiert!</string>
     <string name="notification_export_finished_title">Export abgeschlossen!</string>
     <string name="search">Suchen</string>
+    <string name="button_export_group">Alle Titel exportieren</string>
+    <string name="action_export">Exportieren</string>
+    <string name="action_play">Wiedergeben</string>
+    <string name="action_share">Teilen</string>
 </resources>

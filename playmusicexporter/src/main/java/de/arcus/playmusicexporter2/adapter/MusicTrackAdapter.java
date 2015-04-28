@@ -34,6 +34,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.arcus.playmusicexporter2.R;
+import de.arcus.playmusicexporter2.items.SelectedTrack;
 import de.arcus.playmusicexporter2.utils.ImageViewLoader;
 import de.arcus.playmusiclib.items.MusicTrack;
 
@@ -131,10 +132,10 @@ public class MusicTrackAdapter extends ArrayAdapter<MusicTrack> {
         // Shows the artwork
         if (mShowArtworks) {
             ImageView imageView = (ImageView) view.findViewById(R.id.image_music_track_artwork);
-            imageView.setImageResource(R.drawable.cd_case);
+
             String artworkPath = musicTrack.getArtworkPath();
-            if (artworkPath != null)
-                ImageViewLoader.loadImage(imageView, artworkPath);
+
+            ImageViewLoader.loadImage(imageView, artworkPath, R.drawable.cd_case);
         }
 
         // Sets the title
@@ -149,6 +150,9 @@ public class MusicTrackAdapter extends ArrayAdapter<MusicTrack> {
 
         // Track is available?
         view.setEnabled(musicTrack.isOfflineAvailable());
+
+        // Selected state
+        SelectedTrack.getSelectionList().initView(new SelectedTrack(musicTrack.getId()), view);
 
         return view;
     }

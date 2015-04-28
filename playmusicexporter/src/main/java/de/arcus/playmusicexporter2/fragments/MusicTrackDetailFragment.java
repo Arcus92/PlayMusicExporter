@@ -22,10 +22,10 @@
 
 package de.arcus.playmusicexporter2.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +35,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import de.arcus.playmusicexporter2.R;
+import de.arcus.playmusicexporter2.actionmode.ActionModeTitle;
 import de.arcus.playmusicexporter2.adapter.MusicTrackAdapter;
-import de.arcus.playmusicexporter2.services.ExportService;
+import de.arcus.playmusicexporter2.items.SelectedTrack;
 import de.arcus.playmusicexporter2.utils.ImageViewLoader;
 import de.arcus.playmusicexporter2.utils.MusicPathBuilder;
 import de.arcus.playmusiclib.PlayMusicManager;
@@ -87,6 +88,9 @@ public class MusicTrackDetailFragment extends Fragment {
                 mMusicTrackList = MusicTrackList.deserialize(playMusicManager, id, type);
             }
         }
+
+        // Setup the selection list for this activity
+        SelectedTrack.getSelectionList().setupActionMode((ActionBarActivity)getActivity(), new ActionModeTitle(getActivity()));
     }
 
     @Override
@@ -109,10 +113,11 @@ public class MusicTrackDetailFragment extends Fragment {
 
             // Sets the artwork image
             imageView = (ImageView)headerView.findViewById(R.id.image_music_track_artwork);
-            imageView.setImageResource(R.drawable.cd_case);
+
             String artworkPath = mMusicTrackList.getArtworkPath();
-            if (artworkPath != null)
-                ImageViewLoader.loadImage(imageView, artworkPath);
+
+            // Loads the artwork
+            ImageViewLoader.loadImage(imageView, artworkPath, R.drawable.cd_case);
 
             // Sets the title
             textView = (TextView)headerView.findViewById(R.id.text_music_track_list_title);
@@ -132,6 +137,7 @@ public class MusicTrackDetailFragment extends Fragment {
             listView.setItemsCanFocus(false);
 
 
+            // Click on one list item
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -145,23 +151,15 @@ public class MusicTrackDetailFragment extends Fragment {
 
                         // Track is available
                         if (musicTrack.isOfflineAvailable()) {
+
                             // Build the path
                             String path = MusicPathBuilder.Build(musicTrack, "{album-artist}/{album}/{disc=CD $}/{no=$$.} {title}.mp3");
 
                             // Path to the public music folder
                             path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + path;
 
-
-                            Intent intent = new Intent(MusicTrackDetailFragment.this.getActivity(), ExportService.class);
-
-                            // Puts the export parameter
-                            intent.putExtra(ExportService.ARG_EXPORT_TRACK_ID, musicTrack.getId());
-                            intent.putExtra(ExportService.ARG_EXPORT_PATH, path);
-
-                            // Starts the service
-                            MusicTrackDetailFragment.this.getActivity().startService(intent);
-                            //playMusicManager.exportMusicTrack(musicTrack, path);
-
+                            // Toggles the music track
+                            SelectedTrack.getSelectionList().toggle(new SelectedTrack(musicTrack.getId(), path), view);
                         }
                     }
                 }
