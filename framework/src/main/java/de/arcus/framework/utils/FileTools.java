@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.arcus.framework.logger.Logger;
@@ -253,7 +254,7 @@ public class FileTools {
         List<String> storages = new ArrayList<>();
 
         // Hard coded mount points
-        final String[] mountPointBlacklist = new String[] { "/mnt/tmp", "/mnt/factory", "/mnt/obb", "/mnt/asec", "/mnt/secure", "/mnt/media_rw", "/mnt/shell" };
+        final String[] mountPointBlacklist = new String[] { "/mnt/tmp", "/mnt/factory", "/mnt/obb", "/mnt/asec", "/mnt/secure", "/mnt/media_rw", "/mnt/shell", "/storage/emulated" };
         final String[] mountPointDirectories = new String[] { "/mnt", "/storage" };
         final String[] mountPoints = new String[] { "/sdcard", "/external_sd" };
 
@@ -268,7 +269,7 @@ public class FileTools {
                     for (File subDir : files) {
                         subDir = getRootCanonicalFile(subDir);
                         // Is directory
-                        if (subDir.isDirectory()) {
+                        if (subDir.isDirectory() && subDir.canRead()) {
                             // Add mount point to list
                             if (!storages.contains(subDir.getAbsolutePath()))
                                 storages.add(subDir.getAbsolutePath());
@@ -278,10 +279,10 @@ public class FileTools {
             }
         }
 
-        // Adds all direct moint points
-        for(String mointPoint : mountPoints) {
-            File file = getRootCanonicalFile(mointPoint);
-            if (file.isDirectory()) {
+        // Adds all direct mount points
+        for(String mountPoint : mountPoints) {
+            File file = getRootCanonicalFile(mountPoint);
+            if (file.isDirectory() && file.canRead()) {
                 if (!storages.contains(file.getAbsolutePath()))
                     storages.add(file.getAbsolutePath());
             }
@@ -291,6 +292,9 @@ public class FileTools {
         for (String blacklistPath : mountPointBlacklist) {
             storages.remove(blacklistPath);
         }
+
+        // Sort the list
+        Collections.sort(storages);
 
         // Returns the array
         return storages.toArray(new String[storages.size()]);

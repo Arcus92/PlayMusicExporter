@@ -33,7 +33,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activitys.MusicTrackListActivity"
+            android:name=".activities.MusicTrackListActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,20 +42,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activitys.MusicTrackDetailActivity"
+            android:name=".activities.MusicTrackDetailActivity"
             android:label="@string/title_track_detail"
-            android:parentActivityName=".activitys.MusicTrackListActivity" >
+            android:parentActivityName=".activities.MusicTrackListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activitys.MusicTrackListActivity" />
+                android:value=".activities.MusicTrackListActivity" />
         </activity>
         <activity
-            android:name=".activitys.SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:label="@string/title_settings"
-            android:parentActivityName=".activitys.MusicTrackListActivity" >
+            android:parentActivityName=".activities.MusicTrackListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activitys.MusicTrackListActivity" />
+                android:value=".activities.MusicTrackListActivity" />
         </activity>
         <service android:name="de.arcus.playmusicexporter2.services.ExportService"/>
 

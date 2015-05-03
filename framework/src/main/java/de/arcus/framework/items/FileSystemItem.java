@@ -20,16 +20,28 @@
  * THE SOFTWARE.
  */
 
-package de.arcus.framework.superuser;
+package de.arcus.framework.items;
 
 /**
- * Callback class if the async execution is finish
+ * Item for directory adapter
  */
-public interface SuperUserCommandCallback {
+public class FileSystemItem {
     /**
-     * Callback event
-     * @param command The command that finished
+     * File system types (directory or file)
      */
-    void onFinished(SuperUserCommand command);
+    public enum FileSystemType { File, Directory }
+
+    /**
+     * The type of the entry
+     */
+    private FileSystemType mFileType;
+
+    /**
+     * @return Gets the file system type
+     */
+    public FileSystemType getFileType() {
+        return mFileType;
+    }
+
 
 }

@@ -137,7 +137,7 @@ public class ExportService extends IntentService {
             mNotificationBuilder.setContentTitle(getString(R.string.notification_export_finished_title));
 
             if (mTracksTotal == 1) {
-                mNotificationBuilder.setContentText(getString(R.string.notification_export_finished_single_summery));
+                mNotificationBuilder.setContentText(getString(R.string.notification_export_finished_single_summery, mTrackCurrent.getTitle()));
             } else {
                 mNotificationBuilder.setContentText(getString(R.string.notification_export_finished_summery, mTracksDone, mTracksTotal));
             }
@@ -155,7 +155,7 @@ public class ExportService extends IntentService {
                 if (mTracksTotal == 1) {
                     mNotificationBuilder.setContentText(getString(R.string.notification_export_working_single_summery));
                 } else {
-                    mNotificationBuilder.setContentText(getString(R.string.notification_export_working_summery, mTracksDone, mTracksTotal));
+                    mNotificationBuilder.setContentText(getString(R.string.notification_export_working_summery, mTracksDone + 1, mTracksTotal));
                 }
             }
         }

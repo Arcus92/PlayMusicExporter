@@ -35,6 +35,7 @@ import java.util.List;
 
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.items.SelectedTrack;
+import de.arcus.playmusicexporter2.items.SelectedTrackList;
 import de.arcus.playmusicexporter2.utils.ImageViewLoader;
 import de.arcus.playmusiclib.items.MusicTrack;
 
@@ -152,7 +153,7 @@ public class MusicTrackAdapter extends ArrayAdapter<MusicTrack> {
         view.setEnabled(musicTrack.isOfflineAvailable());
 
         // Selected state
-        SelectedTrack.getSelectionList().initView(new SelectedTrack(musicTrack.getId()), view);
+        SelectedTrackList.getInstance().initView(new SelectedTrack(musicTrack.getId()), view);
 
         return view;
     }

@@ -72,7 +72,7 @@ public class MusicTrackListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(MusicTrackList musicTrackList);
+        void onItemSelected(MusicTrackList musicTrackList);
     }
 
     /**
@@ -92,6 +92,13 @@ public class MusicTrackListFragment extends ListFragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public MusicTrackListFragment() {
+    }
+
+    /**
+     * Update the list view
+     */
+    public void updateListView() {
+        getListView().invalidateViews();
     }
 
     /**

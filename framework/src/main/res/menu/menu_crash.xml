@@ -23,7 +23,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context="de.arcus.framework.crashhandler.CrashActivity">
+    xmlns:tools="http://schemas.android.com/tools" tools:context="de.arcus.framework.activities.CrashActivity">
     <item android:id="@+id/action_restart" android:title="@string/crashhandler_action_restart"
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_email" android:title="@string/crashhandler_action_email_log"

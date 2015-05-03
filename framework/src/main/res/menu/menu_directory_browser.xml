@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2015 David Schulte
   ~
@@ -20,17 +21,23 @@
   ~ THE SOFTWARE.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.arcus.framework">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    <item
+        android:id="@+id/action_move_up"
+        android:title="@string/directory_browser_action_move_up"
+        android:icon="@drawable/ic_action_back"
+        app:showAsAction="ifRoom" />
 
-    <application android:allowBackup="true" >
-        <activity
-            android:name=".activities.CrashActivity"
-            android:launchMode="singleInstance" >
-        </activity>
-        <activity
-            android:name="de.arcus.framework.activities.DirectoryBrowserActivity"
-            android:launchMode="singleInstance" >
-        </activity>
-    </application>
-</manifest>
+    <item
+        android:id="@+id/action_accept"
+        android:title="@string/directory_browser_action_accept"
+        android:icon="@drawable/ic_action_accept"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_cancel"
+        android:title="@string/directory_browser_action_cancel"
+        android:icon="@drawable/ic_action_cancel"
+        app:showAsAction="ifRoom" />
+</menu>

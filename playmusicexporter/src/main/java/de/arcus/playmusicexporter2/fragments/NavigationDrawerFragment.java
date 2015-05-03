@@ -42,7 +42,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import de.arcus.playmusicexporter2.R;
-import de.arcus.playmusicexporter2.activitys.SettingsActivity;
+import de.arcus.playmusicexporter2.activities.SettingsActivity;
 import de.arcus.playmusicexporter2.settings.PlayMusicExporterSettings;
 
 /**
@@ -371,7 +371,7 @@ public class NavigationDrawerFragment extends Fragment {
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
-    public static interface NavigationDrawerCallbacks {
+    public interface NavigationDrawerCallbacks {
         /**
          * Called when an item in the navigation drawer is selected.
          */

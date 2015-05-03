@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Selection list
  */
-public class SelectionList<T> {
+public abstract class SelectionList<T> {
     /**
      * The selected items
      */
@@ -62,6 +62,14 @@ public class SelectionList<T> {
     private @ColorRes int mResColorSelected;
 
     /**
+     * Gets the activity
+     * @return Returns the activity
+     */
+    public ActionBarActivity getActivity() {
+        return mActivity;
+    }
+
+    /**
      * Sets the colors of the view.
      * Use @SuppressWarnings("ResourceAsColor") to prevent Lint errors
      * @param colorNormal Normal state
@@ -76,9 +84,9 @@ public class SelectionList<T> {
      * Sets up the action mode for this selection list
      * @param activity The activity
      */
-    public void setupActionMode(ActionBarActivity activity, ActionMode.Callback callback) {
+    public void setupActionMode(ActionBarActivity activity) {
         mActivity = activity;
-        mActionModeCallback = callback;
+        mActionModeCallback = createActionMode(activity);
 
         // Updates the action mode
         updateActionModeMenu();
@@ -202,10 +210,19 @@ public class SelectionList<T> {
 
             // Set the text
             if (mActionMode != null) {
-                mActionMode.setTitle("TEST: " + mItems.size());
+                // Update the action mode
+                mActionMode.invalidate();
             }
         }
     }
+
+    /**
+     * This is called every time a new activity opens.
+     * This method has to create a action mode callback
+     * @param activity The new activity
+     * @return Returns the action mode callback
+     */
+    protected abstract ActionMode.Callback createActionMode(ActionBarActivity activity);
 
     /**
      * Gets whether the item is selected

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2015 David Schulte
   ~
@@ -20,17 +21,8 @@
   ~ THE SOFTWARE.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.arcus.framework">
-
-    <application android:allowBackup="true" >
-        <activity
-            android:name=".activities.CrashActivity"
-            android:launchMode="singleInstance" >
-        </activity>
-        <activity
-            android:name="de.arcus.framework.activities.DirectoryBrowserActivity"
-            android:launchMode="singleInstance" >
-        </activity>
-    </application>
-</manifest>
+<resources>
+  <string name="directory_browser_action_move_up">Move up</string>
+  <string name="directory_browser_action_accept">Accept</string>
+  <string name="directory_browser_action_cancel">Cancel</string>
+</resources>

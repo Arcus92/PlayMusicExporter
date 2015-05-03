@@ -105,6 +105,10 @@ public class MusicPathBuilder {
                         if (musicTrack.getTrackNumber() > 0)
                             value = String.valueOf(musicTrack.getTrackNumber());
                         break;
+                    case "group-no":
+                        if (musicTrack.getContainerPosition() > 0)
+                            value = String.valueOf(musicTrack.getContainerPosition());
+                        break;
                     case "year":
                         if (!TextUtils.isEmpty(musicTrack.getYear()))
                             value = musicTrack.getYear();

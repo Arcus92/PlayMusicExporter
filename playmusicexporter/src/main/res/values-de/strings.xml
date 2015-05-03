@@ -45,7 +45,7 @@
     <string name="settings_export_id3_disabled">Ohne Metadaten</string>
     <string name="settings_export_id3_with_cover">Metadaten mit Bild</string>
     <string name="settings_export_id3_without_cover">Metadaten ohne Bild</string>
-    <string name="notification_export_finished_single_summery">Der Titel wurde erfolgreich exportiert!</string>
+    <string name="notification_export_finished_single_summery">%1$s wurde erfolgreich exportiert!</string>
     <string name="notification_export_working_single_summery">Titel wird exportiert&#8230;</string>
     <string name="notification_export_working_summery">Titel %1$d von %2$d wird exportiert&#8230;</string>
     <string name="notification_export_finished_summery">%1$d Titel wurden erfolgreich exportiert!</string>
@@ -55,4 +55,6 @@
     <string name="action_export">Exportieren</string>
     <string name="action_play">Wiedergeben</string>
     <string name="action_share">Teilen</string>
+    <string name="action_select_all">Alles markieren</string>
+    <string name="settings_export_path_custom">Benutzerdefinierter Pfad</string>
 </resources>

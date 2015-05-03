@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package de.arcus.playmusicexporter2.activitys;
+package de.arcus.playmusicexporter2.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -156,6 +156,23 @@ public class MusicTrackListActivity extends ActionBarActivity
         // Loads the list
         mViewType = mNavigationDrawerFragment.getViewType();
         loadList();
+    }
+
+    /**
+     * Update all view lists
+     */
+    public void updateLists() {
+        // Gets the music list fragment
+        MusicTrackListFragment musicTrackListFragment = (MusicTrackListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.track_list);
+
+        musicTrackListFragment.updateListView();
+
+        // Gets the music list fragment
+        MusicTrackDetailFragment musicTrackDetailFragment = (MusicTrackDetailFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.track_detail_container);
+
+        musicTrackDetailFragment.updateListView();
     }
 
     /**

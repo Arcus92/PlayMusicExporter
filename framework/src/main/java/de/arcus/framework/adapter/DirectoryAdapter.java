@@ -20,29 +20,29 @@
  * THE SOFTWARE.
  */
 
-package de.arcus.playmusicexporter2.activitys;
+package de.arcus.framework.adapter;
 
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
+import android.content.Context;
+import android.widget.ArrayAdapter;
 
-import de.arcus.playmusicexporter2.R;
-import de.arcus.playmusicexporter2.settings.PlayMusicExporterSettings;
+import de.arcus.framework.R;
+import de.arcus.framework.items.FileSystemItem;
 
 /**
- * The preference activity
+ * Adapter for directories
  */
-public class SettingsActivity extends PreferenceActivity {
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+public class DirectoryAdapter extends ArrayAdapter<FileSystemItem> {
+    /**
+     * The context of the app
+     */
+    private Context mContext;
 
-        // Setup the default shared preference
-        PreferenceManager prefMgr = getPreferenceManager();
-        prefMgr.setSharedPreferencesName(PlayMusicExporterSettings.DEFAULT_SETTINGS_FILENAME);
-        prefMgr.setSharedPreferencesMode(MODE_WORLD_READABLE);
-
-        // Loads the preference xml
-        addPreferencesFromResource(R.xml.preferences);
+    /**
+     * Create a new directory adapter
+     * @param context The app context
+     */
+    public DirectoryAdapter(Context context) {
+        super(context, R.layout.adapter_directory);
+        mContext = context;
     }
 }

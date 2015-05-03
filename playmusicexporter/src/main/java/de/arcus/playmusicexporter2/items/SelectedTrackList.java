@@ -22,57 +22,47 @@
 
 package de.arcus.playmusicexporter2.items;
 
-import android.content.Context;
-import android.content.Intent;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 
-import de.arcus.playmusicexporter2.services.ExportService;
+import de.arcus.framework.utils.SelectionList;
+import de.arcus.playmusicexporter2.R;
+import de.arcus.playmusicexporter2.actionmode.ActionModeTitle;
 
 /**
- * The selected track
+ * The selection manager for music tracks
  */
-public class SelectedTrack {
+public class SelectedTrackList extends SelectionList<SelectedTrack> {
     /**
-     * Type of the track
+     * The instance of the selection
      */
-    private long mId;
-
-    /**
-     * The path of the track
-     */
-    private String mPath;
-
-    public SelectedTrack(long id) {
-        mId = id;
-    }
-
-    public SelectedTrack(long id, String path) {
-        mId = id;
-        mPath = path;
-    }
+    private static SelectedTrackList instance;
 
     /**
-     * Adds the track to the export list
+     * Gets the latest instance of the track selection.
+     * Creates a new one if it doesn't exist.
+     * @return The instance
      */
-    public void export(Context context) {
-        Intent intent = new Intent(context, ExportService.class);
+    @SuppressWarnings("ResourceAsColor")
+    public static SelectedTrackList getInstance() {
+        // Create a new instance
+        if (instance == null) {
+            instance = new SelectedTrackList();
 
-        // Puts the export parameter
-        intent.putExtra(ExportService.ARG_EXPORT_TRACK_ID, mId);
-        intent.putExtra(ExportService.ARG_EXPORT_PATH, mPath);
-
-        // Starts the service
-        context.startService(intent);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        // Compares two selected tracks
-        if (o instanceof SelectedTrack) {
-            SelectedTrack other = (SelectedTrack)o;
-
-            return mId == other.mId;
+            // Sets the color resources
+            instance.setColor(R.color.button_navigation_drawer_normal, R.color.button_navigation_drawer_selected);
         }
 
-        return super.equals(o);
+        return instance;
+    }
+
+    /**
+     * Creates the action mode callback
+     * @param activity The activity
+     * @return The new action mode callback
+     */
+    @Override
+    protected ActionMode.Callback createActionMode(ActionBarActivity activity) {
+        return new ActionModeTitle(activity, this);
     }
 }

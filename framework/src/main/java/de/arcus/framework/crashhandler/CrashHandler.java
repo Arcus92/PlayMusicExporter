@@ -25,6 +25,7 @@ package de.arcus.framework.crashhandler;
 import android.app.Activity;
 import android.content.Intent;
 
+import de.arcus.framework.activities.CrashActivity;
 import de.arcus.framework.logger.Logger;
 
 /**

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2015 David Schulte
   ~
@@ -20,17 +21,12 @@
   ~ THE SOFTWARE.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.arcus.framework">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <application android:allowBackup="true" >
-        <activity
-            android:name=".activities.CrashActivity"
-            android:launchMode="singleInstance" >
-        </activity>
-        <activity
-            android:name="de.arcus.framework.activities.DirectoryBrowserActivity"
-            android:launchMode="singleInstance" >
-        </activity>
-    </application>
-</manifest>
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView" />
+</LinearLayout>
