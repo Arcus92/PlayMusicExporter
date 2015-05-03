@@ -115,12 +115,14 @@ public class AppSettings {
     public <E extends Enum<E>> E getEnum(String key, E defValue) {
         String value = mSharedPreferences.getString(key, defValue.name());
 
-        // Checks all enum values
-        for (E constant : ((Class<E>)defValue.getClass()).getEnumConstants()) {
-            if (value.equals(constant.name()))
-                return constant;
+        // Null check
+        if (value != null) {
+            // Checks all enum values
+            for (E constant : defValue.getDeclaringClass().getEnumConstants()) {
+                if (value.equals(constant.name()))
+                    return constant;
+            }
         }
-
         // Return default
         return defValue;
     }
