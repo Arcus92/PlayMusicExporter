@@ -385,6 +385,10 @@ public class PlayMusicManager {
 
         String path;
 
+        // Fix the path for Play Music 5.9.1854
+        if (!artworkPath.startsWith("artwork2/folder/"))
+            artworkPath = "artwork2/folder/" + artworkPath;
+
         // Search in the public data
         for (String publicData : mPathPublicData) {
             path = publicData + "/files/" + artworkPath;

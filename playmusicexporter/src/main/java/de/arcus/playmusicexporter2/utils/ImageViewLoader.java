@@ -77,6 +77,12 @@ public class ImageViewLoader {
         return mImagePath;
     }
 
+    /**
+     * Starts an image loader
+     * @param imageView The image view
+     * @param path The file path
+     * @param defaultImage The default image in case the image could not be loaded
+     */
     public static void loadImage(ImageView imageView, String path, int defaultImage) {
         // Checks for an old artwork loader on this image view
         ImageViewLoader imageViewLoader = (ImageViewLoader)imageView.getTag();
@@ -164,8 +170,15 @@ public class ImageViewLoader {
                                 e.printStackTrace();
                             }
                         } else {
-                            // File not found
-                            imageView.setImageResource(R.drawable.cd_case);
+                            // Sets the bitmap in the UI thread
+                            Runnable runnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    // File not found
+                                    imageView.setImageResource(R.drawable.cd_case);
+                                }
+                            };
+                            imageView.post(runnable);
                         }
                     }
 
