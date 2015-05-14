@@ -43,11 +43,12 @@ public class PlaylistDataSource extends DataSource<Playlist> {
     private final static String COLUMN_NAME = "LISTS.Name";
     private final static String COLUMN_LIST_TYPE = "LISTS.ListType";
     private final static String COLUMN_OWNER_NAME = "LISTS.OwnerName";
+    private final static String COLUMN_ARTWORK_LOCATION = "(SELECT MUSIC.AlbumArtLocation FROM LISTITEMS LEFT JOIN MUSIC ON MUSIC.Id = LISTITEMS.MusicId WHERE LISTITEMS.ListId = LISTS.Id) AS AlbumArtLocation";
     private final static String COLUMN_ARTWORK_FILE = "(SELECT ARTWORK_CACHE.LocalLocation FROM LISTITEMS LEFT JOIN MUSIC ON MUSIC.Id = LISTITEMS.MusicId LEFT JOIN ARTWORK_CACHE ON ARTWORK_CACHE.RemoteLocation = MUSIC.AlbumArtLocation WHERE LISTITEMS.ListId = LISTS.Id AND ARTWORK_CACHE.LocalLocation IS NOT NULL LIMIT 1) AS ArtworkFile";
 
     // All columns
     private final static String[] COLUMNS_ALL = { COLUMN_ID, COLUMN_NAME,
-            COLUMN_LIST_TYPE, COLUMN_OWNER_NAME, COLUMN_ARTWORK_FILE};
+            COLUMN_LIST_TYPE, COLUMN_OWNER_NAME, COLUMN_ARTWORK_LOCATION, COLUMN_ARTWORK_FILE};
 
 
     /**
@@ -129,6 +130,7 @@ public class PlaylistDataSource extends DataSource<Playlist> {
         instance.setName(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_NAME)));
         instance.setListType(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_LIST_TYPE)));
         instance.setOwnerName(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_OWNER_NAME)));
+        instance.setArtworkLocation(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORK_LOCATION)));
         instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORK_FILE)));
 
         return instance;

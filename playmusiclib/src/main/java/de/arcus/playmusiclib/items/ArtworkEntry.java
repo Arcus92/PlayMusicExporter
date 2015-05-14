@@ -20,27 +20,10 @@
  * THE SOFTWARE.
  */
 
-apply plugin: 'com.android.library'
+package de.arcus.playmusiclib.items;
 
-android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
-
-    defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-}
-
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.1'
+/**
+ * Created by david on 14.05.15.
+ */
+public interface ArtworkEntry {
 }

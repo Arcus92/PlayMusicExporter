@@ -59,7 +59,12 @@ public abstract class MusicTrackList {
     protected String mArtworkFile;
 
     /**
-     * The complet path of the artwork
+     * The url of the artwork
+     */
+    protected String mArtworkLocation;
+
+    /**
+     * The complete path of the artwork
      */
     protected String mArtworkPath;
 
@@ -87,6 +92,20 @@ public abstract class MusicTrackList {
      */
     public void setArtworkFile(String artworkFile) {
         mArtworkFile = artworkFile;
+    }
+
+    /**
+     * Gets the artwork url
+     */
+    public String getArtworkLocation() {
+        return mArtworkLocation;
+    }
+
+    /**
+     * Sets the artwork url
+     */
+    public void setArtworkLocation(String artworkLocation) {
+        mArtworkLocation = artworkLocation;
     }
 
     /**

@@ -22,70 +22,55 @@
 
 package de.arcus.playmusicexporter2.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.os.Environment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
+import de.arcus.playmusicexporter2.R;
+import de.arcus.playmusicexporter2.activities.MusicContainerListActivity;
+import de.arcus.playmusicexporter2.activities.MusicTrackListActivity;
 import de.arcus.playmusicexporter2.adapter.MusicTrackListAdapter;
+import de.arcus.playmusicexporter2.items.SelectedTrack;
+import de.arcus.playmusicexporter2.items.SelectedTrackList;
+import de.arcus.playmusicexporter2.utils.ArtworkViewLoader;
+import de.arcus.playmusicexporter2.utils.MusicPathBuilder;
+import de.arcus.playmusiclib.PlayMusicManager;
+import de.arcus.playmusiclib.items.MusicTrack;
 import de.arcus.playmusiclib.items.MusicTrackList;
 
+
 /**
- * A list fragment representing a list of Tracks. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link MusicTrackDetailFragment}.
- * <p/>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
+ * A fragment representing a single Track detail screen.
+ * This fragment is either contained in a {@link MusicContainerListActivity}
+ * in two-pane mode (on tablets) or a {@link MusicTrackListActivity}
+ * on handsets.
  */
-public class MusicTrackListFragment extends ListFragment {
+public class MusicTrackListFragment extends Fragment {
+    /**
+     * The fragment argument representing the item ID that this fragment
+     * represents.
+     */
+    public static final String ARG_MUSIC_TRACK_LIST_ID = "music_track_list_id";
+    public static final String ARG_MUSIC_TRACK_LIST_TYPE = "music_track_list_type";
 
     /**
-     * The serialization (saved instance state) Bundle key representing the
-     * activated item position. Only used on tablets.
+     * The track list
      */
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private MusicTrackList mMusicTrackList;
 
     /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
+     * The list view
      */
-    private Callbacks mCallbacks = sDummyCallbacks;
-
-    /**
-     * The current activated item position. Only used on tablets.
-     */
-    private int mActivatedPosition = ListView.INVALID_POSITION;
-
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
-    public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
-        void onItemSelected(MusicTrackList musicTrackList);
-    }
-
-    /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(MusicTrackList musicTrackList) {
-        }
-    };
-
-    private MusicTrackListAdapter mMusicTrackListAdapter;
+    private ListView mListView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -98,106 +83,115 @@ public class MusicTrackListFragment extends ListFragment {
      * Update the list view
      */
     public void updateListView() {
-        getListView().invalidateViews();
+        if (mListView != null)
+            mListView.invalidateViews();
     }
-
-    /**
-     * @param list Set the list
-     */
-    public void setMusicTrackList(List<? extends MusicTrackList> list) {
-        // Create a new list
-        List<MusicTrackList> newList = new ArrayList<>();
-
-        // Copy the list
-        for(MusicTrackList musicTrackList : list) {
-            newList.add(musicTrackList);
-        }
-
-        // Set the list in the adapter
-        mMusicTrackListAdapter.setList(newList);
-        getListView().invalidateViews();
-        getListView().setSelection(0);
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMusicTrackListAdapter = new MusicTrackListAdapter(getActivity());
+        if (getArguments().containsKey(ARG_MUSIC_TRACK_LIST_ID)
+         && getArguments().containsKey(ARG_MUSIC_TRACK_LIST_TYPE)) {
 
+            // Loads the track list
+            long id = getArguments().getLong(ARG_MUSIC_TRACK_LIST_ID);
+            String type = getArguments().getString(ARG_MUSIC_TRACK_LIST_TYPE);
 
-        setListAdapter(mMusicTrackListAdapter);
-    }
+            PlayMusicManager playMusicManager = PlayMusicManager.getInstance();
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof Callbacks)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
+            if (playMusicManager != null) {
+                mMusicTrackList = MusicTrackList.deserialize(playMusicManager, id, type);
+            }
         }
 
-        mCallbacks = (Callbacks) activity;
+        // Setup the selection list for this activity
+        SelectedTrackList.getInstance().setupActionMode((AppCompatActivity)getActivity());
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_track_detail, container, false);
 
-        // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
-    }
+        // Show the dummy content as text in a TextView.
+        if (mMusicTrackList != null) {
+            mListView = (ListView)rootView.findViewById(R.id.list_music_track);
+            final MusicTrackListAdapter musicTrackAdapter = new MusicTrackListAdapter(getActivity());
 
-    @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
+            musicTrackAdapter.setShowArtworks(mMusicTrackList.getShowArtworkInTrack());
 
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(mMusicTrackListAdapter.getItem(position));
-    }
+            View headerView = inflater.inflate(R.layout.header_music_track_list, mListView, false);
+            headerView.setEnabled(false);
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+            TextView textView;
+            ImageView imageView;
+
+            // Sets the artwork image
+            imageView = (ImageView)headerView.findViewById(R.id.image_music_track_artwork);
+
+            String artworkPath = mMusicTrackList.getArtworkPath();
+            String artworkLocation = mMusicTrackList.getArtworkLocation();
+
+            // Loads the artwork
+            ArtworkViewLoader.loadImage(imageView, artworkPath, artworkLocation, R.drawable.cd_case);
+
+            // Sets the title
+            textView = (TextView)headerView.findViewById(R.id.text_music_track_list_title);
+            textView.setText(mMusicTrackList.getTitle());
+
+            // Sets the description
+            textView = (TextView)headerView.findViewById(R.id.text_music_track_list_description);
+            textView.setText(mMusicTrackList.getDescription());
+
+            mListView.addHeaderView(headerView);
+
+            musicTrackAdapter.setList(mMusicTrackList.getMusicTrackList());
+
+            mListView.setAdapter(musicTrackAdapter);
+            //listView.setDrawSelectorOnTop(false);
+            mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            mListView.setItemsCanFocus(false);
+
+
+            // Click on one list item
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // The header is not clicked
+                    if (position > 0) {
+                        // We need to subtract the header view
+                        position -= 1;
+
+                        // Gets the selected track
+                        MusicTrack musicTrack = musicTrackAdapter.getItem(position);
+
+                        // Track is available
+                        if (musicTrack.isOfflineAvailable()) {
+
+                            // Default structure
+                            String pathStructure = "{album-artist}/{album}/{disc=CD $}/{no=$$.} {title}.mp3";
+
+                            // Track is exported from a group (playlist or artist)
+                            if (!TextUtils.isEmpty(musicTrack.getContainerName()))
+                            {
+                                pathStructure = "{group}/{group-no=$$.} {title}.mp3";
+                            }
+
+                            // Build the path
+                            String path = MusicPathBuilder.Build(musicTrack, pathStructure);
+
+                            // Path to the public music folder
+                            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + path;
+
+                            // Toggles the music track
+                            SelectedTrackList.getInstance().toggle(new SelectedTrack(musicTrack.getId(), path), view);
+                        }
+                    }
+                }
+            });
         }
-    }
 
-    /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be
-     * given the 'activated' state when touched.
-     */
-    public void setActivateOnItemClick(boolean activateOnItemClick) {
-        // When setting CHOICE_MODE_SINGLE, ListView will automatically
-        // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
-    }
-
-    private void setActivatedPosition(int position) {
-        if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
-        } else {
-            getListView().setItemChecked(position, true);
-        }
-
-        mActivatedPosition = position;
+        return rootView;
     }
 }

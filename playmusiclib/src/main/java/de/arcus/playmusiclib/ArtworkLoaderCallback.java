@@ -20,27 +20,18 @@
  * THE SOFTWARE.
  */
 
-apply plugin: 'com.android.library'
+package de.arcus.playmusiclib;
 
-android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+import android.graphics.Bitmap;
 
-    defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-}
-
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.1'
+/**
+ * This is a callback interface which is called
+ * when an artwork was loaded from the local data or the internet
+ */
+public interface ArtworkLoaderCallback {
+    /**
+     * Callback event
+     * @param bitmap The bitmap or null if it failed
+     */
+    void onFinished(Bitmap bitmap);
 }

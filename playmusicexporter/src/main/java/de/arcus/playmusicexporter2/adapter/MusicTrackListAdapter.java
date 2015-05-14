@@ -23,6 +23,7 @@
 package de.arcus.playmusicexporter2.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,20 +34,36 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.arcus.playmusicexporter2.R;
-import de.arcus.playmusicexporter2.utils.ImageViewLoader;
-import de.arcus.playmusiclib.items.MusicTrackList;
+import de.arcus.playmusicexporter2.items.SelectedTrack;
+import de.arcus.playmusicexporter2.items.SelectedTrackList;
+import de.arcus.playmusicexporter2.utils.ArtworkViewLoader;
+import de.arcus.playmusiclib.items.MusicTrack;
 
 /**
- * Adapter for the music track lists
+ * Adapter for the music tracks
  */
-public class MusicTrackListAdapter extends ArrayAdapter<MusicTrackList> {
+public class MusicTrackListAdapter extends ArrayAdapter<MusicTrack> {
     /**
      * The context of the app
      */
     private Context mContext;
 
     /**
-     * Create a new track list adapter
+     * If this is set the music track shows it artwork instead of the track number.
+     * Used for playlists.
+     */
+    private boolean mShowArtworks = true;
+
+    public boolean getShowArtwok() {
+        return mShowArtworks;
+    }
+
+    public void setShowArtworks(boolean showArtworks) {
+        mShowArtworks = showArtworks;
+    }
+
+    /**
+     * Create a new track adapter
      * @param context The app context
      */
     public MusicTrackListAdapter(Context context) {
@@ -54,48 +71,93 @@ public class MusicTrackListAdapter extends ArrayAdapter<MusicTrackList> {
         mContext = context;
     }
 
-    public void setList(List<MusicTrackList> musicTrackLists) {
+    public void setList(List<MusicTrack> musicTracks) {
         // Clear all items
         clear();
 
         // Add the new items
-        for(MusicTrackList musicTrackList : musicTrackLists) {
-            add(musicTrackList);
+        for(MusicTrack musicTrack : musicTracks) {
+            add(musicTrack);
         }
     }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // The track list
-        MusicTrackList musicTrackList = getItem(position);
+        // The track
+        MusicTrack musicTrack = getItem(position);
 
         View view = convertView;
 
         // Inflates a view
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.adapter_music_track_list, parent, false);
+            view = inflater.inflate(R.layout.adapter_music_track, parent, false);
         }
 
         TextView textView;
-        ImageView imageView;
 
-        // Set the title
-        textView = (TextView)view.findViewById(R.id.text_music_track_list_title);
-        textView.setText(musicTrackList.getTitle());
+        // Sets the track number
+        textView = (TextView)view.findViewById(R.id.text_music_track_number);
+        long trackPosition = musicTrack.getTrackNumber();
 
-        // Set the description
-        textView = (TextView)view.findViewById(R.id.text_music_track_list_description);
-        textView.setText(musicTrackList.getDescription());
+        if (musicTrack.getContainerName() != null)
+            trackPosition = musicTrack.getContainerPosition();
 
-        // Final for the callback
-        imageView = (ImageView)view.findViewById(R.id.image_music_track_artwork);
+        if (trackPosition > 0)
+            textView.setText("" + trackPosition);
+        else
+            textView.setText("");
 
-        // Gets the artwork
-        String artworkPath = musicTrackList.getArtworkPath();
+        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_number : R.color.text_music_disable_number));
 
-        // Loads the artwork
-        ImageViewLoader.loadImage(imageView, artworkPath, R.drawable.cd_case);
+        // Sets the disc number
+        textView = (TextView)view.findViewById(R.id.text_music_track_disc_number);
+        textView.setText("CD " + musicTrack.getDiscNumber());
+        // Don't show the disc number if this is a playlist or artist list
+        if (musicTrack.getDiscNumber() > 0 && TextUtils.isEmpty(musicTrack.getContainerName()))
+            textView.setVisibility(View.VISIBLE);
+        else
+            textView.setVisibility(View.GONE);
+
+        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_disc_number : R.color.text_music_disable_disc_number));
+
+
+        if (mShowArtworks) {
+            view.findViewById(R.id.relative_layout_number).setVisibility(View.GONE);
+            view.findViewById(R.id.relative_layout_artwork).setVisibility(View.VISIBLE);
+        } else {
+            view.findViewById(R.id.relative_layout_number).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.relative_layout_artwork).setVisibility(View.GONE);
+        }
+
+        // Shows the artwork
+        if (mShowArtworks) {
+            ImageView imageView = (ImageView) view.findViewById(R.id.image_music_track_artwork);
+
+            String artworkPath = musicTrack.getArtworkPath();
+            String artworkLocation = musicTrack.getArtworkLocation();
+
+            ArtworkViewLoader.loadImage(imageView, artworkPath, artworkLocation, R.drawable.cd_case);
+        }
+
+        // Sets the title
+        textView = (TextView)view.findViewById(R.id.text_music_track_title);
+        textView.setText(musicTrack.getTitle());
+        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_title : R.color.text_music_disable_title));
+
+        // Sets the artist
+        textView = (TextView)view.findViewById(R.id.text_music_track_artist);
+        textView.setText(musicTrack.getArtist());
+        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_description : R.color.text_music_disable_description));
+
+        // Track is available?
+        view.setEnabled(musicTrack.isOfflineAvailable());
+
+        // Selected state
+        SelectedTrackList.getInstance().initView(new SelectedTrack(musicTrack.getId()), view);
 
         return view;
     }
+
+
 }

@@ -37,6 +37,7 @@ public class MusicTrack {
 
     private String mSourceFile;
     private String mArtworkPath;
+    private String mArtworkLocation;
 
     /**
      * The manager
@@ -368,6 +369,20 @@ public class MusicTrack {
      * The position of the track in the container
      */
     private long mContainerPosition;
+
+    /**
+     * Gets the artwork url
+     */
+    public String getArtworkLocation() {
+        return mArtworkLocation;
+    }
+
+    /**
+     * Sets the artwork url
+     */
+    public void setArtworkLocation(String artworkLocation) {
+        mArtworkLocation = artworkLocation;
+    }
 
     /**
      * @return Gets the position in the container

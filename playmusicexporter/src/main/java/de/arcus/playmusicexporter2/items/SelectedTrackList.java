@@ -22,7 +22,7 @@
 
 package de.arcus.playmusicexporter2.items;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 
 import de.arcus.framework.utils.SelectionList;
@@ -62,7 +62,7 @@ public class SelectedTrackList extends SelectionList<SelectedTrack> {
      * @return The new action mode callback
      */
     @Override
-    protected ActionMode.Callback createActionMode(ActionBarActivity activity) {
+    protected ActionMode.Callback createActionMode(AppCompatActivity activity) {
         return new ActionModeTitle(activity, this);
     }
 }

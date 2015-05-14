@@ -23,7 +23,7 @@
 package de.arcus.framework.utils;
 
 import android.support.annotation.ColorRes;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.View;
 
@@ -43,7 +43,7 @@ public abstract class SelectionList<T> {
      * The activity
      * We need the activity to show the action mode when some items are selected
      */
-    private ActionBarActivity mActivity;
+    private AppCompatActivity mActivity;
 
     /**
      * The action mode
@@ -65,7 +65,7 @@ public abstract class SelectionList<T> {
      * Gets the activity
      * @return Returns the activity
      */
-    public ActionBarActivity getActivity() {
+    public AppCompatActivity getActivity() {
         return mActivity;
     }
 
@@ -84,7 +84,7 @@ public abstract class SelectionList<T> {
      * Sets up the action mode for this selection list
      * @param activity The activity
      */
-    public void setupActionMode(ActionBarActivity activity) {
+    public void setupActionMode(AppCompatActivity activity) {
         mActivity = activity;
         mActionModeCallback = createActionMode(activity);
 
@@ -173,6 +173,13 @@ public abstract class SelectionList<T> {
     }
 
     /**
+     * Clears the action mode
+     */
+    public void clearActionMode() {
+        mActionMode = null;
+    }
+
+    /**
      * Call this after the view was created.
      * This will change the background color.
      * @param item The selected item
@@ -222,7 +229,7 @@ public abstract class SelectionList<T> {
      * @param activity The new activity
      * @return Returns the action mode callback
      */
-    protected abstract ActionMode.Callback createActionMode(ActionBarActivity activity);
+    protected abstract ActionMode.Callback createActionMode(AppCompatActivity activity);
 
     /**
      * Gets whether the item is selected

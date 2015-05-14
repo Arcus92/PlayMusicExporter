@@ -38,11 +38,13 @@ public class PlayMusicExporterSettings extends AppSettings {
 
     // Preference constants
     public static final String PREF_ID3 = "pref_id3";
+    public static final String PREF_ID3_ARTWORK_SIZE = "pref_id3_artwork_size";
     public static final String PREF_EXPORT_PATH = "pref_export_path";
     public static final String PREF_STRUCTURE_ALBUMS = "pref_structure_albums";
     public static final String PREF_STRUCTURE_GROUPS = "pref_structure_groups";
     public static final String PREF_DRAWER_LEARNED = "pref_drawer_learned";
     public static final String PREF_DRAWER_SELECTED_TYPE = "pref_drawer_selected_type";
+
 
     /**
      * Creates a new instance of PlayMusicExporterSettings that access to the default settings file
@@ -56,6 +58,10 @@ public class PlayMusicExporterSettings extends AppSettings {
         // ID3 settings
         if (!contains(PREF_ID3))
             setString(PREF_ID3, "id3_with_cover");
+
+        // ID3 artwork settings
+        if (!contains(PREF_ID3_ARTWORK_SIZE))
+            setInt(PREF_ID3_ARTWORK_SIZE, 512);
 
         // Export path
         if (!contains(PREF_EXPORT_PATH))

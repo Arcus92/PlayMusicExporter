@@ -45,6 +45,16 @@
             android:entries="@array/settings_export_id3_value_names"
             android:entryValues="@array/settings_export_id3_values"
             />
+
+        <!-- ID3 artwork size -->
+        <ListPreference android:title="@string/settings_export_id3_artwork_size"
+            android:key="preference_id3_artwork_size"
+            android:summary="@string/settings_export_id3_artwork_size_summary"
+            android:defaultValue="512"
+            android:entries="@array/settings_export_id3_artwork_size_value_names"
+            android:entryValues="@array/settings_export_id3_artwork_size_values"
+            />
+
     </PreferenceCategory>
 
     <!-- Thanks to -->

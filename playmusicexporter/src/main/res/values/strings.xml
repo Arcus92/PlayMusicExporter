@@ -66,6 +66,26 @@
     <string name="settings_export_id3_without_cover">Metadata without cover</string>
     <string name="settings_export_id3_disabled">No metadata</string>
 
+    <string name="settings_export_id3_artwork_size">Maximum artwork size</string>
+    <string name="settings_export_id3_artwork_size_summary">If the artwork original size is larger than this setting the app will size down the artwork to this size.</string>
+    <string name="settings_export_id3_artwork_size_128px" translatable="false">128x128px</string>
+    <string name="settings_export_id3_artwork_size_256px" translatable="false">256x256px</string>
+    <string name="settings_export_id3_artwork_size_512px" translatable="false">512x512px</string>
+    <string name="settings_export_id3_artwork_size_1024px" translatable="false">1024x1024px</string>
+
+    <string-array name="settings_export_id3_artwork_size_value_names" translatable="false">
+        <item>@string/settings_export_id3_artwork_size_128px</item>
+        <item>@string/settings_export_id3_artwork_size_256px</item>
+        <item>@string/settings_export_id3_artwork_size_512px</item>
+        <item>@string/settings_export_id3_artwork_size_1024px</item>
+    </string-array>
+    <string-array name="settings_export_id3_artwork_size_values" translatable="false">
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+    </string-array>
+
     <string name="settings_export_path_custom">Custom path</string>
     <string-array name="settings_export_id3_value_names">
         <item>@string/settings_export_id3_with_cover</item>
@@ -77,6 +97,8 @@
         <item>id3_without_cover</item>
         <item>id3_disabled</item>
     </string-array>
+
+
 
     <string name="settings_open_homepage_title" translatable="false">David-Schulte.de</string>
     <string name="settings_open_homepage_url" translatable="false"><![CDATA[http://www.david-schulte.de/]]></string>

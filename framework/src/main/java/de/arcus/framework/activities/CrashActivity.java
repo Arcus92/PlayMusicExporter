@@ -28,8 +28,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +38,7 @@ import android.widget.TextView;
 import de.arcus.framework.logger.Logger;
 import de.arcus.framework.R;
 
-public class CrashActivity extends ActionBarActivity {
+public class CrashActivity extends AppCompatActivity {
     // Extra flags
     public static final String EXTRA_FLAG_CRASH_MESSAGE = "CRASH_TITLE";
     public static final String EXTRA_FLAG_CRASH_LOG = "CRASH_LOG";

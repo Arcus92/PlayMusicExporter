@@ -23,7 +23,8 @@
 package de.arcus.framework.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -32,7 +33,7 @@ import de.arcus.framework.R;
 /**
  * Activity to browse for a directory
  */
-public class DirectoryBrowserActivity extends ActionBarActivity {
+public class DirectoryBrowserActivity extends AppCompatActivity {
     // The intent extra names
     public final static String EXTRA_PATH = "path";
     public final static String EXTRA_TITLE = "title";
@@ -66,9 +67,13 @@ public class DirectoryBrowserActivity extends ActionBarActivity {
                 mPath = bundle.getString(EXTRA_PATH);
         }
 
-        // Set the title
-        getSupportActionBar().setTitle(mTitle);
-        getSupportActionBar().setSubtitle(mPath);
+        // Setup the actionbar
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            // Set the title
+            actionBar.setTitle(mTitle);
+            actionBar.setSubtitle(mPath);
+        }
 
 
 

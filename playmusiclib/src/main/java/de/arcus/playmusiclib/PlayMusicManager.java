@@ -27,6 +27,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.text.TextUtils;
 
@@ -38,6 +39,7 @@ import com.mpatric.mp3agic.ID3v23Tag;
 import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.Mp3File;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -193,6 +195,46 @@ public class PlayMusicManager {
      */
     public void setID3EnableArtwork(boolean id3EnableArtwork) {
         mID3EnableArtwork = id3EnableArtwork;
+    }
+
+    /**
+     * The ID3 artwork format (eg. JPEG or PNG)
+     */
+    private Bitmap.CompressFormat mID3ArtworkFormat = Bitmap.CompressFormat.JPEG;
+
+    /**
+     * @return Gets the current artwork format
+     */
+    public Bitmap.CompressFormat getID3ArtworkFormat() {
+        return mID3ArtworkFormat;
+    }
+
+    /**
+     * @param id3ArtworkFormat Sets the artwork format for the id3 tag
+     */
+    public void setID3ArtworkFormat(Bitmap.CompressFormat id3ArtworkFormat) {
+        mID3ArtworkFormat = id3ArtworkFormat;
+    }
+
+    /**
+     * The ID3 artwork maximum size (0 = use original size)
+     */
+    private int mID3ArtworkMaximumSize = 512;
+
+    /**
+     * @return Gets the current artwork format
+     */
+    public int getID3ArtworkMaximumSize() {
+        return mID3ArtworkMaximumSize;
+    }
+
+    /**
+     * @param id3ArtworkMaximumSize Sets the artwork maximum size of the artwork.
+     *                              If the original artwork is larger than this value the app will
+     *                              sample it down. (0 = use original size)
+     */
+    public void setID3ArtworkMaximumSize(int id3ArtworkMaximumSize) {
+        mID3ArtworkMaximumSize = id3ArtworkMaximumSize;
     }
 
     /**
@@ -521,7 +563,7 @@ public class PlayMusicManager {
             }
 
             // It can't be null
-            ID3v2 tagID3v2 = null;
+            final ID3v2 tagID3v2;
 
             // Creates the requested version
             switch(mID3v2Version) {
@@ -533,6 +575,9 @@ public class PlayMusicManager {
                     break;
                 case ID3v24:
                     tagID3v2 = new ID3v24Tag();
+                    break;
+                default:
+                    tagID3v2 = null;
                     break;
             }
 
@@ -558,29 +603,21 @@ public class PlayMusicManager {
             // Add the artwork to the meta data
             if (mID3EnableArtwork) {
                 String artworkPath = musicTrack.getArtworkPath();
+                String artworkLocation = musicTrack.getArtworkLocation();
 
-                if (artworkPath != null) {
+                // Load the artwork
+                Bitmap bitmap = ArtworkLoader.loadArtwork(artworkPath, artworkLocation, mID3ArtworkMaximumSize);
 
-                    // Reads the artwork with root permissions (maybe it is in /data)
-                    byte[] artworkData = SuperUserTools.fileReadToByteArray(artworkPath);
-                    if (artworkData != null) {
-                        // The file extension is always .jpg even if the image is a PNG file,
-                        // so we need to check the magic number
+                if (bitmap != null) {
+                    // JPEG is default
+                    String mimeType = "image/jpeg";
 
-                        // JPEG is default
-                        String mimeType = "image/jpeg";
+                    // Load the bitmap into a byte array
+                    ByteArrayOutputStream artworkDataStream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, artworkDataStream);
 
-                        // Check for other image formats
-                        if (artworkData.length > 4) {
-                            // PNG-Header
-                            if (artworkData[0] == -119 && artworkData[1] == 80 && artworkData[2] == 78 && artworkData[3] == 71) {
-                                mimeType = "image/png";
-                            }
-                        }
-
-                        // Adds the artwork to the meta data
-                        tagID3v2.setAlbumImage(artworkData, mimeType);
-                    }
+                    // Adds the artwork to the meta data
+                    tagID3v2.setAlbumImage(artworkDataStream.toByteArray(), mimeType);
                 }
             }
 
@@ -626,8 +663,8 @@ public class PlayMusicManager {
 
         // Failed
         return false;
-
     }
+
 
     /**
      * Deletes all cache files

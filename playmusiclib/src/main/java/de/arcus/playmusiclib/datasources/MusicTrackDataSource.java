@@ -63,13 +63,14 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
     private final static String COLUMN_CLIENT_ID = "MUSIC.ClientId";
     private final static String COLUMN_SOURCE_ID = "MUSIC.SourceId";
     private final static String COLUMN_CPDATA = "MUSIC.CpData";
+    private final static String COLUMN_ARTWORK_LOCATION = "MUSIC.AlbumArtLocation";
     private final static String COLUMN_ARTWORK_FILE = "(SELECT LocalLocation FROM artwork_cache WHERE artwork_cache.RemoteLocation = AlbumArtLocation) AS ArtworkFile";
 
     // All columns
     private final static String[] COLUMNS_ALL = { COLUMN_ID, COLUMN_SIZE,
             COLUMN_LOCALCOPYPATH, COLUMN_LOCALCOPYTYPE, COLUMN_LOCALCOPYSTORAGETYPE, COLUMN_TITLE, COLUMN_ARTIST_ID, COLUMN_ARTIST, COLUMN_ALBUM_ARTIST,
             COLUMN_ALBUM, COLUMN_GENRE, COLUMN_YEAR, COLUMN_TRACK_NUMBER, COLUMN_DISC_NUMBER, COLUMN_DURATION, COLUMN_RATING,
-            COLUMN_ALBUM_ID, COLUMN_CLIENT_ID, COLUMN_SOURCE_ID, COLUMN_ARTWORK_FILE, COLUMN_CPDATA };
+            COLUMN_ALBUM_ID, COLUMN_CLIENT_ID, COLUMN_SOURCE_ID, COLUMN_ARTWORK_LOCATION, COLUMN_ARTWORK_FILE, COLUMN_CPDATA };
 
     /**
      * If this is set the data source will only load offline tracks
@@ -189,6 +190,7 @@ public class MusicTrackDataSource extends DataSource<MusicTrack> {
         instance.setClientId(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_CLIENT_ID)));
         instance.setSourceId(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_SOURCE_ID)));
         instance.setCpData(cursor.getBlob(getColumnsIndex(COLUMNS_ALL, COLUMN_CPDATA)));
+        instance.setArtworkLocation(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORK_LOCATION)));
         instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORK_FILE)));
 
         // Sets the container information

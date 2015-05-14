@@ -43,6 +43,7 @@ public class AlbumDataSource extends DataSource<Album> {
     private final static String COLUMN_ALBUM_ID = "MUSIC.AlbumId";
     private final static String COLUMN_ALBUM = "MUSIC.Album";
     private final static String COLUMN_ALBUM_ARTIST = "MUSIC.AlbumArtist";
+    private final static String COLUMN_ARTWORK_LOCATION = "MUSIC.AlbumArtLocation";
     private final static String COLUMN_ALBUM_ARTWORK_FILE = "(SELECT ARTWORK_CACHE.LocalLocation FROM MUSIC AS MUSIC2 LEFT JOIN ARTWORK_CACHE ON MUSIC2.AlbumArtLocation = ARTWORK_CACHE.RemoteLocation WHERE MUSIC2.AlbumID = MUSIC.AlbumID AND ARTWORK_CACHE.RemoteLocation IS NOT NULL LIMIT 1) AS ArtistArtworkPath";
 
     private final static String COLUMN_TITLE = "MUSIC.Title";
@@ -50,7 +51,7 @@ public class AlbumDataSource extends DataSource<Album> {
 
     // All columns
     private final static String[] COLUMNS_ALL = {COLUMN_ALBUM_ID, COLUMN_ALBUM,
-            COLUMN_ALBUM_ARTIST, COLUMN_ALBUM_ARTWORK_FILE};
+            COLUMN_ALBUM_ARTIST, COLUMN_ARTWORK_LOCATION, COLUMN_ALBUM_ARTWORK_FILE};
 
     /**
      * If this is set the data source will only load offline tracks
@@ -165,6 +166,7 @@ public class AlbumDataSource extends DataSource<Album> {
         instance.setAlbumId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ID)));
         instance.setAlbum(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM)));
         instance.setAlbumArtist(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ARTIST)));
+        instance.setArtworkLocation(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORK_LOCATION)));
         instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ALBUM_ARTWORK_FILE)));
 
         return instance;

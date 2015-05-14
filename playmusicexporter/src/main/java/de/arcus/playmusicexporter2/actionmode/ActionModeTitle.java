@@ -29,8 +29,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import de.arcus.playmusicexporter2.R;
-import de.arcus.playmusicexporter2.activities.MusicTrackDetailActivity;
 import de.arcus.playmusicexporter2.activities.MusicTrackListActivity;
+import de.arcus.playmusicexporter2.activities.MusicContainerListActivity;
 import de.arcus.playmusicexporter2.items.SelectedTrack;
 import de.arcus.playmusicexporter2.items.SelectedTrackList;
 
@@ -59,6 +59,9 @@ public class ActionModeTitle implements ActionMode.Callback {
         // Inflate a menu resource providing context menu items
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.action_mode_selection, menu);
+
+        //mode.setSubtitle("TEST");
+        mode.setTitleOptionalHint(true);
         return true;
     }
 
@@ -82,6 +85,7 @@ public class ActionModeTitle implements ActionMode.Callback {
                     selectedTrack.export(mContext);
                 }
 
+                // Close the action mode
                 mode.finish();
                 return true;
             default:
@@ -95,15 +99,15 @@ public class ActionModeTitle implements ActionMode.Callback {
     private void updateViews()
     {
         // We are in the album list
-        if (mSelectionList.getActivity() instanceof MusicTrackListActivity) {
-            MusicTrackListActivity trackListActivity = (MusicTrackListActivity)mSelectionList.getActivity();
+        if (mSelectionList.getActivity() instanceof MusicContainerListActivity) {
+            MusicContainerListActivity trackListActivity = (MusicContainerListActivity)mSelectionList.getActivity();
 
             trackListActivity.updateLists();
         }
 
         // We are in the track list
-        if (mSelectionList.getActivity() instanceof MusicTrackDetailActivity) {
-            MusicTrackDetailActivity trackDetailActivity = (MusicTrackDetailActivity)mSelectionList.getActivity();
+        if (mSelectionList.getActivity() instanceof MusicTrackListActivity) {
+            MusicTrackListActivity trackDetailActivity = (MusicTrackListActivity)mSelectionList.getActivity();
 
             trackDetailActivity.updateLists();
         }
@@ -112,10 +116,20 @@ public class ActionModeTitle implements ActionMode.Callback {
     // Called when the user exits the action mode
     @Override
     public void onDestroyActionMode(ActionMode mode) {
-        // Clears the selection
-        SelectedTrackList.getInstance().clear();
+        // We are in the music track list
+        if (mSelectionList.getActivity() instanceof MusicTrackListActivity) {
+            // Clear the action mode
+            SelectedTrackList.getInstance().clearActionMode();
 
-        updateViews();
+            // Close the activity
+            MusicTrackListActivity trackDetailActivity = (MusicTrackListActivity)mSelectionList.getActivity();
+            trackDetailActivity.finish();
+        } else {
+            // Clears the selection
+            SelectedTrackList.getInstance().clear();
+
+            // Update the views
+            updateViews();
+        }
     }
-
 }

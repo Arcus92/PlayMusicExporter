@@ -41,10 +41,11 @@ public class ArtistDataSource extends DataSource<Artist> {
     // All fields
     private final static String COLUMN_ARTIST_ID = "ArtistId";
     private final static String COLUMN_ARTIST = "Artist";
+    private final static String COLUMN_ARTWORK_LOCATION = "AlbumArtLocation";
     private final static String COLUMN_ARTWORK_FILE = "(SELECT ARTWORK_CACHE.LocalLocation FROM MUSIC AS MUSIC2 LEFT JOIN ARTWORK_CACHE ON ARTWORK_CACHE.RemoteLocation = MUSIC.AlbumArtLocation WHERE MUSIC2.ArtistId = MUSIC.ArtistId AND ARTWORK_CACHE.LocalLocation IS NOT NULL LIMIT 1) AS ArtworkFile";
 
     // All columns
-    private final static String[] COLUMNS_ALL = { COLUMN_ARTIST_ID, COLUMN_ARTIST, COLUMN_ARTWORK_FILE };
+    private final static String[] COLUMNS_ALL = { COLUMN_ARTIST_ID, COLUMN_ARTIST, COLUMN_ARTWORK_LOCATION, COLUMN_ARTWORK_FILE };
 
 
     /**
@@ -131,6 +132,7 @@ public class ArtistDataSource extends DataSource<Artist> {
         // Read all properties from the data row
         instance.setArtistId(cursor.getLong(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTIST_ID)));
         instance.setArtist(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTIST)));
+        instance.setArtworkLocation(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORK_LOCATION)));
         instance.setArtworkFile(cursor.getString(getColumnsIndex(COLUMNS_ALL, COLUMN_ARTWORK_FILE)));
 
         return instance;

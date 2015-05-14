@@ -23,21 +23,17 @@
 package de.arcus.playmusicexporter2.utils;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
-import de.arcus.framework.superuser.SuperUserCommand;
-import de.arcus.framework.superuser.SuperUserCommandCallback;
-import de.arcus.framework.superuser.SuperUserTools;
-import de.arcus.playmusicexporter2.R;
+import de.arcus.playmusiclib.ArtworkLoader;
+import de.arcus.playmusiclib.ArtworkLoaderCallback;
 
 /**
- * Class to load Artworks
+ * Class to load artworks
  */
-public class ImageViewLoader {
+public class ArtworkViewLoader {
     /**
      * A weak reference to the image view
      */
@@ -61,9 +57,15 @@ public class ImageViewLoader {
     private String mImagePath;
 
     /**
+     * Url of the image
+     */
+    private String mImageUrl;
+
+    /**
      * Path of the new image which will be loaded after the current loading is completed
      */
     private String mNewImagePath;
+    private String mNewImageUrl;
 
     /**
      * The default image of the image view
@@ -83,14 +85,14 @@ public class ImageViewLoader {
      * @param path The file path
      * @param defaultImage The default image in case the image could not be loaded
      */
-    public static void loadImage(ImageView imageView, String path, int defaultImage) {
+    public static void loadImage(ImageView imageView, String path, String url, int defaultImage) {
         // Checks for an old artwork loader on this image view
-        ImageViewLoader imageViewLoader = (ImageViewLoader)imageView.getTag();
+        ArtworkViewLoader imageViewLoader = (ArtworkViewLoader)imageView.getTag();
 
         if (path == null) path = "";
 
         if (imageViewLoader == null) {
-            imageViewLoader = new ImageViewLoader(imageView, path, defaultImage);
+            imageViewLoader = new ArtworkViewLoader(imageView, path, url, defaultImage);
 
             // Save the loader in the tag
             // If someone wants to load another artwork to this view
@@ -99,7 +101,7 @@ public class ImageViewLoader {
             imageViewLoader.loadImage();
         } else {
             // Updates the old loader
-            imageViewLoader.updateImage(path);
+            imageViewLoader.updateImage(path, url);
         }
     }
 
@@ -108,9 +110,10 @@ public class ImageViewLoader {
      * @param imageView The image view we want to set
      * @param path The path to load
      */
-    private ImageViewLoader(ImageView imageView, String path, int defaultImage) {
+    private ArtworkViewLoader(ImageView imageView, String path, String url, int defaultImage) {
         mImageView = new WeakReference<>(imageView);
         mImagePath = path;
+        mImageUrl = url;
         mDefaultImage = defaultImage;
     }
 
@@ -120,87 +123,68 @@ public class ImageViewLoader {
     private void loadImage() {
         // Show the default icon while loading
         final ImageView imageViewDefault = mImageView.get();
+        int maximalArtworkSize = 0;
         if (imageViewDefault != null) {
+            // The maximum artwork size
+            maximalArtworkSize = imageViewDefault.getWidth();
+
             // Sets the bitmap in the UI thread
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
                     // Default icon
                     imageViewDefault.setImageResource(mDefaultImage);
+
                 }
             };
             imageViewDefault.post(runnable);
         }
 
-        if (!TextUtils.isEmpty(mImagePath)) {
-            mIsLoading = true;
+        // Start loading
+        mIsLoading = true;
 
-            // Be careful! Don't scroll to fast! This will spam the superuser to do list!
-            SuperUserTools.fileReadToByteArrayAsync(mImagePath, new SuperUserCommandCallback() {
-                @Override
-                public void onFinished(SuperUserCommand command) {
+        // Load the artwork
+        ArtworkLoader.loadArtworkAsync(mImagePath, mImageUrl, maximalArtworkSize, new ArtworkLoaderCallback() {
+            @Override
+            public void onFinished(final Bitmap bitmap) {
+                final ImageView imageView = mImageView.get();
 
-                    final ImageView imageView = mImageView.get();
-
-                    if (imageView != null) {
-
-                        // Success
-                        if (command.commandWasSuccessful()) {
-                            // Binary data
-                            byte[] bitmapData = command.getStandardOutputBinary();
-
-                            // Loads the bitmap
-                            try {
-                                // We already want to load a new image, so we don't need to set this
-                                if (mNewImagePath == null) {
-                                    // Loads the bitmap
-                                    final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-
-                                    // Sets the bitmap in the UI thread
-                                    Runnable runnable = new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            imageView.setImageBitmap(bitmap);
-                                        }
-                                    };
-                                    imageView.post(runnable);
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            // Sets the bitmap in the UI thread
-                            Runnable runnable = new Runnable() {
-                                @Override
-                                public void run() {
-                                    // File not found
-                                    imageView.setImageResource(R.drawable.cd_case);
-                                }
-                            };
-                            imageView.post(runnable);
+                if (imageViewDefault != null) {
+                    // Sets the bitmap in the UI thread
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            // Bitmap is valid
+                            if (bitmap != null)
+                                imageView.setImageBitmap(bitmap);
+                            else
+                                imageView.setImageResource(mDefaultImage);
                         }
-                    }
-
-                    mIsLoading = false;
-
-                    // Loads the next image
-                    if (mNewImagePath != null) {
-                        mImagePath = mNewImagePath;
-                        mNewImagePath = null;
-
-                        loadImage();
-                    }
+                    };
+                    imageView.post(runnable);
                 }
-            });
-        }
+
+                // Loading is done
+                mIsLoading = false;
+
+                // Loads the next image
+                if (mNewImagePath != null) {
+                    mImagePath = mNewImagePath;
+                    mImageUrl = mNewImageUrl;
+                    mNewImagePath = null;
+                    mNewImageUrl = null;
+
+                    loadImage();
+                }
+            }
+        });
     }
 
     /**
      * Loads a new artwork
      * @param path New artwork path
      */
-    private void updateImage(String path) {
+    private void updateImage(String path, String url) {
         // The same artwork; nothing to do
         if (path.equals(mImagePath)) {
             return;
@@ -208,8 +192,10 @@ public class ImageViewLoader {
 
         if (mIsLoading) {
             mNewImagePath = path;
+            mNewImageUrl = url;
         } else {
             mImagePath = path;
+            mImageUrl = url;
             loadImage();
         }
     }
