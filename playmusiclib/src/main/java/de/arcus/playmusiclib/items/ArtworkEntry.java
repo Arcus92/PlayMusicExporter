@@ -22,8 +22,76 @@
 
 package de.arcus.playmusiclib.items;
 
+import de.arcus.playmusiclib.PlayMusicManager;
+
 /**
  * Created by david on 14.05.15.
  */
-public interface ArtworkEntry {
+public class ArtworkEntry {
+    /**
+     * The manager
+     */
+    protected PlayMusicManager mPlayMusicManager;
+
+    /**
+     * Creates a data item
+     * @param playMusicManager The manager
+     */
+    public ArtworkEntry(PlayMusicManager playMusicManager) {
+        mPlayMusicManager = playMusicManager;
+    }
+
+    /**
+     * The filename of the artwork
+     */
+    protected String mArtworkFile;
+
+    /**
+     * The url of the artwork
+     */
+    protected String mArtworkLocation;
+
+    /**
+     * The complete path of the artwork
+     */
+    protected String mArtworkPath;
+
+    /**
+     * Gets the artwork filename
+     */
+    public String getArtworkFile() {
+        return mArtworkFile;
+    }
+
+    /**
+     * @param artworkFile Sets the artwork filename
+     */
+    public void setArtworkFile(String artworkFile) {
+        mArtworkFile = artworkFile;
+    }
+
+    /**
+     * Gets the artwork url
+     */
+    public String getArtworkLocation() {
+        return mArtworkLocation;
+    }
+
+    /**
+     * Sets the artwork url
+     */
+    public void setArtworkLocation(String artworkLocation) {
+        mArtworkLocation = artworkLocation;
+    }
+
+    /**
+     * Gets the artwork path
+     * @return Path to the artwork
+     */
+    public String getArtworkPath() {
+        // Search for the artwork path
+        if (mArtworkPath == null)
+            mArtworkPath = mPlayMusicManager.getArtworkPath(mArtworkFile);
+        return mArtworkPath;
+    }
 }

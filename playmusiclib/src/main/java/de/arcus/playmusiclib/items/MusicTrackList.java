@@ -33,18 +33,13 @@ import de.arcus.playmusiclib.datasources.PlaylistDataSource;
  * List of {@link de.arcus.playmusiclib.items.MusicTrack MusicTracks}.
  * Eg. albums, playlists, etc...
  */
-public abstract class MusicTrackList {
-    /**
-     * The manager
-     */
-    protected PlayMusicManager mPlayMusicManager;
-
+public abstract class MusicTrackList extends ArtworkEntry {
     /**
      * Creates a data item
      * @param playMusicManager The manager
      */
     public MusicTrackList(PlayMusicManager playMusicManager) {
-        mPlayMusicManager = playMusicManager;
+        super(playMusicManager);
     }
 
     /**
@@ -53,22 +48,10 @@ public abstract class MusicTrackList {
      */
     protected List<MusicTrack> mMusicTrackList;
 
-    /**
-     * The filename of the artwork
-     */
-    protected String mArtworkFile;
 
     /**
-     * The url of the artwork
+     * @return Returns the music track list
      */
-    protected String mArtworkLocation;
-
-    /**
-     * The complete path of the artwork
-     */
-    protected String mArtworkPath;
-
-
     public List<MusicTrack> getMusicTrackList() {
         // List is requested for the fist time
         if (mMusicTrackList == null)
@@ -78,35 +61,6 @@ public abstract class MusicTrackList {
         return mMusicTrackList;
     }
 
-
-
-    /**
-     * Gets the artwork filename
-     */
-    public String getArtworkFile() {
-        return mArtworkFile;
-    }
-
-    /**
-     * @param artworkFile Sets the artwork filename
-     */
-    public void setArtworkFile(String artworkFile) {
-        mArtworkFile = artworkFile;
-    }
-
-    /**
-     * Gets the artwork url
-     */
-    public String getArtworkLocation() {
-        return mArtworkLocation;
-    }
-
-    /**
-     * Sets the artwork url
-     */
-    public void setArtworkLocation(String artworkLocation) {
-        mArtworkLocation = artworkLocation;
-    }
 
     /**
      * Loads all tracks from this list.
@@ -145,17 +99,6 @@ public abstract class MusicTrackList {
      * Needed for playlists and artists
      */
     public abstract boolean getShowArtworkInTrack();
-
-    /**
-     * Gets the artwork path
-     * @return Path to the artwork
-     */
-    public String getArtworkPath() {
-        // Search for the artwork path
-        if (mArtworkPath == null)
-            mArtworkPath = mPlayMusicManager.getArtworkPath(mArtworkFile);
-        return mArtworkPath;
-    }
 
     /**
      * Loads a music track list by type and id

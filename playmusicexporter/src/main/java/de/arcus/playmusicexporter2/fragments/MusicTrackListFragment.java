@@ -130,11 +130,8 @@ public class MusicTrackListFragment extends Fragment {
             // Sets the artwork image
             imageView = (ImageView)headerView.findViewById(R.id.image_music_track_artwork);
 
-            String artworkPath = mMusicTrackList.getArtworkPath();
-            String artworkLocation = mMusicTrackList.getArtworkLocation();
-
             // Loads the artwork
-            ArtworkViewLoader.loadImage(imageView, artworkPath, artworkLocation, R.drawable.cd_case);
+            ArtworkViewLoader.loadImage(mMusicTrackList, imageView, R.drawable.cd_case);
 
             // Sets the title
             textView = (TextView)headerView.findViewById(R.id.text_music_track_list_title);

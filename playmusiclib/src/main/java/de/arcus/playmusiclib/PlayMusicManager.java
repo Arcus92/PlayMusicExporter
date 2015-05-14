@@ -602,11 +602,8 @@ public class PlayMusicManager {
 
             // Add the artwork to the meta data
             if (mID3EnableArtwork) {
-                String artworkPath = musicTrack.getArtworkPath();
-                String artworkLocation = musicTrack.getArtworkLocation();
-
                 // Load the artwork
-                Bitmap bitmap = ArtworkLoader.loadArtwork(artworkPath, artworkLocation, mID3ArtworkMaximumSize);
+                Bitmap bitmap = ArtworkLoader.loadArtwork(musicTrack, mID3ArtworkMaximumSize);
 
                 if (bitmap != null) {
                     // JPEG is default

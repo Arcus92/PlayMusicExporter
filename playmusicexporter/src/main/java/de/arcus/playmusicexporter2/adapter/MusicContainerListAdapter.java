@@ -90,12 +90,8 @@ public class MusicContainerListAdapter extends ArrayAdapter<MusicTrackList> {
         // Final for the callback
         imageView = (ImageView)view.findViewById(R.id.image_music_track_artwork);
 
-        // Gets the artwork
-        String artworkPath = musicTrackList.getArtworkPath();
-        String artworkLocation = musicTrackList.getArtworkLocation();
-
         // Loads the artwork
-        ArtworkViewLoader.loadImage(imageView, artworkPath, artworkLocation, R.drawable.cd_case);
+        ArtworkViewLoader.loadImage(musicTrackList, imageView, R.drawable.cd_case);
 
         return view;
     }

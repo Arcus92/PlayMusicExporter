@@ -29,27 +29,20 @@ import de.arcus.playmusiclib.PlayMusicManager;
 /**
  * A single music track from Play Music
  */
-public class MusicTrack {
+public class MusicTrack extends ArtworkEntry {
     // Variables
     private long mId, mSize, mTrackNumber, mDiscNumber, mAlbumId, mArtistId, mLocalCopyType, mLocalCopyStorageType, mDuration, mRating;
-    private String mTitle, mArtist, mAlbum, mAlbumArtist, mLocalCopyPath, mGenre, mYear, mClientId, mSourceId, mArtworkFile;
+    private String mTitle, mArtist, mAlbum, mAlbumArtist, mLocalCopyPath, mGenre, mYear, mClientId, mSourceId;
     private byte[] mCpData;
 
     private String mSourceFile;
-    private String mArtworkPath;
-    private String mArtworkLocation;
-
-    /**
-     * The manager
-     */
-    private PlayMusicManager mPlayMusicManager;
 
     /**
      * Creates a data item
      * @param playMusicManager The manager
      */
     public MusicTrack(PlayMusicManager playMusicManager) {
-        mPlayMusicManager = playMusicManager;
+        super(playMusicManager);
     }
 
     /**
@@ -331,21 +324,6 @@ public class MusicTrack {
     public void setCpData(byte[] cpData) {
         this.mCpData = cpData;
     }
-
-    /**
-     * @return Gets the artwork file name
-     */
-    public String getArtworkFile() {
-        return mArtworkFile;
-    }
-
-    /**
-     * @param artworkFile Sets the artwork file name
-     */
-    public void setArtworkFile(String artworkFile) {
-        this.mArtworkFile = artworkFile;
-    }
-
     /**
      * The name of the container (eg. a playlist or an artist)
      */
@@ -371,20 +349,6 @@ public class MusicTrack {
     private long mContainerPosition;
 
     /**
-     * Gets the artwork url
-     */
-    public String getArtworkLocation() {
-        return mArtworkLocation;
-    }
-
-    /**
-     * Sets the artwork url
-     */
-    public void setArtworkLocation(String artworkLocation) {
-        mArtworkLocation = artworkLocation;
-    }
-
-    /**
      * @return Gets the position in the container
      */
     public long getContainerPosition() {
@@ -406,16 +370,6 @@ public class MusicTrack {
         if (mSourceFile == null)
             mSourceFile = mPlayMusicManager.getMusicFile(mLocalCopyPath);
         return mSourceFile;
-    }
-
-    /**
-     * @return Returns the full album artwork path
-     */
-    public String getArtworkPath() {
-        // Search for the artwork path
-        if (mArtworkPath == null)
-            mArtworkPath = mPlayMusicManager.getArtworkPath(mArtworkFile);
-        return mArtworkPath;
     }
 
     /**

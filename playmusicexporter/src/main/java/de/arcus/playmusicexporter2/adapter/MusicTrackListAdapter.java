@@ -134,10 +134,7 @@ public class MusicTrackListAdapter extends ArrayAdapter<MusicTrack> {
         if (mShowArtworks) {
             ImageView imageView = (ImageView) view.findViewById(R.id.image_music_track_artwork);
 
-            String artworkPath = musicTrack.getArtworkPath();
-            String artworkLocation = musicTrack.getArtworkLocation();
-
-            ArtworkViewLoader.loadImage(imageView, artworkPath, artworkLocation, R.drawable.cd_case);
+            ArtworkViewLoader.loadImage(musicTrack, imageView, R.drawable.cd_case);
         }
 
         // Sets the title

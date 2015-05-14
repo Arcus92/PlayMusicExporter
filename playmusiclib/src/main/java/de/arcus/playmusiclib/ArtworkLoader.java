@@ -32,6 +32,7 @@ import java.net.URL;
 import de.arcus.framework.logger.Logger;
 import de.arcus.framework.superuser.SuperUserTools;
 import de.arcus.framework.utils.ImageTools;
+import de.arcus.playmusiclib.items.ArtworkEntry;
 
 /**
  * This class contains methods to load the artworks from the Play Music cache or from the internet
@@ -39,13 +40,14 @@ import de.arcus.framework.utils.ImageTools;
 public class ArtworkLoader {
     /**
      * Loads an artwork
-     * @param artworkPath The local filepath
-     * @param artworkUrl The remote url
+     * @param artworkEntry The artwork entry
      * @param artworkSize The size
      * @return The loaded bitmap or null if it failed
      */
-    public static Bitmap loadArtwork(String artworkPath, String artworkUrl, int artworkSize) {
+    public static Bitmap loadArtwork(ArtworkEntry artworkEntry, int artworkSize) {
         Bitmap bitmap = null;
+        String artworkPath = artworkEntry.getArtworkPath();
+        String artworkUrl = artworkEntry.getArtworkLocation();
 
         // The local path is set
         if (!TextUtils.isEmpty(artworkPath)) {
@@ -81,12 +83,11 @@ public class ArtworkLoader {
 
     /**
      * Loads an artwork
-     * @param artworkPath The local filepath
-     * @param artworkUrl The remote url
+     * @param artworkEntry The artwork entry
      * @param artworkSize The size
      * @param callback The callback
      */
-    public static void loadArtworkAsync(final String artworkPath, final String artworkUrl, final int artworkSize, final ArtworkLoaderCallback callback) {
+    public static void loadArtworkAsync(final ArtworkEntry artworkEntry, final int artworkSize, final ArtworkLoaderCallback callback) {
         // The main handler
         final Handler handler = new Handler();
 
@@ -94,7 +95,7 @@ public class ArtworkLoader {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final Bitmap bitmap = loadArtwork(artworkPath, artworkUrl, artworkSize);
+                final Bitmap bitmap = loadArtwork(artworkEntry, artworkSize);
 
                 // Call the callback event in the main thread
                 handler.post(new Runnable() {

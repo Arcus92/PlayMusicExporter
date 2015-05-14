@@ -29,6 +29,7 @@ import java.lang.ref.WeakReference;
 
 import de.arcus.playmusiclib.ArtworkLoader;
 import de.arcus.playmusiclib.ArtworkLoaderCallback;
+import de.arcus.playmusiclib.items.ArtworkEntry;
 
 /**
  * Class to load artworks
@@ -52,20 +53,14 @@ public class ArtworkViewLoader {
     }
 
     /**
-     * Path of the image
+     * The artwork entry
      */
-    private String mImagePath;
-
-    /**
-     * Url of the image
-     */
-    private String mImageUrl;
+    private ArtworkEntry mArtworkEntry;
 
     /**
      * Path of the new image which will be loaded after the current loading is completed
      */
-    private String mNewImagePath;
-    private String mNewImageUrl;
+    private ArtworkEntry mNewArtworkEntry;
 
     /**
      * The default image of the image view
@@ -73,26 +68,17 @@ public class ArtworkViewLoader {
     private int mDefaultImage;
 
     /**
-     * @return Gets the path of the image we want to load
-     */
-    public String getImagePath() {
-        return mImagePath;
-    }
-
-    /**
      * Starts an image loader
+     * @param artworkEntry The artwork entry
      * @param imageView The image view
-     * @param path The file path
      * @param defaultImage The default image in case the image could not be loaded
      */
-    public static void loadImage(ImageView imageView, String path, String url, int defaultImage) {
+    public static void loadImage(ArtworkEntry artworkEntry, ImageView imageView, int defaultImage) {
         // Checks for an old artwork loader on this image view
         ArtworkViewLoader imageViewLoader = (ArtworkViewLoader)imageView.getTag();
 
-        if (path == null) path = "";
-
         if (imageViewLoader == null) {
-            imageViewLoader = new ArtworkViewLoader(imageView, path, url, defaultImage);
+            imageViewLoader = new ArtworkViewLoader(artworkEntry, imageView, defaultImage);
 
             // Save the loader in the tag
             // If someone wants to load another artwork to this view
@@ -101,19 +87,19 @@ public class ArtworkViewLoader {
             imageViewLoader.loadImage();
         } else {
             // Updates the old loader
-            imageViewLoader.updateImage(path, url);
+            imageViewLoader.updateImage(artworkEntry);
         }
     }
 
     /**
      * Loads a image to an image view
-     * @param imageView The image view we want to set
-     * @param path The path to load
+     * @param artworkEntry The artwork entry
+     * @param imageView The image view
+     * @param defaultImage The default image in case the image could not be loaded
      */
-    private ArtworkViewLoader(ImageView imageView, String path, String url, int defaultImage) {
+    private ArtworkViewLoader(ArtworkEntry artworkEntry, ImageView imageView, int defaultImage) {
         mImageView = new WeakReference<>(imageView);
-        mImagePath = path;
-        mImageUrl = url;
+        mArtworkEntry = artworkEntry;
         mDefaultImage = defaultImage;
     }
 
@@ -144,7 +130,7 @@ public class ArtworkViewLoader {
         mIsLoading = true;
 
         // Load the artwork
-        ArtworkLoader.loadArtworkAsync(mImagePath, mImageUrl, maximalArtworkSize, new ArtworkLoaderCallback() {
+        ArtworkLoader.loadArtworkAsync(mArtworkEntry, maximalArtworkSize, new ArtworkLoaderCallback() {
             @Override
             public void onFinished(final Bitmap bitmap) {
                 final ImageView imageView = mImageView.get();
@@ -168,11 +154,9 @@ public class ArtworkViewLoader {
                 mIsLoading = false;
 
                 // Loads the next image
-                if (mNewImagePath != null) {
-                    mImagePath = mNewImagePath;
-                    mImageUrl = mNewImageUrl;
-                    mNewImagePath = null;
-                    mNewImageUrl = null;
+                if (mNewArtworkEntry != null) {
+                    mArtworkEntry = mNewArtworkEntry;
+                    mNewArtworkEntry = null;
 
                     loadImage();
                 }
@@ -182,20 +166,18 @@ public class ArtworkViewLoader {
 
     /**
      * Loads a new artwork
-     * @param path New artwork path
+     * @param artworkEntry New artwork entry
      */
-    private void updateImage(String path, String url) {
+    private void updateImage(ArtworkEntry artworkEntry) {
         // The same artwork; nothing to do
-        if (path.equals(mImagePath)) {
+        if (artworkEntry.getArtworkLocation().equals(mArtworkEntry.getArtworkLocation())) {
             return;
         }
 
         if (mIsLoading) {
-            mNewImagePath = path;
-            mNewImageUrl = url;
+            mNewArtworkEntry = artworkEntry;
         } else {
-            mImagePath = path;
-            mImageUrl = url;
+            mArtworkEntry = artworkEntry;
             loadImage();
         }
     }
