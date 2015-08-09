@@ -60,8 +60,7 @@ public class ActionModeTitle implements ActionMode.Callback {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.action_mode_selection, menu);
 
-        //mode.setSubtitle("TEST");
-        mode.setTitleOptionalHint(true);
+
         return true;
     }
 
@@ -70,6 +69,9 @@ public class ActionModeTitle implements ActionMode.Callback {
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         updateViews();
+
+        // Update the title
+        mode.setTitle(mContext.getString(R.string.action_mode_track_selection, mSelectionList.getSelectedItems().size()));
 
         return false; // Return false if nothing is done
     }
@@ -85,8 +87,16 @@ public class ActionModeTitle implements ActionMode.Callback {
                     selectedTrack.export(mContext);
                 }
 
+                // Clear the selection
+                SelectedTrackList.getInstance().clear();
+
                 // Close the action mode
-                mode.finish();
+                //mode.finish();
+                return true;
+            case R.id.action_deselect_all:
+                // Clear the selection
+                SelectedTrackList.getInstance().clear();
+
                 return true;
             default:
                 return false;

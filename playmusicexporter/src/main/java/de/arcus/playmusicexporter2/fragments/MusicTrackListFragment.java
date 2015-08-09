@@ -104,9 +104,6 @@ public class MusicTrackListFragment extends Fragment {
                 mMusicTrackList = MusicTrackList.deserialize(playMusicManager, id, type);
             }
         }
-
-        // Setup the selection list for this activity
-        SelectedTrackList.getInstance().setupActionMode((AppCompatActivity)getActivity());
     }
 
     @Override
@@ -146,10 +143,6 @@ public class MusicTrackListFragment extends Fragment {
             musicTrackAdapter.setList(mMusicTrackList.getMusicTrackList());
 
             mListView.setAdapter(musicTrackAdapter);
-            //listView.setDrawSelectorOnTop(false);
-            mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-            mListView.setItemsCanFocus(false);
-
 
             // Click on one list item
             mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

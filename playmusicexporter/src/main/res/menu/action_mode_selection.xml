@@ -27,6 +27,11 @@
         android:icon="@drawable/ic_action_select_all"
         app:showAsAction="ifRoom" />
 
+    <item android:id="@+id/action_deselect_all"
+        android:title="@string/action_deselect_all"
+        android:icon="@drawable/ic_action_select_none"
+        app:showAsAction="ifRoom" />
+
     <item android:id="@+id/action_export"
         android:title="@string/action_export"
         android:icon="@drawable/ic_action_save"

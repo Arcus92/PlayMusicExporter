@@ -41,6 +41,7 @@ import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.fragments.MusicTrackListFragment;
 import de.arcus.playmusicexporter2.fragments.MusicContainerListFragment;
 import de.arcus.playmusicexporter2.fragments.NavigationDrawerFragment;
+import de.arcus.playmusicexporter2.items.SelectedTrackList;
 import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.datasources.AlbumDataSource;
 import de.arcus.playmusiclib.datasources.ArtistDataSource;
@@ -160,6 +161,9 @@ public class MusicContainerListActivity extends AppCompatActivity
         // Loads the list
         mViewType = mNavigationDrawerFragment.getViewType();
         loadList();
+
+        // Setup the selection list for this activity
+        SelectedTrackList.getInstance().setupActionMode(this);
     }
 
     /**

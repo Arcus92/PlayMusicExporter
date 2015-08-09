@@ -27,6 +27,7 @@
     <string name="title_track_detail">Track Detail</string>
 
     <string name="action_select_all">Select all</string>
+    <string name="action_deselect_all">Deselect all</string>
     <string name="action_export">Export</string>
     <string name="action_play">Play</string>
     <string name="action_share">Share</string>
@@ -110,4 +111,5 @@
     <string name="settings_donation_title">Support me</string>
     <string name="settings_donation_summery">Donate to me via PayPal</string>
     <string name="settings_donation_url" translatable="false"><![CDATA[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A2VD24Z5E32RU]]></string>
+    <string name="action_mode_track_selection">%d tracks selected</string>
 </resources>

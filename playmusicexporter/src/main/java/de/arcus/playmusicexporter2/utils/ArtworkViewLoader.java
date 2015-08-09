@@ -27,6 +27,8 @@ import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
+import de.arcus.framework.logger.Logger;
+import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusiclib.ArtworkLoader;
 import de.arcus.playmusiclib.ArtworkLoaderCallback;
 import de.arcus.playmusiclib.items.ArtworkEntry;
@@ -74,6 +76,11 @@ public class ArtworkViewLoader {
      * @param defaultImage The default image in case the image could not be loaded
      */
     public static void loadImage(ArtworkEntry artworkEntry, ImageView imageView, int defaultImage) {
+        // No artwork
+        if (artworkEntry.getArtworkLocation() == null) {
+            return;
+        }
+
         // Checks for an old artwork loader on this image view
         ArtworkViewLoader imageViewLoader = (ArtworkViewLoader)imageView.getTag();
 
@@ -112,7 +119,7 @@ public class ArtworkViewLoader {
         int maximalArtworkSize = 0;
         if (imageViewDefault != null) {
             // The maximum artwork size
-            maximalArtworkSize = imageViewDefault.getWidth();
+            maximalArtworkSize = imageViewDefault.getContext().getResources().getDimensionPixelSize(R.dimen.music_track_artwork_loading_size);
 
             // Sets the bitmap in the UI thread
             Runnable runnable = new Runnable() {
@@ -125,6 +132,8 @@ public class ArtworkViewLoader {
             };
             imageViewDefault.post(runnable);
         }
+
+
 
         // Start loading
         mIsLoading = true;

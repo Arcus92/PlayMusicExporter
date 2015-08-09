@@ -59,4 +59,5 @@
     <string name="settings_export_path_custom">Benutzerdefinierter Pfad</string>
     <string name="settings_export_id3_artwork_size">Maximale Artworkgröße</string>
     <string name="settings_export_id3_artwork_size_summary">Wenn die Größe des Artworks größer als der eingestellte Wert ist, wird das Artwork auf diesen Wert runter skalliert.</string>
+    <string name="action_mode_track_selection">%d Titel ausgewählt</string>
 </resources>

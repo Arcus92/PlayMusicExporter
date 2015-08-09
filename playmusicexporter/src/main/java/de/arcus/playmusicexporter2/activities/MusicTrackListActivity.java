@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import de.arcus.framework.crashhandler.CrashHandler;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.fragments.MusicTrackListFragment;
+import de.arcus.playmusicexporter2.items.SelectedTrackList;
 import de.arcus.playmusiclib.PlayMusicManager;
 import de.arcus.playmusiclib.items.MusicTrackList;
 
@@ -102,6 +103,9 @@ public class MusicTrackListActivity extends AppCompatActivity {
                     .add(R.id.track_detail_container, fragment)
                     .commit();
         }
+
+        // Setup the selection list for this activity
+        SelectedTrackList.getInstance().setupActionMode(this);
     }
 
     @Override
@@ -129,6 +133,7 @@ public class MusicTrackListActivity extends AppCompatActivity {
         MusicTrackListFragment musicTrackDetailFragment = (MusicTrackListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.track_detail_container);
 
-        musicTrackDetailFragment.updateListView();
+        if (musicTrackDetailFragment != null)
+            musicTrackDetailFragment.updateListView();
     }
 }
