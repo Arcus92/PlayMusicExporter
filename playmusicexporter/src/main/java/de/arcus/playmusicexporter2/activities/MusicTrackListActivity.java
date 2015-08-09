@@ -136,4 +136,16 @@ public class MusicTrackListActivity extends AppCompatActivity {
         if (musicTrackDetailFragment != null)
             musicTrackDetailFragment.updateListView();
     }
+
+    /**
+     * Select all items
+     */
+    public void selectAll() {
+        // Gets the music list fragment
+        MusicTrackListFragment musicTrackDetailFragment = (MusicTrackListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.track_detail_container);
+
+        if (musicTrackDetailFragment != null)
+            musicTrackDetailFragment.selectAll();
+    }
 }

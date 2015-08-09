@@ -120,11 +120,13 @@ public abstract class SelectionList<T> {
         // Set the selection state
         setSelected(item, state);
 
-        // Change the background
-        if (state)
-            view.setBackgroundColor(view.getResources().getColor(mResColorSelected));
-        else
-            view.setBackgroundColor(view.getResources().getColor(mResColorNormal));
+        if (view != null) {
+            // Change the background
+            if (state)
+                view.setBackgroundColor(view.getResources().getColor(mResColorSelected));
+            else
+                view.setBackgroundColor(view.getResources().getColor(mResColorNormal));
+        }
     }
 
     /**

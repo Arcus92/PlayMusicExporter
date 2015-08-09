@@ -103,6 +103,7 @@ public class MusicContainerListFragment extends ListFragment {
         getListView().invalidateViews();
     }
 
+
     /**
      * @param list Set the list
      */

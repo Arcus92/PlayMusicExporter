@@ -48,6 +48,11 @@ public class ActionModeTitle implements ActionMode.Callback {
      */
     private SelectedTrackList mSelectionList;
 
+    /**
+     * Flag to not close the activity when action mode is closing
+     */
+    private boolean mDoNotCloseActivity;
+
     public ActionModeTitle(Context context, SelectedTrackList selectionList) {
         mContext = context;
         mSelectionList = selectionList;
@@ -87,13 +92,25 @@ public class ActionModeTitle implements ActionMode.Callback {
                     selectedTrack.export(mContext);
                 }
 
+                // Do not close the activity
+                mDoNotCloseActivity = true;
+
                 // Clear the selection
                 SelectedTrackList.getInstance().clear();
+                return true;
+            case R.id.action_select_all:
+                // We are in the track list
+                if (mSelectionList.getActivity() instanceof MusicTrackListActivity) {
+                    MusicTrackListActivity trackDetailActivity = (MusicTrackListActivity)mSelectionList.getActivity();
 
-                // Close the action mode
-                //mode.finish();
+                    trackDetailActivity.selectAll();
+                }
+
                 return true;
             case R.id.action_deselect_all:
+                // Do not close the activity
+                mDoNotCloseActivity = true;
+
                 // Clear the selection
                 SelectedTrackList.getInstance().clear();
 
@@ -127,7 +144,7 @@ public class ActionModeTitle implements ActionMode.Callback {
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         // We are in the music track list
-        if (mSelectionList.getActivity() instanceof MusicTrackListActivity) {
+        if (mSelectionList.getActivity() instanceof MusicTrackListActivity && !mDoNotCloseActivity) {
             // Clear the action mode
             SelectedTrackList.getInstance().clearActionMode();
 

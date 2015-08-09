@@ -72,6 +72,8 @@ public class MusicTrackListFragment extends Fragment {
      */
     private ListView mListView;
 
+    private MusicTrackListAdapter mMusicTrackAdapter;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -85,6 +87,20 @@ public class MusicTrackListFragment extends Fragment {
     public void updateListView() {
         if (mListView != null)
             mListView.invalidateViews();
+    }
+
+    /**
+     * Select all items
+     */
+    public void selectAll() {
+        // Select all tracks
+        for(int i = 0; i < mMusicTrackAdapter.getCount(); i++ ) {
+            MusicTrack musicTrack = mMusicTrackAdapter.getItem(i);
+
+            selectTrack(musicTrack, null, false);
+        }
+
+        updateListView();
     }
 
     @Override
@@ -114,9 +130,9 @@ public class MusicTrackListFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         if (mMusicTrackList != null) {
             mListView = (ListView)rootView.findViewById(R.id.list_music_track);
-            final MusicTrackListAdapter musicTrackAdapter = new MusicTrackListAdapter(getActivity());
+            mMusicTrackAdapter = new MusicTrackListAdapter(getActivity());
 
-            musicTrackAdapter.setShowArtworks(mMusicTrackList.getShowArtworkInTrack());
+            mMusicTrackAdapter.setShowArtworks(mMusicTrackList.getShowArtworkInTrack());
 
             View headerView = inflater.inflate(R.layout.header_music_track_list, mListView, false);
             headerView.setEnabled(false);
@@ -140,9 +156,9 @@ public class MusicTrackListFragment extends Fragment {
 
             mListView.addHeaderView(headerView);
 
-            musicTrackAdapter.setList(mMusicTrackList.getMusicTrackList());
+            mMusicTrackAdapter.setList(mMusicTrackList.getMusicTrackList());
 
-            mListView.setAdapter(musicTrackAdapter);
+            mListView.setAdapter(mMusicTrackAdapter);
 
             // Click on one list item
             mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -154,34 +170,49 @@ public class MusicTrackListFragment extends Fragment {
                         position -= 1;
 
                         // Gets the selected track
-                        MusicTrack musicTrack = musicTrackAdapter.getItem(position);
+                        MusicTrack musicTrack = mMusicTrackAdapter.getItem(position);
 
-                        // Track is available
-                        if (musicTrack.isOfflineAvailable()) {
-
-                            // Default structure
-                            String pathStructure = "{album-artist}/{album}/{disc=CD $}/{no=$$.} {title}.mp3";
-
-                            // Track is exported from a group (playlist or artist)
-                            if (!TextUtils.isEmpty(musicTrack.getContainerName()))
-                            {
-                                pathStructure = "{group}/{group-no=$$.} {title}.mp3";
-                            }
-
-                            // Build the path
-                            String path = MusicPathBuilder.Build(musicTrack, pathStructure);
-
-                            // Path to the public music folder
-                            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + path;
-
-                            // Toggles the music track
-                            SelectedTrackList.getInstance().toggle(new SelectedTrack(musicTrack.getId(), path), view);
-                        }
+                        // Toggle the track
+                        selectTrack(musicTrack, view, true);
                     }
                 }
             });
         }
 
         return rootView;
+    }
+
+    /**
+     * Select a track
+     * @param musicTrack The track
+     * @param view The view
+     * @param toggle If you want to toggle the selection set this to true
+     */
+    private void selectTrack(MusicTrack musicTrack, View view, boolean toggle) {
+        // Track is available
+        if (musicTrack.isOfflineAvailable()) {
+
+            // Default structure
+            String pathStructure = "{album-artist}/{album}/{disc=CD $}/{no=$$.} {title}.mp3";
+
+            // Track is exported from a group (playlist or artist)
+            if (!TextUtils.isEmpty(musicTrack.getContainerName()))
+            {
+                pathStructure = "{group}/{group-no=$$.} {title}.mp3";
+            }
+
+            // Build the path
+            String path = MusicPathBuilder.Build(musicTrack, pathStructure);
+
+            // Path to the public music folder
+            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + path;
+
+            if (toggle) {
+                // Toggles the music track
+                SelectedTrackList.getInstance().toggle(new SelectedTrack(musicTrack.getId(), path), view);
+            } else {
+                SelectedTrackList.getInstance().setSelected(new SelectedTrack(musicTrack.getId(), path), true, view);
+            }
+        }
     }
 }
