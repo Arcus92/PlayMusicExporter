@@ -50,7 +50,7 @@
     <string name="notification_export_working_summery">Titel %1$d von %2$d wird exportiert&#8230;</string>
     <string name="notification_export_finished_summery">%1$d Titel wurden erfolgreich exportiert!</string>
     <string name="notification_export_finished_title">Export abgeschlossen!</string>
-    <string name="search">Suchen</string>
+    <string name="search">Suchen&#8230;</string>
     <string name="button_export_group">Alle Titel exportieren</string>
     <string name="action_export">Exportieren</string>
     <string name="action_play">Wiedergeben</string>
@@ -60,4 +60,5 @@
     <string name="settings_export_id3_artwork_size">Maximale Artworkgröße</string>
     <string name="settings_export_id3_artwork_size_summary">Wenn die Größe des Artworks größer als der eingestellte Wert ist, wird das Artwork auf diesen Wert runter skalliert.</string>
     <string name="action_mode_track_selection">%d Titel ausgewählt</string>
+    <string name="action_deselect_all">Auswahl aufheben</string>
 </resources>

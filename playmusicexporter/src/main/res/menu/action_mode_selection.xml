@@ -31,19 +31,4 @@
         android:title="@string/action_deselect_all"
         android:icon="@drawable/ic_action_select_none"
         app:showAsAction="ifRoom" />
-
-    <item android:id="@+id/action_export"
-        android:title="@string/action_export"
-        android:icon="@drawable/ic_action_save"
-        app:showAsAction="ifRoom" />
-
-    <item android:id="@+id/action_share"
-        android:title="@string/action_share"
-        android:icon="@drawable/ic_action_share"
-        app:showAsAction="ifRoom" />
-
-    <item android:id="@+id/action_play"
-        android:title="@string/action_play"
-        android:icon="@drawable/ic_action_play"
-        app:showAsAction="ifRoom" />
 </menu>

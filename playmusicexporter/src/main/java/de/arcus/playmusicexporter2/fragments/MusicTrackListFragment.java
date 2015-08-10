@@ -24,6 +24,7 @@ package de.arcus.playmusicexporter2.fragments;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -35,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import de.arcus.framework.logger.Logger;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.activities.MusicContainerListActivity;
 import de.arcus.playmusicexporter2.activities.MusicTrackListActivity;
@@ -72,6 +74,8 @@ public class MusicTrackListFragment extends Fragment {
      */
     private ListView mListView;
 
+    private FloatingActionButton mFloatingButtonExport;
+
     private MusicTrackListAdapter mMusicTrackAdapter;
 
     /**
@@ -87,6 +91,19 @@ public class MusicTrackListFragment extends Fragment {
     public void updateListView() {
         if (mListView != null)
             mListView.invalidateViews();
+
+        updateFloatingButton();
+    }
+
+    /**
+     * Update the floating button
+     */
+    public void updateFloatingButton() {
+        if (SelectedTrackList.getInstance().getSelectedItems().size() > 0) {
+            mFloatingButtonExport.show();
+        } else {
+            mFloatingButtonExport.hide();
+        }
     }
 
     /**
@@ -177,6 +194,22 @@ public class MusicTrackListFragment extends Fragment {
                     }
                 }
             });
+
+            // The floating action button
+            mFloatingButtonExport = (FloatingActionButton)rootView.findViewById(R.id.floating_button_export);
+            mFloatingButtonExport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Export all selected tracks
+                    for(SelectedTrack selectedTrack : SelectedTrackList.getInstance().getSelectedItems()) {
+                        selectedTrack.export(getActivity());
+                    }
+
+                    // Clear the selection
+                    SelectedTrackList.getInstance().clear(true);
+                }
+            });
+            updateFloatingButton();
         }
 
         return rootView;
@@ -207,12 +240,19 @@ public class MusicTrackListFragment extends Fragment {
             // Path to the public music folder
             path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + path;
 
+            // Prevent the closing
+            SelectedTrackList.getInstance().setDoNotCloseActionMode(true);
+
             if (toggle) {
                 // Toggles the music track
                 SelectedTrackList.getInstance().toggle(new SelectedTrack(musicTrack.getId(), path), view);
             } else {
                 SelectedTrackList.getInstance().setSelected(new SelectedTrack(musicTrack.getId(), path), true, view);
             }
+
+            SelectedTrackList.getInstance().setDoNotCloseActionMode(false);
         }
+
+        updateFloatingButton();
     }
 }

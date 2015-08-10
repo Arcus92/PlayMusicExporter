@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import de.arcus.framework.logger.Logger;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.activities.MusicTrackListActivity;
 import de.arcus.playmusicexporter2.activities.MusicContainerListActivity;
@@ -48,10 +49,8 @@ public class ActionModeTitle implements ActionMode.Callback {
      */
     private SelectedTrackList mSelectionList;
 
-    /**
-     * Flag to not close the activity when action mode is closing
-     */
-    private boolean mDoNotCloseActivity;
+
+
 
     public ActionModeTitle(Context context, SelectedTrackList selectionList) {
         mContext = context;
@@ -85,19 +84,6 @@ public class ActionModeTitle implements ActionMode.Callback {
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_export:
-
-                // Export all selected tracks
-                for(SelectedTrack selectedTrack : SelectedTrackList.getInstance().getSelectedItems()) {
-                    selectedTrack.export(mContext);
-                }
-
-                // Do not close the activity
-                mDoNotCloseActivity = true;
-
-                // Clear the selection
-                SelectedTrackList.getInstance().clear();
-                return true;
             case R.id.action_select_all:
                 // We are in the track list
                 if (mSelectionList.getActivity() instanceof MusicTrackListActivity) {
@@ -108,11 +94,8 @@ public class ActionModeTitle implements ActionMode.Callback {
 
                 return true;
             case R.id.action_deselect_all:
-                // Do not close the activity
-                mDoNotCloseActivity = true;
-
                 // Clear the selection
-                SelectedTrackList.getInstance().clear();
+                mSelectionList.clear(true);
 
                 return true;
             default:
@@ -144,7 +127,7 @@ public class ActionModeTitle implements ActionMode.Callback {
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         // We are in the music track list
-        if (mSelectionList.getActivity() instanceof MusicTrackListActivity && !mDoNotCloseActivity) {
+        if (mSelectionList.getActivity() instanceof MusicTrackListActivity && !mSelectionList.getDoNotCloseActionMode()) {
             // Clear the action mode
             SelectedTrackList.getInstance().clearActionMode();
 

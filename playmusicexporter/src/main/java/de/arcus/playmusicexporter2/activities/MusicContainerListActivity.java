@@ -34,6 +34,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import de.arcus.framework.logger.Logger;
 import de.arcus.framework.crashhandler.CrashHandler;
@@ -268,7 +269,11 @@ public class MusicContainerListActivity extends AppCompatActivity
         if (mSearchView != null) {
             // Sets the search listener
             mSearchView.setOnQueryTextListener(this);
-            mSearchView.setIconifiedByDefault(false);
+            mSearchView.setIconifiedByDefault(true);
+
+            // Hack to change the default placeholder
+            EditText searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+            searchEditText.setHint(R.string.search);
         }
 
         return true;

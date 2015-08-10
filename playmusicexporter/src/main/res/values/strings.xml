@@ -50,7 +50,7 @@
     <string name="notification_export_finished_summery">%1$d tracks were exported successfully!</string>
     <string name="notification_export_finished_single_summery">%1$s was exported successfully!</string>
 
-    <string name="search">Search</string>
+    <string name="search">Search&#8230;</string>
     <string name="button_export_group">Export all tracks</string>
 
     <string name="settings_category_export">Export settings</string>

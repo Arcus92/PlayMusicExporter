@@ -56,6 +56,14 @@ public abstract class SelectionList<T> {
     private ActionMode.Callback mActionModeCallback;
 
     /**
+     * Flag to not close the activity when action mode is closing
+     */
+    private boolean mDoNotCloseActionMode;
+
+    public boolean getDoNotCloseActionMode() { return mDoNotCloseActionMode; }
+    public void setDoNotCloseActionMode(boolean doNotCloseActionMode) { mDoNotCloseActionMode = doNotCloseActionMode; }
+
+    /**
      * The colors
      */
     private @ColorRes int mResColorNormal;
@@ -168,10 +176,23 @@ public abstract class SelectionList<T> {
      * Clears the selection
      */
     public void clear() {
+        clear(false);
+    }
+
+    /**
+     * Clears the selection
+     * @param doNotCloseActionMode Close the action mode?
+     */
+    public void clear(boolean doNotCloseActionMode) {
+        mDoNotCloseActionMode = doNotCloseActionMode;
+
         mItems.clear();
 
         // Updates the action mode
         updateActionModeMenu();
+
+        // Reset the flag
+        mDoNotCloseActionMode = false;
     }
 
     /**
@@ -199,6 +220,14 @@ public abstract class SelectionList<T> {
      * Updates the action mode menu
      */
     private void updateActionModeMenu() {
+        updateActionModeMenu(false);
+    }
+
+    /**
+     * Updates the action mode menu
+     * @param doNotCloseActivity Prevent the closing of the activity
+     */
+    private void updateActionModeMenu(boolean doNotCloseActivity) {
         // Null check
         if (mActionModeCallback != null && mActivity != null && !mActivity.isFinishing()) {
 
@@ -212,6 +241,7 @@ public abstract class SelectionList<T> {
                 // Set mActionMode to null before call finish to prevent recursion
                 ActionMode actionMode = mActionMode;
                 mActionMode = null;
+
 
                 // Close the action mode
                 actionMode.finish();
