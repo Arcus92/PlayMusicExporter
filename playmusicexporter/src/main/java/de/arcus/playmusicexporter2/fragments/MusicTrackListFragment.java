@@ -35,6 +35,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import de.arcus.framework.logger.Logger;
 import de.arcus.playmusicexporter2.R;
@@ -251,6 +252,10 @@ public class MusicTrackListFragment extends Fragment {
             }
 
             SelectedTrackList.getInstance().setDoNotCloseActionMode(false);
+        } else {
+            // Show an info message for offline tracks
+            Toast toast = Toast.makeText(getActivity(), R.string.toast_error_track_not_offline, Toast.LENGTH_LONG);
+            toast.show();
         }
 
         updateFloatingButton();
