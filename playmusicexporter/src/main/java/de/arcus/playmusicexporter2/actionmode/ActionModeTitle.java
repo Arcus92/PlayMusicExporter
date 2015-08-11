@@ -94,8 +94,12 @@ public class ActionModeTitle implements ActionMode.Callback {
 
                 return true;
             case R.id.action_deselect_all:
-                // Clear the selection
-                mSelectionList.clear(true);
+                // We are in the track list
+                if (mSelectionList.getActivity() instanceof MusicTrackListActivity) {
+                    MusicTrackListActivity trackDetailActivity = (MusicTrackListActivity)mSelectionList.getActivity();
+
+                    trackDetailActivity.deselectAll();
+                }
 
                 return true;
             default:

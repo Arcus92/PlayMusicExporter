@@ -115,7 +115,21 @@ public class MusicTrackListFragment extends Fragment {
         for(int i = 0; i < mMusicTrackAdapter.getCount(); i++ ) {
             MusicTrack musicTrack = mMusicTrackAdapter.getItem(i);
 
-            selectTrack(musicTrack, null, false);
+            selectTrack(musicTrack, null, TrackSelectionState.Select);
+        }
+
+        updateListView();
+    }
+
+    /**
+     * Deselect all items
+     */
+    public void deselectAll() {
+        // Deselect all tracks
+        for(int i = 0; i < mMusicTrackAdapter.getCount(); i++ ) {
+            MusicTrack musicTrack = mMusicTrackAdapter.getItem(i);
+
+            selectTrack(musicTrack, null, TrackSelectionState.Deselect);
         }
 
         updateListView();
@@ -191,7 +205,7 @@ public class MusicTrackListFragment extends Fragment {
                         MusicTrack musicTrack = mMusicTrackAdapter.getItem(position);
 
                         // Toggle the track
-                        selectTrack(musicTrack, view, true);
+                        selectTrack(musicTrack, view, TrackSelectionState.Toggle);
                     }
                 }
             });
@@ -216,13 +230,15 @@ public class MusicTrackListFragment extends Fragment {
         return rootView;
     }
 
+    private enum TrackSelectionState { Deselect, Select, Toggle }
+
     /**
      * Select a track
      * @param musicTrack The track
      * @param view The view
-     * @param toggle If you want to toggle the selection set this to true
+     * @param state Selection state
      */
-    private void selectTrack(MusicTrack musicTrack, View view, boolean toggle) {
+    private void selectTrack(MusicTrack musicTrack, View view, TrackSelectionState state) {
         // Track is available
         if (musicTrack.isOfflineAvailable()) {
 
@@ -244,18 +260,25 @@ public class MusicTrackListFragment extends Fragment {
             // Prevent the closing
             SelectedTrackList.getInstance().setDoNotCloseActionMode(true);
 
-            if (toggle) {
-                // Toggles the music track
-                SelectedTrackList.getInstance().toggle(new SelectedTrack(musicTrack.getId(), path), view);
-            } else {
-                SelectedTrackList.getInstance().setSelected(new SelectedTrack(musicTrack.getId(), path), true, view);
+            switch (state) {
+                case Select:
+                    SelectedTrackList.getInstance().setSelected(new SelectedTrack(musicTrack.getId(), path), true, view);
+                    break;
+                case Deselect:
+                    SelectedTrackList.getInstance().setSelected(new SelectedTrack(musicTrack.getId(), path), false, view);
+                    break;
+                case Toggle:
+                    SelectedTrackList.getInstance().toggle(new SelectedTrack(musicTrack.getId(), path), view);
+                    break;
             }
 
             SelectedTrackList.getInstance().setDoNotCloseActionMode(false);
         } else {
-            // Show an info message for offline tracks
-            Toast toast = Toast.makeText(getActivity(), R.string.toast_error_track_not_offline, Toast.LENGTH_LONG);
-            toast.show();
+            if (state == TrackSelectionState.Toggle) {
+                // Show an info message for offline tracks
+                Toast toast = Toast.makeText(getActivity(), R.string.toast_error_track_not_offline, Toast.LENGTH_LONG);
+                toast.show();
+            }
         }
 
         updateFloatingButton();
