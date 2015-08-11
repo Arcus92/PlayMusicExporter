@@ -23,7 +23,7 @@
 
 <resources>
 
-    <string name="app_name">Play Music Exporter</string>
+    <string name="app_name">Play Music Exporter (beta)</string>
     <string name="title_track_detail">Track Detail</string>
 
     <string name="action_select_all">Select all</string>

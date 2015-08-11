@@ -22,7 +22,7 @@
   -->
 
 <resources>
-    <string name="app_name">Play Music Exporter</string>
+    <string name="app_name">Play Music Exporter (beta)</string>
     <string name="navigation_drawer_close">Drawer schließen</string>
     <string name="view_type_selection_title">Ansicht</string>
     <string name="title_view_rated">Positiv bewertet</string>
