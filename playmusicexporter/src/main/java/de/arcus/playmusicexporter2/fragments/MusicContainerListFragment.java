@@ -25,7 +25,6 @@ package de.arcus.playmusicexporter2.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
 
@@ -34,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.arcus.playmusicexporter2.adapter.MusicContainerListAdapter;
-import de.arcus.playmusicexporter2.items.SelectedTrackList;
 import de.arcus.playmusiclib.items.MusicTrackList;
 
 /**

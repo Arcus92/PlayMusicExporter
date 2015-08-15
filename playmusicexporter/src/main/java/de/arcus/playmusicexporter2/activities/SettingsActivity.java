@@ -23,14 +23,16 @@
 package de.arcus.playmusicexporter2.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
+
+import java.io.File;
 
 import de.arcus.framework.activities.DirectoryBrowserActivity;
+import de.arcus.framework.logger.Logger;
 import de.arcus.framework.utils.FileTools;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.settings.PlayMusicExporterSettings;
@@ -45,7 +47,7 @@ public class SettingsActivity extends PreferenceActivity {
     private PlayMusicExporterSettings mSettings;
 
     // Preferences
-    private ListPreference mPrefExportPath;
+    private Preference mPrefExportPath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,41 +65,22 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
 
         // The export path preference
-        mPrefExportPath = (ListPreference)findPreference("preference_export_path");
-        mPrefExportPath.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        mPrefExportPath = findPreference("preference_export_path");
+        mPrefExportPath.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                // The new value
-                String selectedPath = newValue.toString();
+            public boolean onPreferenceClick(Preference preference) {
+                // Current path
+                Uri currentPath = mSettings.getUri(PlayMusicExporterSettings.PREF_EXPORT_URI, Uri.EMPTY);
 
-                boolean ret = true;
+                // Starts the directory browser activity
+                Intent intent = DirectoryBrowserActivity.openDirectoryBrowser(getApplicationContext(), currentPath, getString(R.string.settings_export_path));
+                startActivityForResult(intent, REQUEST_EXPORT_PATH);
 
-                // Empty = custom
-                if (TextUtils.isEmpty(selectedPath)) {
-                    // Opens the directory browser
-                    Intent intent = new Intent(getApplicationContext(), DirectoryBrowserActivity.class);
-
-                    // The current path
-                    intent.putExtra(DirectoryBrowserActivity.EXTRA_PATH, mSettings.getString(PlayMusicExporterSettings.PREF_EXPORT_PATH, ""));
-                    intent.putExtra(DirectoryBrowserActivity.EXTRA_TITLE, getString(R.string.settings_export_path));
-
-                    // Starts the activity
-                    startActivityForResult(intent, REQUEST_EXPORT_PATH);
-
-                    // Do not apply the empty value.
-                    // We wait vor the activity result instead.
-                    ret = false;
-                } else {
-                    // Saves the path
-                    mSettings.setString(PlayMusicExporterSettings.PREF_EXPORT_PATH, selectedPath);
-                }
-
-                // Update the entry
-                updatePrefExportPath();
-
-                return ret;
+                // We wait for the activity result
+                return true;
             }
         });
+
         updatePrefExportPath();
     }
 
@@ -106,47 +89,34 @@ public class SettingsActivity extends PreferenceActivity {
      */
     private void updatePrefExportPath() {
         // Get the path from the settings
-        String selectedPath = mSettings.getString(PlayMusicExporterSettings.PREF_EXPORT_PATH, "");
+        Uri selectedPath = mSettings.getUri(PlayMusicExporterSettings.PREF_EXPORT_URI, Uri.EMPTY);
 
         // Get all storage
         String[] storage = FileTools.getStorages();
         String[] storageValues = new String[storage.length + 1];
-        String[] storageNames = new String[storage.length + 1];
-        int storageSelected = storage.length;
-
         for(int i=0; i<storage.length; i++) {
             String path = storage[i] + "/Music";
             storageValues[i] = path;
-            storageNames[i] = path;
-
-            // Is storage selected?
-            if (selectedPath.equals(path)) {
-                storageSelected = i;
-            }
         }
 
         // If the path is not set, we use the first default value.
         // This should not happen, because we set the default value in the
         // PlayMusicExporterSettings constructor, but i want to be sure.
-        if (selectedPath.equals("") && storageValues.length > 0) {
-            selectedPath = storageValues[0];
-            storageSelected = 0;
+        if (selectedPath == Uri.EMPTY && storageValues.length > 0) {
+            selectedPath = Uri.fromFile(new File(storageValues[0]));
         }
 
-        // Custom entry
-        storageValues[storage.length] = "";
-        storageNames[storage.length] = getString(R.string.settings_export_path_custom);
+        String label;
 
-        // Custom is selected
-        if (storageSelected == storage.length) {
-            // Adds the custom path to the label
-            storageNames[storage.length] += "\n" + selectedPath;
+        if (selectedPath.toString().startsWith("file://")) {
+            // Simple path
+            label = selectedPath.getPath();
+        } else {
+            // Uri TODO: Add a nice readable label
+            label = selectedPath.getPath();
         }
 
-        mPrefExportPath.setEntries(storageNames);
-        mPrefExportPath.setEntryValues(storageValues);
-        mPrefExportPath.setValueIndex(storageSelected);
-        mPrefExportPath.setSummary(selectedPath);
+        mPrefExportPath.setSummary(label);
     }
 
     /**
@@ -164,6 +134,14 @@ public class SettingsActivity extends PreferenceActivity {
             // Export path was changed
             if (requestCode == REQUEST_EXPORT_PATH) {
                 // TODO
+                Uri uri = data.getData();
+
+                Logger.getInstance().logInfo("Uri", uri.toString());
+
+                mSettings.setUri(PlayMusicExporterSettings.PREF_EXPORT_URI, uri);
+
+                // Update the label
+                updatePrefExportPath();
             }
         }
     }

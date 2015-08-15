@@ -25,7 +25,7 @@ package de.arcus.playmusiclib.items;
 import de.arcus.playmusiclib.PlayMusicManager;
 
 /**
- * Created by david on 14.05.15.
+ * Artwork entry
  */
 public class ArtworkEntry {
     /**

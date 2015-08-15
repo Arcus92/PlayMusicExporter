@@ -27,7 +27,6 @@ import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
-import de.arcus.framework.logger.Logger;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusiclib.ArtworkLoader;
 import de.arcus.playmusiclib.ArtworkLoaderCallback;

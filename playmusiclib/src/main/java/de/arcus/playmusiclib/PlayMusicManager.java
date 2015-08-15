@@ -28,7 +28,11 @@ import android.content.pm.PackageManager;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
 
 import com.mpatric.mp3agic.ID3v1Genres;
@@ -41,6 +45,10 @@ import com.mpatric.mp3agic.Mp3File;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +56,6 @@ import de.arcus.framework.logger.Logger;
 import de.arcus.framework.superuser.SuperUser;
 import de.arcus.framework.superuser.SuperUserTools;
 import de.arcus.framework.utils.FileTools;
-import de.arcus.framework.utils.MediaScanner;
 import de.arcus.playmusiclib.enums.ID3v2Version;
 import de.arcus.playmusiclib.exceptions.CouldNotOpenDatabaseException;
 import de.arcus.playmusiclib.exceptions.NoSuperUserException;
@@ -447,6 +454,7 @@ public class PlayMusicManager {
         return path;
     }
 
+
     /**
      * Exports a track to the sd card
      * @param musicTrack The music track you want to export
@@ -454,6 +462,24 @@ public class PlayMusicManager {
      * @return Returns whether the export was successful
      */
     public boolean exportMusicTrack(MusicTrack musicTrack, String dest) {
+        // Creates the destination directory
+        File directory = new File(dest).getParentFile();
+
+
+        // Filename
+        String filename = new File(dest).getName();
+
+        return exportMusicTrack(musicTrack, Uri.fromFile(directory), filename);
+    }
+
+    /**
+     * Exports a track to the sd card
+     * @param musicTrack The music track you want to export
+     * @param uri The document tree
+     * @return Returns whether the export was successful
+     */
+    public boolean exportMusicTrack(MusicTrack musicTrack, Uri uri, String path) {
+
         // Check for null
         if (musicTrack == null) return false;
 
@@ -484,10 +510,64 @@ public class PlayMusicManager {
             }
         }
 
-        // Creates the destination directory
-        String directory = new File(dest).getParent();
-        if (directory != null && !FileTools.directoryExists(directory))
-            FileTools.directoryCreate(directory);
+
+
+        String dest;
+        Uri copyUri = null;
+        if (uri.toString().startsWith("file://")) {
+            // Build the full path
+            dest = uri.buildUpon().appendPath(path).build().getPath();
+
+            String parentDirectory = new File(dest).getParent();
+            FileTools.directoryCreate(parentDirectory);
+        } else {
+            // Complex uri (Lollipop)
+            dest = getTempPath() + "/final.mp3";
+
+            // The root
+            DocumentFile document = DocumentFile.fromTreeUri(mContext, uri);
+
+            // Creates the subdirectories
+            String[] directories = path.split("\\/");
+            for(int i=0; i<directories.length - 1; i++) {
+                String directoryName = directories[i];
+                boolean found = false;
+
+                // Search all sub elements
+                for (DocumentFile subDocument:  document.listFiles()) {
+                    // Directory exists
+                    if (subDocument.isDirectory() && subDocument.getName().equals(directoryName)) {
+                        document = subDocument;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    // Create the directory
+                    document = document.createDirectory(directoryName);
+                }
+            }
+
+            // Gets the filename
+            String filename = directories[directories.length - 1];
+
+            for (DocumentFile subDocument: document.listFiles()) {
+                // Directory exists
+                if (subDocument.isFile() && subDocument.getName().equals(filename)) {
+                    // Delete the file
+                    subDocument.delete();
+                    break;
+                }
+            }
+
+            // Create the mp3 file
+            document = document.createFile("music/mp3", filename);
+
+            // Create the directories
+            copyUri = document.getUri();
+        }
+
 
         // We want to export the ID3 tags
         if (mID3Enable) {
@@ -513,10 +593,47 @@ public class PlayMusicManager {
             }
         }
 
+        // We need to copy the file to a uri
+        if (copyUri != null) {
+            // Lollipop only
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                try {
+                    // Gets the file descriptor
+                    ParcelFileDescriptor parcelFileDescriptor = mContext.getContentResolver().openFileDescriptor(copyUri, "w");
+
+                    // Gets the output stream
+                    FileOutputStream fileOutputStream = new FileOutputStream(parcelFileDescriptor.getFileDescriptor());
+
+                    // Gets the input stream
+                    FileInputStream fileInputStream = new FileInputStream(dest);
+
+                    // Copy the stream
+                    FileTools.fileCopy(fileInputStream, fileOutputStream);
+
+                    // Close all streams
+                    fileOutputStream.close();
+                    fileInputStream.close();
+                    parcelFileDescriptor.close();
+
+                } catch (FileNotFoundException e) {
+                    Logger.getInstance().logError("ExportMusicTrack", "File not found!");
+
+                    // Could not copy the file
+                    return false;
+                } catch (IOException e) {
+                    Logger.getInstance().logError("ExportMusicTrack", "Failed to write the document: " + e.toString());
+
+                    // Could not copy the file
+                    return false;
+                }
+            }
+        }
+
+        // Delete temp files
         cleanUp();
 
         // Adds the file to the media system
-        new MediaScanner(mContext, dest);
+        //new MediaScanner(mContext, dest);
 
         // Done
         return true;
@@ -624,6 +741,7 @@ public class PlayMusicManager {
             // Save the file
             mp3File.save(dest);
 
+
             // Done
             return true;
         } catch (Exception e) {
@@ -667,6 +785,7 @@ public class PlayMusicManager {
      * Deletes all cache files
      */
     private void cleanUp() {
+        FileTools.fileDelete(getTempPath() + "/final.mp3");
         FileTools.fileDelete(getTempPath() + "/tmp.mp3");
         FileTools.fileDelete(getTempPath() + "/crypt.mp3");
     }

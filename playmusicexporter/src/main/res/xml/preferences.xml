@@ -25,7 +25,7 @@
     <!-- Export settings -->
     <PreferenceCategory android:title="@string/settings_category_export">
         <!-- Export path -->
-        <ListPreference android:title="@string/settings_export_path"
+        <Preference android:title="@string/settings_export_path"
             android:key="preference_export_path"/>
 
         <!-- Path structure for albums -->

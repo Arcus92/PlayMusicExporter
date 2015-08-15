@@ -22,11 +22,10 @@
 
 package de.arcus.playmusicexporter2.fragments;
 
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,13 +36,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import de.arcus.framework.logger.Logger;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.activities.MusicContainerListActivity;
 import de.arcus.playmusicexporter2.activities.MusicTrackListActivity;
 import de.arcus.playmusicexporter2.adapter.MusicTrackListAdapter;
 import de.arcus.playmusicexporter2.items.SelectedTrack;
 import de.arcus.playmusicexporter2.items.SelectedTrackList;
+import de.arcus.playmusicexporter2.settings.PlayMusicExporterSettings;
 import de.arcus.playmusicexporter2.utils.ArtworkViewLoader;
 import de.arcus.playmusicexporter2.utils.MusicPathBuilder;
 import de.arcus.playmusiclib.PlayMusicManager;
@@ -242,6 +241,9 @@ public class MusicTrackListFragment extends Fragment {
         // Track is available
         if (musicTrack.isOfflineAvailable()) {
 
+            // Gets the settings
+            PlayMusicExporterSettings settings = new PlayMusicExporterSettings(getActivity());
+
             // Default structure
             String pathStructure = "{album-artist}/{album}/{disc=CD $}/{no=$$.} {title}.mp3";
 
@@ -254,21 +256,22 @@ public class MusicTrackListFragment extends Fragment {
             // Build the path
             String path = MusicPathBuilder.Build(musicTrack, pathStructure);
 
-            // Path to the public music folder
-            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + path;
+            // Gets the root uri
+            Uri uri = settings.getUri(PlayMusicExporterSettings.PREF_EXPORT_URI, Uri.EMPTY);
+
 
             // Prevent the closing
             SelectedTrackList.getInstance().setDoNotCloseActionMode(true);
 
             switch (state) {
                 case Select:
-                    SelectedTrackList.getInstance().setSelected(new SelectedTrack(musicTrack.getId(), path), true, view);
+                    SelectedTrackList.getInstance().setSelected(new SelectedTrack(musicTrack.getId(), uri, path), true, view);
                     break;
                 case Deselect:
-                    SelectedTrackList.getInstance().setSelected(new SelectedTrack(musicTrack.getId(), path), false, view);
+                    SelectedTrackList.getInstance().setSelected(new SelectedTrack(musicTrack.getId(), uri, path), false, view);
                     break;
                 case Toggle:
-                    SelectedTrackList.getInstance().toggle(new SelectedTrack(musicTrack.getId(), path), view);
+                    SelectedTrackList.getInstance().toggle(new SelectedTrack(musicTrack.getId(), uri, path), view);
                     break;
             }
 

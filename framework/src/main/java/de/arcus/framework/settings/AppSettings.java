@@ -24,6 +24,7 @@ package de.arcus.framework.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
 /**
  * Helper class to read and write app settings without to care about to open and close an editor
@@ -103,6 +104,18 @@ public class AppSettings {
      */
     public long getLong(String key, long defValue) {
         return mSharedPreferences.getLong(key, defValue);
+    }
+
+    /**
+     * Gets a uri from the settings
+     * @param key Key of the setting
+     * @param defValue Default value which is returned if the key doesn't exists
+     * @return Value
+     */
+    public Uri getUri(String key, Uri defValue) {
+        if (mSharedPreferences.contains(key))
+            return Uri.parse(mSharedPreferences.getString(key, ""));
+        else return defValue;
     }
 
     /**
@@ -226,6 +239,20 @@ public class AppSettings {
         editor.commit();
     }
 
+    /**
+     * Saves a uri to the settings
+     * @param key Key of the setting
+     * @param value Value
+     */
+    public void setUri(String key, Uri value) {
+        // Opens the editor
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+
+        editor.putString(key, value.toString());
+
+        // Commits the change
+        editor.commit();
+    }
 
     /**
      * Saves an enum value to the settings

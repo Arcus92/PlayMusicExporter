@@ -24,6 +24,7 @@ package de.arcus.playmusicexporter2.items;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import de.arcus.playmusicexporter2.services.ExportService;
 
@@ -37,6 +38,11 @@ public class SelectedTrack {
     private long mId;
 
     /**
+     * The uri of the track
+     */
+    private Uri mUri;
+
+    /**
      * The path of the track
      */
     private String mPath;
@@ -45,8 +51,9 @@ public class SelectedTrack {
         mId = id;
     }
 
-    public SelectedTrack(long id, String path) {
+    public SelectedTrack(long id, Uri uri, String path) {
         mId = id;
+        mUri = uri;
         mPath = path;
     }
 
@@ -58,6 +65,7 @@ public class SelectedTrack {
 
         // Puts the export parameter
         intent.putExtra(ExportService.ARG_EXPORT_TRACK_ID, mId);
+        intent.putExtra(ExportService.ARG_EXPORT_URI, mUri.toString());
         intent.putExtra(ExportService.ARG_EXPORT_PATH, mPath);
 
         // Starts the service

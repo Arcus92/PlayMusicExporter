@@ -26,6 +26,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
@@ -43,6 +44,7 @@ public class ExportService extends IntentService {
      * Constants for the server instance
      */
     public static final String ARG_EXPORT_TRACK_ID = "track_id";
+    public static final String ARG_EXPORT_URI = "uri";
     public static final String ARG_EXPORT_PATH = "path";
 
     /**
@@ -181,6 +183,7 @@ public class ExportService extends IntentService {
 
         // Gets the track information
         long trackID = bundle.getLong(ARG_EXPORT_TRACK_ID);
+        Uri uri = Uri.parse(bundle.getString(ARG_EXPORT_URI));
         String path = bundle.getString(ARG_EXPORT_PATH);
 
         PlayMusicManager playMusicManager = PlayMusicManager.getInstance();
@@ -196,7 +199,7 @@ public class ExportService extends IntentService {
                 updateNotification();
 
                 // Exports the song
-                if(!playMusicManager.exportMusicTrack(mTrackCurrent, path)) {
+                if(!playMusicManager.exportMusicTrack(mTrackCurrent, uri, path)) {
                     // Export failed
                     mTracksFailed ++;
                 }

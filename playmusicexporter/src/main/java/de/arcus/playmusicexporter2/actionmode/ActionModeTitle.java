@@ -28,11 +28,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import de.arcus.framework.logger.Logger;
 import de.arcus.playmusicexporter2.R;
 import de.arcus.playmusicexporter2.activities.MusicTrackListActivity;
 import de.arcus.playmusicexporter2.activities.MusicContainerListActivity;
-import de.arcus.playmusicexporter2.items.SelectedTrack;
 import de.arcus.playmusicexporter2.items.SelectedTrackList;
 
 /**

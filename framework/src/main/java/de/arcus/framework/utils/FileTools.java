@@ -120,16 +120,46 @@ public class FileTools {
     }
 
     /**
+     * Copies a stream
+     * @param inputStream Source stream
+     * @param outputStream Destination stream
+     * @return Return whether the stream was copied successful
+     */
+    public static boolean fileCopy(InputStream inputStream, OutputStream outputStream) {
+        // The buffer size
+        final int BUFFER_SIZE = 1024;
+
+        // Will be set on true if the file was copied correctly
+        boolean success = false;
+
+        try {
+            // The copy buffer
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int length;
+
+            // Copy block by block
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            // Copy was successful
+            success = true;
+        } catch (IOException ex) {
+            // Failed
+            Logger.getInstance().logError("FileCopy", "Failed: " + ex.toString());
+        }
+
+        return success;
+    }
+
+    /**
      * Copies a file
-     * @param src Soruce path
+     * @param src Source path
      * @param dest Destination path
      * @return Return whether the file was copied successful
      */
     public static boolean fileCopy(String src, String dest) {
         Logger.getInstance().logVerbose("FileCopy", "From " + src + " to " + dest);
-
-        // The buffer size
-        final int BUFFER_SIZE = 1024;
 
         // Will be set on true if the file was copied correctly
         boolean success = false;
@@ -142,17 +172,7 @@ public class FileTools {
             inputStream = new FileInputStream(src);
             outputStream = new FileOutputStream(dest);
 
-            // The copy buffer
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int length;
-
-            // Copy block by block
-            while ((length = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, length);
-            }
-
-            // Copy was successful
-            success = true;
+            success = fileCopy(inputStream, outputStream);
         } catch (IOException ex) {
             // Failed
             Logger.getInstance().logError("FileCopy", "Failed: " + ex.toString());

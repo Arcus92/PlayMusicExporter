@@ -23,6 +23,7 @@
 package de.arcus.playmusicexporter2.settings;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
 
 import de.arcus.framework.settings.AppSettings;
@@ -39,7 +40,7 @@ public class PlayMusicExporterSettings extends AppSettings {
     // Preference constants
     public static final String PREF_ID3 = "pref_id3";
     public static final String PREF_ID3_ARTWORK_SIZE = "pref_id3_artwork_size";
-    public static final String PREF_EXPORT_PATH = "pref_export_path";
+    public static final String PREF_EXPORT_URI = "pref_export_uri";
     public static final String PREF_STRUCTURE_ALBUMS = "pref_structure_albums";
     public static final String PREF_STRUCTURE_GROUPS = "pref_structure_groups";
     public static final String PREF_DRAWER_LEARNED = "pref_drawer_learned";
@@ -64,8 +65,9 @@ public class PlayMusicExporterSettings extends AppSettings {
             setInt(PREF_ID3_ARTWORK_SIZE, 512);
 
         // Export path
-        if (!contains(PREF_EXPORT_PATH))
-            setString(PREF_EXPORT_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath());
+        if (!contains(PREF_EXPORT_URI))
+            setUri(PREF_EXPORT_URI, Uri.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)));
+
     }
 
 
