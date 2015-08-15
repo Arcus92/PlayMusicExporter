@@ -83,4 +83,10 @@
                 android:data="@string/settings_donation_url" />
         </Preference>
     </PreferenceCategory>
+
+    <!-- Develop -->
+    <PreferenceCategory android:title="@string/settings_category_develop">
+        <!-- Build date-->
+        <Preference android:key="preference_build_date" android:title="@string/settings_build_date"/>
+    </PreferenceCategory>
 </PreferenceScreen>

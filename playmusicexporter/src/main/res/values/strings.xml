@@ -59,6 +59,7 @@
     <string name="settings_category_extra">Extras</string>
     <string name="settings_category_about_me">About me</string>
     <string name="settings_category_thanks">Thanks to</string>
+    <string name="settings_category_develop">Develop</string>
 
     <string name="settings_export_path">Location</string>
     <string name="settings_export_structure_albums">Subdirectory structure for albums</string>
@@ -113,5 +114,8 @@
     <string name="settings_donation_title">Support me</string>
     <string name="settings_donation_summery">Donate to me via PayPal</string>
     <string name="settings_donation_url" translatable="false"><![CDATA[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A2VD24Z5E32RU]]></string>
+
+    <string name="settings_build_date">Build date</string>
+
     <string name="action_mode_track_selection">%d tracks selected</string>
 </resources>

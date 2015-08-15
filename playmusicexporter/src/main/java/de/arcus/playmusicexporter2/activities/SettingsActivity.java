@@ -23,13 +23,18 @@
 package de.arcus.playmusicexporter2.activities;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
 
 import java.io.File;
+import java.util.Date;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import de.arcus.framework.activities.DirectoryBrowserActivity;
 import de.arcus.framework.logger.Logger;
@@ -80,6 +85,22 @@ public class SettingsActivity extends PreferenceActivity {
                 return true;
             }
         });
+
+        // Build date
+        Preference prefBuildDate = findPreference("preference_build_date");
+
+        // Hack to get the build date
+        try {
+            ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), 0);
+            ZipFile zipFile = new ZipFile(applicationInfo.sourceDir);
+            ZipEntry dexFile = zipFile.getEntry("classes.dex");
+            long time = dexFile.getTime();
+
+            prefBuildDate.setSummary(DateFormat.format("yyyy-MM-dd HH:mm:ss", new Date(time)).toString());
+
+        } catch (Exception e) {
+            // Failed
+        }
 
         updatePrefExportPath();
     }
