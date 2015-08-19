@@ -55,6 +55,7 @@ public class ArtworkLoader {
             try {
                 // Load the local file
                 byte[] bitmapData = SuperUserTools.fileReadToByteArray(artworkPath);
+
                 bitmap = ImageTools.decodeByteArraySubsampled(bitmapData, artworkSize, artworkSize);
             } catch (Exception e) {
                 // Error

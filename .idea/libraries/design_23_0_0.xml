@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="design-23.0.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/playmusicexporter/build/intermediates/exploded-aar/com.android.support/design/23.0.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/playmusicexporter/build/intermediates/exploded-aar/com.android.support/design/23.0.0/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

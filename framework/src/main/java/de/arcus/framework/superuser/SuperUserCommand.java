@@ -22,8 +22,6 @@
 
 package de.arcus.framework.superuser;
 
-import org.apache.http.util.ByteArrayBuffer;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -33,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.arcus.framework.logger.Logger;
+import de.arcus.framework.utils.ByteBuffer;
 
 /**
  * This class executes superuser commands.
@@ -303,7 +302,7 @@ public class SuperUserCommand {
                     byte[] buffer = new byte[1024];
 
                     // Byte buffer
-                    ByteArrayBuffer byteArrayBuffer = new ByteArrayBuffer(1024);
+                    ByteBuffer byteBuffer = new ByteBuffer();
 
                     // Need the direct input stream
                     InputStream inputStream = SuperUser.getProcess().getInputStream();
@@ -314,7 +313,7 @@ public class SuperUserCommand {
                             len = inputStream.read(buffer);
 
                             // Write to buffer
-                            byteArrayBuffer.append(buffer, 0, len);
+                            byteBuffer.append(buffer, 0, len);
                         }
 
                         // Fix: Wait for the buffer and try again
@@ -327,7 +326,7 @@ public class SuperUserCommand {
                         }
                     } while (bufferedInputReader.ready());
 
-                    mOutputStandardBinary = byteArrayBuffer.toByteArray();
+                    mOutputStandardBinary = byteBuffer.toByteArray();
                 } else {
                     // Reads the standard output as text
                     tmpList.clear();
