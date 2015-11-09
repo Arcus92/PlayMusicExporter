@@ -23,6 +23,7 @@
 package de.arcus.playmusicexporter2.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,7 +109,7 @@ public class MusicTrackListAdapter extends ArrayAdapter<MusicTrack> {
         else
             textView.setText("");
 
-        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_number : R.color.text_music_disable_number));
+        textView.setTextColor(ContextCompat.getColor(mContext, musicTrack.isOfflineAvailable() ? R.color.text_music_number : R.color.text_music_disable_number));
 
         // Sets the disc number
         textView = (TextView)view.findViewById(R.id.text_music_track_disc_number);
@@ -119,7 +120,7 @@ public class MusicTrackListAdapter extends ArrayAdapter<MusicTrack> {
         else
             textView.setVisibility(View.GONE);
 
-        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_disc_number : R.color.text_music_disable_disc_number));
+        textView.setTextColor(ContextCompat.getColor(mContext, musicTrack.isOfflineAvailable() ? R.color.text_music_disc_number : R.color.text_music_disable_disc_number));
 
 
         if (mShowArtworks) {
@@ -140,12 +141,12 @@ public class MusicTrackListAdapter extends ArrayAdapter<MusicTrack> {
         // Sets the title
         textView = (TextView)view.findViewById(R.id.text_music_track_title);
         textView.setText(musicTrack.getTitle());
-        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_title : R.color.text_music_disable_title));
+        textView.setTextColor(ContextCompat.getColor(mContext, musicTrack.isOfflineAvailable() ? R.color.text_music_title : R.color.text_music_disable_title));
 
         // Sets the artist
         textView = (TextView)view.findViewById(R.id.text_music_track_artist);
         textView.setText(musicTrack.getArtist());
-        textView.setTextColor(mContext.getResources().getColor(musicTrack.isOfflineAvailable() ? R.color.text_music_description : R.color.text_music_disable_description));
+        textView.setTextColor(ContextCompat.getColor(mContext, musicTrack.isOfflineAvailable() ? R.color.text_music_description : R.color.text_music_disable_description));
 
         // Track is available?
         view.setEnabled(musicTrack.isOfflineAvailable());

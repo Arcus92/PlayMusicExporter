@@ -25,6 +25,7 @@ package de.arcus.playmusicexporter2.activities;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -158,6 +159,13 @@ public class SettingsActivity extends PreferenceActivity {
                 Uri uri = data.getData();
 
                 Logger.getInstance().logInfo("Uri", uri.toString());
+
+                // Saves the permission
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ) {
+                    getContentResolver().takePersistableUriPermission(uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                }
 
                 mSettings.setUri(PlayMusicExporterSettings.PREF_EXPORT_URI, uri);
 

@@ -28,6 +28,7 @@ import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -211,12 +212,13 @@ public class NavigationDrawerFragment extends Fragment {
         // Button is active
         if (active) {
             // Gets the active color
-            colorText = getResources().getColor(R.color.button_navigation_drawer_text_active);
-            colorBackground = getResources().getColor(R.color.button_navigation_drawer_active);
+
+            colorText = ContextCompat.getColor(getContext(), R.color.button_navigation_drawer_text_active);
+            colorBackground = ContextCompat.getColor(getContext(), R.color.button_navigation_drawer_active);
         } else {
             // Gets the normal color
-            colorText = getResources().getColor(R.color.button_navigation_drawer_text);
-            colorBackground = getResources().getColor(R.color.button_navigation_drawer_normal);
+            colorText = ContextCompat.getColor(getContext(), R.color.button_navigation_drawer_text);
+            colorBackground = ContextCompat.getColor(getContext(), R.color.button_navigation_drawer_normal);
         }
 
         // Sets the color

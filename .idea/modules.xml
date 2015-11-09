@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/PlayMusicExporter.iml" filepath="$PROJECT_DIR$/PlayMusicExporter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/framework/framework.iml" filepath="$PROJECT_DIR$/framework/framework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/playmusicexporter/playmusicexporter.iml" filepath="$PROJECT_DIR$/playmusicexporter/playmusicexporter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/playmusiclib/playmusiclib.iml" filepath="$PROJECT_DIR$/playmusiclib/playmusiclib.iml" />
+    </modules>
+  </component>
+</project>

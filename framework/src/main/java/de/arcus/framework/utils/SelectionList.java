@@ -23,6 +23,7 @@
 package de.arcus.framework.utils;
 
 import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.View;
@@ -131,9 +132,9 @@ public abstract class SelectionList<T> {
         if (view != null) {
             // Change the background
             if (state)
-                view.setBackgroundColor(view.getResources().getColor(mResColorSelected));
+                view.setBackgroundColor(ContextCompat.getColor(view.getContext(), mResColorSelected));
             else
-                view.setBackgroundColor(view.getResources().getColor(mResColorNormal));
+                view.setBackgroundColor(ContextCompat.getColor(view.getContext(), mResColorNormal));
         }
     }
 
@@ -211,9 +212,9 @@ public abstract class SelectionList<T> {
     public void initView(T item, View view) {
         // Change the background
         if (isSelected(item))
-            view.setBackgroundColor(view.getResources().getColor(mResColorSelected));
+            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), mResColorSelected));
         else
-            view.setBackgroundColor(view.getResources().getColor(mResColorNormal));
+            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), mResColorNormal));
     }
 
     /**
