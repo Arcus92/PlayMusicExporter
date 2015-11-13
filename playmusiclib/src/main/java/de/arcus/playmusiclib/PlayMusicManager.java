@@ -144,7 +144,15 @@ public class PlayMusicManager {
      * @return Gets the temp path to the exported music
      */
     private String getTempPath() {
-        return mContext.getCacheDir().getAbsolutePath();
+        // Marshmallow hack
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Use the internal storage instead
+            String path = Environment.getExternalStorageDirectory() + "/PlayMusicExporter/";
+            FileTools.directoryCreate(path);
+            return path;
+        } else {
+            return mContext.getCacheDir().getAbsolutePath();
+        }
     }
 
     /**

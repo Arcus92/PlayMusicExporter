@@ -22,13 +22,19 @@
 
 package de.arcus.playmusicexporter2.activities;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -93,6 +99,8 @@ public class MusicContainerListActivity extends AppCompatActivity
 
     private SearchView mSearchView;
 
+    private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +142,59 @@ public class MusicContainerListActivity extends AppCompatActivity
                     .setActivateOnItemClick(true);
         }
 
+        boolean waitForPermissions = false;
+
+        // Check file system permissions
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            waitForPermissions = true;
+        }
+
+        if (!waitForPermissions)
+            loadPlayMusicExporter();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // Continue loading
+                    loadPlayMusicExporter();
+                } else {
+                    // Shows a warning and close the app
+                    AlertDialog.Builder builder =
+                            new AlertDialog.Builder(this);
+                    builder.setTitle(R.string.dialog_storage_access_denied_title);
+                    builder.setMessage(R.string.dialog_storage_access_denied);
+                    builder.setCancelable(false);
+                    builder.setPositiveButton(R.string.text_okay, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Close the app
+                            MusicContainerListActivity.this.finish();
+                        }
+                    });
+                    builder.show();
+
+                }
+                return;
+            }
+        }
+    }
+    /**
+     * Loads the PlayMusicExporter lib and shows the list
+     */
+    private void loadPlayMusicExporter()
+    {
         // Gets the running instance
         mPlayMusicManager = PlayMusicManager.getInstance();
 

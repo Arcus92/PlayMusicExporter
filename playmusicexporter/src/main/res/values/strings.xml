@@ -50,7 +50,12 @@
     <string name="notification_export_finished_summery">%1$d tracks were exported successfully!</string>
     <string name="notification_export_finished_single_summery">%1$s was exported successfully!</string>
 
+    <string name="dialog_storage_access_denied_title">Storage access denied</string>
+    <string name="dialog_storage_access_denied">The PlayMusicExporter always needs to write to the external storage. This is part of the Marshmallow fix.\n\nPlease restart the app and grant the permission.</string>
+
     <string name="toast_error_track_not_offline">You can only export offline tracks. Try to download the album offline in Play Music.</string>
+
+    <string name="text_okay">Okay</string>
 
     <string name="search">Search&#8230;</string>
     <string name="button_export_group">Export all tracks</string>
