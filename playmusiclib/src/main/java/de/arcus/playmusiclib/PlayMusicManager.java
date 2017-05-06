@@ -23,6 +23,7 @@
 package de.arcus.playmusiclib;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.SQLException;
@@ -49,6 +50,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -649,7 +651,7 @@ public class PlayMusicManager {
         cleanUp();
 
         // Adds the file to the media system
-        //new MediaScanner(mContext, dest);
+        addFileToMediaLibrary(dest);
 
         // Done
         return true;
@@ -796,7 +798,6 @@ public class PlayMusicManager {
         return false;
     }
 
-
     /**
      * Deletes all cache files
      */
@@ -804,5 +805,35 @@ public class PlayMusicManager {
         FileTools.fileDelete(getTempPath() + "/final.mp3");
         FileTools.fileDelete(getTempPath() + "/tmp.mp3");
         FileTools.fileDelete(getTempPath() + "/crypt.mp3");
+    }
+
+    /**
+     * Adds a file the the android media library
+     * @param filename The filename
+     */
+    private void addFileToMediaLibrary(String filename)
+    {
+        addFileToMediaLibrary(new File(filename));
+    }
+
+    /**
+     * Adds a file the the android media library
+     * @param file The file
+     */
+    private void addFileToMediaLibrary(File file)
+    {
+        addFileToMediaLibrary(Uri.fromFile(file));
+    }
+
+    /**
+     * Adds a file the the android media library
+     * @param uri The file uri
+     */
+    private void addFileToMediaLibrary(Uri uri)
+    {
+        // Starts the media scanner
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(uri);
+        mContext.sendBroadcast(intent);
     }
 }
