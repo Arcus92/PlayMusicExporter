@@ -189,6 +189,7 @@ public class MusicPathBuilder {
         filename = filename.replace('<', '-');
         filename = filename.replace('>', '-');
         filename = filename.replace('|', '-');
+        filename = filename.replace('/', '-');
 
         return filename;
     }

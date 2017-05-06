@@ -442,9 +442,9 @@ public class PlayMusicManager {
 
         String path;
 
-        // Fix the path for Play Music 5.9.1854
-        if (!artworkPath.startsWith("artwork2/folder/"))
-            artworkPath = "artwork2/folder/" + artworkPath;
+        // DS 2017-05-06: Changed the path to the newest version
+        if (!artworkPath.startsWith("artwork/"))
+            artworkPath = "artwork/" + artworkPath;
 
         // Search in the public data
         for (String publicData : mPathPublicData) {
@@ -608,6 +608,14 @@ public class PlayMusicManager {
                 try {
                     // Gets the file descriptor
                     ParcelFileDescriptor parcelFileDescriptor = mContext.getContentResolver().openFileDescriptor(copyUri, "w");
+
+                    // DS 2017-05-06: Added a null check
+                    if (parcelFileDescriptor == null)
+                    {
+                        Logger.getInstance().logError("ExportMusicTrack", "Invalid file descriptor!");
+
+                        return false;
+                    }
 
                     // Gets the output stream
                     FileOutputStream fileOutputStream = new FileOutputStream(parcelFileDescriptor.getFileDescriptor());

@@ -56,7 +56,10 @@ public class ArtworkLoader {
                 // Load the local file
                 byte[] bitmapData = SuperUserTools.fileReadToByteArray(artworkPath);
 
-                bitmap = ImageTools.decodeByteArraySubsampled(bitmapData, artworkSize, artworkSize);
+                // DS 2017-05-06: Added null check
+                if (bitmapData != null) {
+                    bitmap = ImageTools.decodeByteArraySubsampled(bitmapData, artworkSize, artworkSize);
+                }
             } catch (Exception e) {
                 // Error
                 Logger.getInstance().logError("LoadArtwork", e.toString());

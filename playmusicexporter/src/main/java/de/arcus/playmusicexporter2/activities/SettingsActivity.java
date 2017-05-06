@@ -65,7 +65,7 @@ public class SettingsActivity extends PreferenceActivity {
         // Setup the default shared preference
         PreferenceManager prefMgr = getPreferenceManager();
         prefMgr.setSharedPreferencesName(PlayMusicExporterSettings.DEFAULT_SETTINGS_FILENAME);
-        prefMgr.setSharedPreferencesMode(MODE_WORLD_READABLE);
+        prefMgr.setSharedPreferencesMode(MODE_PRIVATE);
 
         // Loads the preference xml
         addPreferencesFromResource(R.xml.preferences);
