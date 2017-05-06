@@ -55,7 +55,7 @@
 
     <string name="toast_error_track_not_offline">You can only export offline tracks. Try to download the album offline in Play Music.</string>
 
-    <string name="text_okay">OK</string>
+    <string name="text_okay">Okay</string>
 
     <string name="search">Search&#8230;</string>
     <string name="button_export_group">Export all tracks</string>

@@ -21,4 +21,4 @@ You can get the <em>old</em> working version [here](https://www.david-schulte.de
 
 ### Copyright
 
-Copyright (c) 2015 David Schulte. See LICENSE.txt for details.
+Copyright (c) 2017 David Schulte. See LICENSE.txt for details.

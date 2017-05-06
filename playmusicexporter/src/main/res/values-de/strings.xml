@@ -66,4 +66,5 @@
     <string name="settings_category_develop">Entwicklung</string>
     <string name="dialog_storage_access_denied_title">Daten-Zugriff verweigert</string>
     <string name="dialog_storage_access_denied">Der PlayMusicExpoerter benötigt Schreibrechte auf der SD-Karte. Dies ist Teil des Marshmallow-Fix.\n\nBitte starten Sie die App neu und erlauben Sie die Berechtigung.</string>
+    <string name="text_okay">OK</string>
 </resources>

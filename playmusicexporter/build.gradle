@@ -32,8 +32,8 @@ android {
         applicationId "de.arcus.playmusicexporter2"
         minSdkVersion 9
         targetSdkVersion 25
-        versionCode 102
-        versionName '2.4.2'
+        versionCode 103
+        versionName '2.4.3'
     }
     buildTypes {
         release {
