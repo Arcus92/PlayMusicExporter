@@ -65,8 +65,6 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private View mFragmentContainerView;
 
-    private boolean mUserLearnedDrawer;
-
     private Button mButtonTypeAlbum;
     private Button mButtonTypeArtist;
     private Button mButtonTypePlaylist;
@@ -120,10 +118,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         // Load the settings
         PlayMusicExporterSettings appSettings = new PlayMusicExporterSettings(getActivity());
-        mUserLearnedDrawer = appSettings.getBoolean(PlayMusicExporterSettings.PREF_DRAWER_LEARNED, false);
         mViewType = appSettings.getEnum(PlayMusicExporterSettings.PREF_DRAWER_SELECTED_TYPE, ViewType.Album);
-
-
     }
 
     @Override
@@ -278,23 +273,10 @@ public class NavigationDrawerFragment extends Fragment {
                     return;
                 }
 
-                if (!mUserLearnedDrawer) {
-                    // The user manually opened the drawer; store this flag to prevent auto-showing
-                    // the navigation drawer automatically in the future.
-                    mUserLearnedDrawer = true;
-                    PlayMusicExporterSettings appSettings = new PlayMusicExporterSettings(getActivity());
-                    appSettings.setBoolean(PlayMusicExporterSettings.PREF_DRAWER_LEARNED, mUserLearnedDrawer);
-                }
-
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
         };
 
-        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
-        // per the navigation drawer design guidelines.
-        if (!mUserLearnedDrawer) {
-            mDrawerLayout.openDrawer(mFragmentContainerView);
-        }
 
         // Defer code dependent on restoration of previous instance state.
         mDrawerLayout.post(new Runnable() {
